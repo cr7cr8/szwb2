@@ -1,0 +1,21 @@
+
+
+
+###
+GET http://localhost/api/article
+###
+
+###
+POST http://localhost/api/article
+Content-Type: application/json
+
+{
+    "ownerName":"ccc",
+    "content":"cccdd"
+
+}
+###
+
+###
+GET http://localhost/api/picture
+###

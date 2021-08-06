@@ -126,29 +126,21 @@ export const useStyles = makeStyles(props => {
 });
 
 export default function createMentionPlugin() {
-  //  const url = "http://szwb1.herokuapp.com/api";
-  const url = "https://api.multiavatar.com"
-
-
-
+  const url = "http://szwb1.herokuapp.com/api";
   let externalES = null;
   let externalSetEditorState = null;
-  //let friendsList = ["mmm", "唐大大", "nbwb"];
-  let friendsList = [];
+  let friendsList = ["mmm", "唐大大", "nbwb"];
   const friendObj = {}
 
   friendsList.forEach(friendName => {
     friendObj[friendName] = null
-    axios.get(
-      //`${url}/avatar/downloadavatar/${friendName}`,
-      `${url}/${friendName}.svg`,
-      {
-        responseType: 'arraybuffer',
-        onDownloadProgress: function (progressEvent) { }
-      }).then((response) => {
-        const base64 = btoa(new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''));
-        friendObj[friendName] = "data:" + response.headers["content-type"] + ";base64," + base64
-      })
+    axios.get(`${url}/avatar/downloadavatar/${friendName}`, {
+      responseType: 'arraybuffer',
+      onDownloadProgress: function (progressEvent) { }
+    }).then((response) => {
+      const base64 = btoa(new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+      friendObj[friendName] = "data:" + response.headers["content-type"] + ";base64," + base64
+    })
 
 
   })
@@ -236,7 +228,7 @@ export default function createMentionPlugin() {
               }}
 
               avatar={<Avatar alt="Natacha" src={friendObj[friendName]} />}
-
+          
               onMouseDown={() => {
                 insertMention(inMentionPanel ? " @" + friendName : friendName, mentionHeadKey, mentionBodyKey, entityKey)
               }}
@@ -267,8 +259,8 @@ export default function createMentionPlugin() {
       return (
         <span style={{
           position: "relative",
-          // display: "inline-block",
-
+         // display: "inline-block",
+         
         }}>
 
           <Chip
@@ -299,7 +291,7 @@ export default function createMentionPlugin() {
       return (
         <span style={{
           position: "relative",
-          //   display: "inline-block",
+       //   display: "inline-block",
         }}>
 
           <Chip
@@ -380,7 +372,7 @@ export default function createMentionPlugin() {
 
         <Chip
           classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-          avatar={<Avatar alt="Natacha" src={friendObj[person]||`${url}/${person}.svg`}
+          avatar={<Avatar alt="Natacha" src={friendObj[person]}
 
           />}
           label={<Typography variant="body2" >{children}</Typography>}
@@ -598,9 +590,7 @@ export default function createMentionPlugin() {
             {
               mentionHeadKey, mentionBodyKey,
               person: blockText.substring(start, end).replace(" @", ""),
-              //  imgurl: `url(${url}/avatar/downloadavatar/${blockText.substring(start, end).replace(" @", "")})`
-              imgurl: `${url}/${blockText.substring(start, end).replace(" @", "")}).svg`
-          
+              imgurl: `url(${url}/avatar/downloadavatar/${blockText.substring(start, end).replace(" @", "")})`
             }
           )
 
@@ -609,9 +599,7 @@ export default function createMentionPlugin() {
             {
               mentionHeadKey, mentionBodyKey,
               person: blockText.substring(start, end).replace(" @", ""),
-              //     imgurl: `url(${url}/avatar/downloadavatar/${blockText.substring(start, end).replace(" @", "")})`
-              imgurl: `${url}/${blockText.substring(start, end).replace(" @", "")}).svg`
-           
+              imgurl: `url(${url}/avatar/downloadavatar/${blockText.substring(start, end).replace(" @", "")})`
             }
           )
         }
@@ -620,7 +608,6 @@ export default function createMentionPlugin() {
 
       }
     })
-
 
     externalES = EditorState.push(externalES, newContent, "apply-entity");
     externalES = EditorState.acceptSelection(externalES, oldSelection);

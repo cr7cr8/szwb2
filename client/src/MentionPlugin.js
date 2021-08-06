@@ -28,9 +28,6 @@ export const useStyles = makeStyles(props => {
 
   return {
 
-
-
-
     mentionHeadAvatar: props => {
       return {
         position: "absolute",

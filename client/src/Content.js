@@ -33,6 +33,10 @@ import {
   engineName,
 } from "react-device-detect";
 
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
+
+
 
 
 export default function Content({ style }) {
@@ -57,7 +61,7 @@ export default function Content({ style }) {
 
 
         if (node.name === "imgtag") {
-          return (<ImgTag key={index} picArr={imgArr} picName={node.attribs.id}/>)
+          return (<ImgTag key={index} picArr={imgArr} picName={node.attribs.id} />)
         }
         if (node.name === "emoji") {
 
@@ -174,18 +178,25 @@ export default function Content({ style }) {
 }
 
 
-function ImgTag({ picArr, picName,...props }) {
+function ImgTag({ picArr, picName, ...props }) {
 
   //  const { editorContent, setEditorContent, lgSizeObj, smSizeObj, deviceSize, picArr, setPicArr } = useContext(Context1);
   const theme = useTheme()
-  const picNum = picName==="local"?picArr.length:Number(picName.split("_")[1])
+  const picNum = picName === "local" ? picArr.length : Number(picName.split("_")[1])
   const imgArr = picArr
 
-      
 
 
+  const [photoIndex, setPhotoIndex] = useState(0)
+  const [isOpen, setIsOpen] = useState(false)
 
   if (picNum === 1) {
+
+    const images = picName === "local"
+      ? [imgArr[0].localUrl]
+      : [`${url}/picture/downloadpicture/${picName}_0`]
+
+
     return (<div style={{
 
       position: "relative",
@@ -197,15 +208,43 @@ function ImgTag({ picArr, picName,...props }) {
       backgroundPositionX: "center",
       backgroundPositionY: "center",
       backgroundSize: "cover",
-      backgroundImage: picName==="local"?"url(" + imgArr[0].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_0)`,
+      backgroundImage: picName === "local" ? "url(" + imgArr[0].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_0)`,
 
       backgroundColor: theme.palette.divider,   //"skyblue",
       overflow: "hidden",
 
-    }} />
+    }} onClick={function () {
+
+      setIsOpen(true)
+
+
+    }} >
+      {isOpen && <Lightbox
+        mainSrc={images[photoIndex]}
+        nextSrc={images[(photoIndex + 1) % images.length]}
+        prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+        onCloseRequest={() => setIsOpen(false)}
+        onMovePrevRequest={() =>
+          setPhotoIndex(
+            pre => (pre + images.length - 1) % images.length,
+          )
+        }
+        onMoveNextRequest={() =>
+          setPhotoIndex(
+            pre => (pre + images.length + 1) % images.length,
+          )
+        }
+      />}
+    </div>
     )
   }
   else if (picNum === 2) {
+
+    const images = picName === "local"
+      ? [imgArr[0].localUrl, imgArr[1].localUrl]
+      : [`${url}/picture/downloadpicture/${picName}_0`, `${url}/picture/downloadpicture/${picName}_1`]
+
+
     return (
       <div style={{
         position: "relative",
@@ -234,12 +273,14 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-        //  backgroundImage: "url(" + imgArr[0].localUrl + ")",
-        backgroundImage: picName==="local"?"url(" + imgArr[0].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_0)`,
+          //  backgroundImage: "url(" + imgArr[0].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[0].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_0)`,
           transform: "translateX(-1px) translateY(0px)",
           backgroundColor: "wheat",
         }}
           onClick={function () {
+            setPhotoIndex(0)
+            setIsOpen(true)
             //    setPicArr(pre => [pre[1]])
           }}
 
@@ -257,21 +298,47 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-         // backgroundImage: "url(" + imgArr[1].localUrl + ")",
-         backgroundImage: picName==="local"?"url(" + imgArr[1].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_1)`,
-         
+          // backgroundImage: "url(" + imgArr[1].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[1].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_1)`,
+
           transform: "translateX(1px) translateY(0px)",
           backgroundColor: "wheat",
         }}
           onClick={function () {
             //    setPicArr(pre => [pre[0]])
+            setPhotoIndex(1)
+            setIsOpen(true)
           }}
         />
+
+
+        {isOpen && <Lightbox
+          mainSrc={images[photoIndex]}
+          nextSrc={images[(photoIndex + 1) % images.length]}
+          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+          onCloseRequest={() => setIsOpen(false)}
+          onMovePrevRequest={() =>
+            setPhotoIndex(
+              pre => (pre + images.length - 1) % images.length,
+            )
+          }
+          onMoveNextRequest={() =>
+            setPhotoIndex(
+              pre => (pre + images.length + 1) % images.length,
+            )
+          }
+        />}
+
 
       </div>
     )
   }
   else if (picNum === 3) {
+
+    const images = picName === "local"
+      ? [imgArr[0].localUrl, imgArr[1].localUrl, imgArr[2].localUrl]
+      : [`${url}/picture/downloadpicture/${picName}_0`, `${url}/picture/downloadpicture/${picName}_1`, `${url}/picture/downloadpicture/${picName}_2`]
+
     return (
       <div style={{
         position: "relative",
@@ -299,14 +366,16 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-        //  backgroundImage: "url(" + imgArr[0].localUrl + ")",
-          backgroundImage: picName==="local"?"url(" + imgArr[0].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_0)`,
-         
+          //  backgroundImage: "url(" + imgArr[0].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[0].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_0)`,
+
           transform: "translateX(-1px) translateY(0px)",
           backgroundColor: "wheat",
         }}
           onClick={function () {
             //    setPicArr(pre => [pre[1], pre[2]])
+            setPhotoIndex(0)
+            setIsOpen(true)
           }}
 
         />
@@ -322,14 +391,16 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-         // backgroundImage: "url(" + imgArr[1].localUrl + ")",
-         backgroundImage: picName==="local"?"url(" + imgArr[1].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_1)`,
+          // backgroundImage: "url(" + imgArr[1].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[1].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_1)`,
           transform: "translateX(1px) translateY(-1px)",
 
 
         }} onClick={
           function () {
             //   setPicArr(pre => [pre[0], pre[2]])
+            setPhotoIndex(1)
+            setIsOpen(true)
           }} />
 
         <div style={{
@@ -344,20 +415,47 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-       //   backgroundImage: "url(" + imgArr[2].localUrl + ")",
-       backgroundImage: picName==="local"?"url(" + imgArr[2].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_2)`,
+          //   backgroundImage: "url(" + imgArr[2].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[2].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_2)`,
           transform: "translateX(1px) translateY(1px)",
 
         }} onClick={
           function () {
             //   setPicArr(pre => [pre[0], pre[1]])
+            setPhotoIndex(2)
+            setIsOpen(true)
           }} />
+
+        {isOpen && <Lightbox
+          mainSrc={images[photoIndex]}
+          nextSrc={images[(photoIndex + 1) % images.length]}
+          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+          onCloseRequest={() => setIsOpen(false)}
+          onMovePrevRequest={() =>
+            setPhotoIndex(
+              pre => (pre + images.length - 1) % images.length,
+            )
+          }
+          onMoveNextRequest={() =>
+            setPhotoIndex(
+              pre => (pre + images.length + 1) % images.length,
+            )
+          }
+        />}
+
 
       </div>
     )
   }
 
   else {
+
+
+    const images = picName === "local"
+      ? [imgArr[0].localUrl, imgArr[1].localUrl, imgArr[2].localUrl, imgArr[3].localUrl]
+      : [`${url}/picture/downloadpicture/${picName}_0`, `${url}/picture/downloadpicture/${picName}_1`, `${url}/picture/downloadpicture/${picName}_2`, `${url}/picture/downloadpicture/${picName}_3`]
+
+
     return (
       <div style={{
         position: "relative",
@@ -384,13 +482,15 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-         // backgroundImage: "url(" + imgArr[0].localUrl + ")",
-         backgroundImage: picName==="local"?"url(" + imgArr[0].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_0)`,
-         
+          // backgroundImage: "url(" + imgArr[0].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[0].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_0)`,
+
           transform: "translateX(-1px) translateY(-1px)",
 
         }} onClick={function () {
           //  setPicArr(pre => [pre[1], pre[2], pre[3]])
+          setPhotoIndex(0)
+          setIsOpen(true)
         }} />
 
         <div style={{
@@ -405,12 +505,14 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-       //   backgroundImage: "url(" + imgArr[1].localUrl + ")",
-       backgroundImage: picName==="local"?"url(" + imgArr[1].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_1)`,
+          //   backgroundImage: "url(" + imgArr[1].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[1].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_1)`,
           transform: "translateX(1px) translateY(-1px)",
 
         }} onClick={function () {
           //   setPicArr(pre => [pre[0], pre[2], pre[3]])
+          setPhotoIndex(1)
+          setIsOpen(true)
         }} />
 
         <div style={{
@@ -425,13 +527,15 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-     //    backgroundImage: "url(" + imgArr[2].localUrl + ")",
-     backgroundImage: picName==="local"?"url(" + imgArr[2].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_2)`,
+          //    backgroundImage: "url(" + imgArr[2].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[2].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_2)`,
           transform: "translateX(-1px) translateY(1px)",
         }}
           onClick={
             function () {
               //      setPicArr(pre => [pre[0], pre[1], pre[3]])
+              setPhotoIndex(2)
+              setIsOpen(true)
             }}
         />
 
@@ -447,15 +551,32 @@ function ImgTag({ picArr, picName,...props }) {
           backgroundPositionX: "center",
           backgroundPositionY: "center",
           backgroundSize: "cover",
-       //   backgroundImage: "url(" + imgArr[3].localUrl + ")",
-          backgroundImage: picName==="local"?"url(" + imgArr[3].localUrl + ")":`url(${url}/picture/downloadpicture/${picName}_3)`,
+          //   backgroundImage: "url(" + imgArr[3].localUrl + ")",
+          backgroundImage: picName === "local" ? "url(" + imgArr[3].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_3)`,
           transform: "translateX(1px) translateY(1px)",
 
         }} onClick={
           function () {
             //   setPicArr(pre => [pre[1], pre[2], pre[3]])
+            setPhotoIndex(3)
+            setIsOpen(true)
           }} />
-
+        {isOpen && <Lightbox
+          mainSrc={images[photoIndex]}
+          nextSrc={images[(photoIndex + 1) % images.length]}
+          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+          onCloseRequest={() => setIsOpen(false)}
+          onMovePrevRequest={() =>
+            setPhotoIndex(
+              pre => (pre + images.length - 1) % images.length,
+            )
+          }
+          onMoveNextRequest={() =>
+            setPhotoIndex(
+              pre => (pre + images.length + 1) % images.length,
+            )
+          }
+        />}
 
       </div>
 

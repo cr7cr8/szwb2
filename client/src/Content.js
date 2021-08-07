@@ -208,7 +208,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
     <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
       style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal" }} key={index}>
 
-      {`${inView}`}
+      {/* {`${inView}`} */}
       {toHtml(postArr[index], postPicArr[index], inView)}
 
 

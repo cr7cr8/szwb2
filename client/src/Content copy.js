@@ -50,7 +50,7 @@ export default function Content({ style }) {
   const { mentionHeadRoot, mentionBodyRoot, mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel, } = mentionStyles();
 
 
-  function toHtml(preHtml, imgArr, inView) {
+  function toHtml(preHtml, imgArr) {
     //  alert("bbbb")
     const html = ReactHtmlParser(preHtml, {
 
@@ -61,7 +61,7 @@ export default function Content({ style }) {
 
 
         if (node.name === "imgtag") {
-          return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} />)
+          return (<ImgTag key={index} picArr={imgArr} picName={node.attribs.id} />)
         }
         if (node.name === "emoji") {
 
@@ -121,7 +121,7 @@ export default function Content({ style }) {
             arr2.push(convertNodeToElement(item))
           })
           return (
-            <BackColorTag arr={arr} transformFn={transformFn} index={index} arr2={arr2} backimage={backimage} textcolor={textcolor} inView={inView} key={Math.random()} />
+            <BackColorTag arr={arr} transformFn={transformFn} index={index} arr2={arr2} backimage={backimage} textcolor={textcolor} key={Math.random()} />
           )
         }
         if (node.name === "linkoff") {
@@ -163,25 +163,30 @@ export default function Content({ style }) {
 
           {postArr.map(function (item, index) {
 
-
+            const { ref, inView, entry } = useInView({
+              /* Optional options */
+              threshold: 0,
+              triggerOnce: false,
+              initialInView: true,
+            });
 
 
 
             return (
               // <LazyLoad offset={0}>
 
-              // <Paper classes={{ root: editorPaperCss }} elevation={3}
-              //   style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal" }} key={index}>
 
 
-              //   {toHtml(postArr[index], postPicArr[index])}
+              <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
+                style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal" }} key={index}>
+
+                {`${inView}`}
+                {toHtml(postArr[index], postPicArr[index])}
 
 
 
-              // </Paper>
+              </Paper>
               // </LazyLoad>
-
-              <PaperContent postArr={postArr} postPicArr={postPicArr} index={index} editorPaperCss={editorPaperCss} toHtml={toHtml} />
             )
 
           })}
@@ -193,31 +198,6 @@ export default function Content({ style }) {
   )
 
 }
-
-function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
-
-  const { ref, inView, entry } = useInView({
-    /* Optional options */
-    threshold: 0,
-    triggerOnce: true,
-    initialInView: false,
-  });
-
-
-  return (
-    <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
-      style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal" }} key={index}>
-
-      {`${inView}`}
-      {toHtml(postArr[index], postPicArr[index], inView)}
-
-
-
-    </Paper>
-
-  )
-}
-
 
 
 function ImgTag({ picArr, picName, ...props }) {
@@ -704,7 +684,7 @@ function LinkTag({ toHtml, node, index, imgArr, ...props }) {
   )
 }
 
-function BackColorTag({ backimage, textcolor, transformFn, node, index, arr, arr2, inView, ...props }) {
+function BackColorTag({ backimage, textcolor, transformFn, node, index, arr, arr2, ...props }) {
 
   const [isOverFlow, setIsOverFlow] = useState(false)
   //console.log(backImage)
@@ -720,7 +700,7 @@ function BackColorTag({ backimage, textcolor, transformFn, node, index, arr, arr
         // backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60a204e70270cc001728285f)",
         // backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60a2062e95f2250017420aa4)",
         // backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b701a9dc07780017dcfd38)",
-        ...inView && { backgroundImage: backimage },
+        backgroundImage: backimage,
         color: textcolor,
         //  backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b6f77fae1acf0017a96c4b)",
 

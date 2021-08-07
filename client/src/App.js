@@ -6,12 +6,20 @@ import DraftEditor from "./DraftEditor";
 import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid } from "@material-ui/core";
 import Content from "./Content";
 
+
+import DetectableOverflow from 'react-detectable-overflow';
+import { useEffect, useState } from 'react';
+
+
 function App() {
+
+
+  
   return (
 
     <>
       <CssBaseline />
-   
+    
 
       <Grid container
         direction="row"
@@ -20,8 +28,8 @@ function App() {
         spacing={0}
       >
         <Grid item xs={12} sm={12} md={10} lg={6} xl={6} >
-  
-       <DraftEditor />
+
+          <DraftEditor />
         </Grid>
 
       </Grid>
@@ -34,7 +42,7 @@ function App() {
 
 
       <div style={{ margin: 100 }} />
-      
+
     </>
   );
 }

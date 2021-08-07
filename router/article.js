@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 
 router.get("/",/*authenticateToken*/function(req,res,next){
 
-  Article.find({}).then(docs=>{
+  Article.find({}).sort({"postingTime":-1}).then(docs=>{
  //   console.log(docs)
 //    console.log(Array.isArray(docs))
     res.send(docs)

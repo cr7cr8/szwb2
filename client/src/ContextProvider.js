@@ -65,6 +65,22 @@ export default function ContextProvider(props) {
   const [postArr, setPostArr] = useState([])
   const [postPicArr, setPostPicArr] = useState([])
 
+  const postCount = useRef(0)
+
+
+  const getSinglePost = useCallback(function (num) {
+
+    if (num < postCount.current || num===0){
+      axios.get(`${url}/article/singlepost/${num}`).then(response => {
+
+        console.log(response.data)
+
+        setPostArr(pre => { return [...pre, ...response.data.map(item => item.content),] })
+        setPostPicArr(pre => [...pre, ""])
+      })
+    }
+  })
+
   // const [backImageArr, setBackImageArr] = useState(
   //   [
   //     "url(https://mernchen.herokuapp.com/api/picture/download/60b7028076fa440017fb5779)",
@@ -80,20 +96,23 @@ export default function ContextProvider(props) {
   //const iconSizeArr = ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
 
   useEffect(function () {
-
-    axios.get(`${url}/article`).then(response => {
-
-      console.log(response.data)
-      setPostArr(response.data.map(item => item.content))
-      setPostPicArr(new Array(response.data.length))
+    axios.get(`${url}/article/count`).then(response => {
+      postCount.current = response.data
     })
-//picture/downloadpicture/905137_Capture-_887.PNG
+    //   axios.get(`${url}/article/singlepost/0`).then(response => {
 
-    // axios.get(`${url}/picture/downloadpicture`).then(response => {
+    //     console.log(response.data)
 
-    //   console.log(response.data)
-    //   setPostArr(response.data.map(item => item.content))
-    // })
+    //     setPostArr(response.data.map(item => item.content))
+    //     setPostPicArr(new Array(response.data.length))
+    //   })
+    //   //picture/downloadpicture/905137_Capture-_887.PNG
+
+    //   // axios.get(`${url}/picture/downloadpicture`).then(response => {
+
+    //   //   console.log(response.data)
+    //   //   setPostArr(response.data.map(item => item.content))
+    //   // })
 
   }, [])
 
@@ -195,6 +214,7 @@ export default function ContextProvider(props) {
       picArr, setPicArr,
       postArr, setPostArr,
       postPicArr, setPostPicArr,
+      getSinglePost,
       // backImageArr, setBackImageArr,
       // backImageIndex, setBackImageIndex,
 

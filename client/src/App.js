@@ -8,18 +8,38 @@ import Content from "./Content";
 
 
 import DetectableOverflow from 'react-detectable-overflow';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 
+
+import { useInView } from 'react-intersection-observer';
+import { Context } from "./ContextProvider"
 
 function App() {
 
+  const { getSinglePost } = useContext(Context);
 
-  
+  // const { ref, inView, entry } = useInView({
+  //   /* Optional options */
+  //   threshold: 0.8,
+  //   triggerOnce: false,
+  //   initialInView: true,
+  // });
+
+  // useEffect(function(){
+  //   if(inView){
+  //     getSinglePost()
+  //   }
+
+  // })
+
+
+  //console.log(entry)
+
   return (
 
     <>
       <CssBaseline />
-    
+
 
       <Grid container
         direction="row"
@@ -41,7 +61,7 @@ function App() {
       <Content />
 
 
-      <div style={{ margin: 100 }} />
+      {/* <div style={{ margin: "auto", backgroundColor: "pink", width: "200px", height: "30px" }} ref={ref}>{inView + ""}</div> */}
 
     </>
   );

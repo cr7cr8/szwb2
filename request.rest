@@ -5,6 +5,12 @@
 GET http://localhost/api/article
 ###
 
+
+###
+GET http://localhost/api/article/singlepost/3
+###
+
+
 ###
 POST http://localhost/api/article
 Content-Type: application/json

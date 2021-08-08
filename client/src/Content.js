@@ -43,7 +43,9 @@ export default function Content({ style }) {
 
   const { editorContent, setEditorContent, lgSizeObj, smSizeObj, deviceSize, picArr, setPicArr,
     postArr, setPostArr,
-    postPicArr, setPostPicArr, } = useContext(Context);
+    postPicArr, setPostPicArr,
+    getSinglePost,
+  } = useContext(Context);
 
   const theme = useTheme()
   const { editorPaperCss, className1, unstyledBlockCss, imageBlockCss, centerBlockCss, rightBlockCss, } = useStyles({})
@@ -147,8 +149,22 @@ export default function Content({ style }) {
     [theme.breakpoints.values.xl]: 4,
   };
 
+  const { ref, inView, entry } = useInView({
+    /* Optional options */
+    threshold: 0.8,
+    triggerOnce: false,
+    initialInView: true,
+  });
 
+  useEffect(function(){
+   // setTimeout(() => {
+      if(inView){
+        getSinglePost(postArr.length)
+      }
+  ///  }, 0);
+  
 
+  },[postArr,inView])
 
   return (
     <>
@@ -188,7 +204,12 @@ export default function Content({ style }) {
 
 
         </Masonry>
+
+        <div style={{ margin: "auto", backgroundColor: "pink", width: "100%", height: "30px" }} ref={ref}>{inView + ""}</div>
+      
       </Container>
+
+
     </>
   )
 

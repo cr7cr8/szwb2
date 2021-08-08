@@ -156,15 +156,15 @@ export default function Content({ style }) {
     initialInView: true,
   });
 
-  useEffect(function(){
-   // setTimeout(() => {
-      if(inView){
+  useEffect(function () {
+    setTimeout(() => {
+      if (inView) {
         getSinglePost(postArr.length)
       }
-  ///  }, 0);
-  
+    }, 300);
 
-  },[postArr,inView])
+
+  }, [postArr, inView])
 
   return (
     <>
@@ -205,8 +205,8 @@ export default function Content({ style }) {
 
         </Masonry>
 
-        <div style={{ margin: "auto", backgroundColor: "pink", width: "100%", height: "30px" }} ref={ref}>{inView + ""}</div>
-      
+        <div style={{ margin: "auto", backgroundColor: "pink", width: "100%", height: "30px",opacity:0 }} ref={ref}>{inView + ""}</div>
+
       </Container>
 
 
@@ -227,7 +227,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
 
   return (
     <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
-      style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal" }} key={index}>
+      style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal", }} key={index}>
 
       {/* {`${inView}`} */}
       {toHtml(postArr[index], postPicArr[index], inView)}

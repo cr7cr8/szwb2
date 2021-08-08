@@ -200,22 +200,25 @@ const initialState = {
     // }
   },
   blocks: [
-    {
-      key: "1111",
-      text: "ewijveoij http://weibo.com/aas vvv @mmm fdsfd  \n \n \n \n \n dsd",//`  @aaa @的就是dds http://asd.com `,//  \uD83D\uDE47\u200D\u2640\uFE0F   `,   //  \uD83D\uDE33`,
-      type: "unstyled",
-      // type:"unstyled",
-      depth: 0,
-      inlineStyleRanges: [
-        //    {
-        //         offset: 4,
-        //         length: 10,
-        //         style: "HIGHLIGHT"
-        //    },
-      ],
-      entityRanges: [],
-      data: {}
-    },
+    // {
+    //   key: "1111",
+    //   text: "ewijveoij http://weibo.com/aas vvv @mmm fdsfd  \n \n \n \n \n dsd",//`  @aaa @的就是dds http://asd.com `,//  \uD83D\uDE47\u200D\u2640\uFE0F   `,   //  \uD83D\uDE33`,
+    //   type: "unstyled",
+    //   // type:"unstyled",
+    //   depth: 0,
+    //   inlineStyleRanges: [
+    //     //    {
+    //     //         offset: 4,
+    //     //         length: 10,
+    //     //         style: "HIGHLIGHT"
+    //     //    },
+    //   ],
+    //   entityRanges: [],
+    //   data: {}
+    // },
+
+
+
     // {
     //   key: "2222",
     //   text: `  @aaa @的就是dds http://asd.com `,//  \uD83D\uDE47\u200D\u2640\uFE0F   `,   //  \uD83D\uDE33`,

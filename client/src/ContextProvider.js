@@ -73,7 +73,7 @@ export default function ContextProvider(props) {
     if (num < postCount.current || num===0){
       axios.get(`${url}/article/singlepost/${num}`).then(response => {
 
-        console.log(response.data)
+      //  console.log(response.data)
 
         setPostArr(pre => { return [...pre, ...response.data.map(item => item.content),] })
         setPostPicArr(pre => [...pre, ""])

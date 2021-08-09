@@ -17,7 +17,7 @@ import DetectableOverflow from 'react-detectable-overflow';
 
 
 import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, Chip, Link } from "@material-ui/core";
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp } from "@material-ui/icons";
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useStyles } from './DraftEditor';
@@ -205,7 +205,7 @@ export default function Content({ style }) {
 
         </Masonry>
 
-        <div style={{ margin: "auto", backgroundColor: "pink", width: "100%", height: "30px",opacity:0 }} ref={ref}>{inView + ""}</div>
+        <div style={{ margin: "auto", backgroundColor: "pink", width: "100%", height: "30px", opacity: 0 }} ref={ref}>{inView + ""}</div>
 
       </Container>
 
@@ -216,7 +216,7 @@ export default function Content({ style }) {
 }
 
 function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
-
+  const theme = useTheme()
   const { ref, inView, entry } = useInView({
     /* Optional options */
     threshold: 0,
@@ -224,18 +224,58 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
     initialInView: false,
   });
 
+  const [height, setHeight] = useState("auto")
+  const [display, setDisplay] = useState("none")
+  const panelRef = useRef()
+
+  useEffect(function () {
+    // console.log(panelRef.current)
+ //   console.log(window.getComputedStyle(panelRef.current)["height"])
+
+    if (Number(window.getComputedStyle(panelRef.current)["height"].replace("px", "")) > 360) {
+      setHeight("360px")
+      setDisplay("block")
+    }
+
+  }, [])
 
   return (
-    <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
-      style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal", }} key={index}>
+    <div ref={panelRef} style={{ position: "relative" }}>
+      <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
+        style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal", height: height }} key={index}>
 
-      {/* {`${inView}`} */}
-      {toHtml(postArr[index], postPicArr[index], inView)}
+        {/* {`${inView}`} */}
+        {toHtml(postArr[index], postPicArr[index], inView)}
 
 
 
-    </Paper>
+      </Paper>
+      <Button
+        onClick={function () {
+          setHeight("auto")
+          setDisplay("none")
 
+        }}
+        size="small"
+        style={{
+          position: "absolute",
+          bottom: 0,
+          zIndex:9000,
+          display: display,
+          width: "100%",
+          opacity: 0.8,
+          borderTopRightRadius: 0,
+          borderTopLeftRadius: 0,
+          backgroundColor: theme.palette.background.default,
+          color: theme.palette.type === "dark"
+
+            ? theme.palette.text.secondary
+            : theme.palette.primary.main
+
+        }}
+
+      ><ExpandMore /></Button>
+    </div>
   )
 }
 

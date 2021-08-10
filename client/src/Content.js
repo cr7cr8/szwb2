@@ -16,8 +16,18 @@ import DetectableOverflow from 'react-detectable-overflow';
 
 
 
-import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, Chip, Link } from "@material-ui/core";
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess } from "@material-ui/icons";
+import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, Chip, Link, IconButton, CircularProgress } from "@material-ui/core";
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+
+
+
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, DeleteOutline } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useStyles } from './DraftEditor';
@@ -25,30 +35,38 @@ import { useStyles as mentionStyles } from './MentionPlugin';
 
 import url from './config';
 
+
+import { compareAsc, format, formatDistanceToNow, } from 'date-fns';
+
 import {
   isMobile,
   isFirefox,
   isChrome,
-  browserName,
+
   engineName,
+
 } from "react-device-detect";
 
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
 
-import LazyLoad from 'react-lazyload';
+
 import { useInView } from 'react-intersection-observer';
 
 export default function Content({ style }) {
 
-  const { editorContent, setEditorContent, lgSizeObj, smSizeObj, deviceSize, picArr, setPicArr,
+  const {
+    token, setToken,
+    editorContent, setEditorContent, lgSizeObj, smSizeObj, deviceSize, picArr, setPicArr,
     postArr, setPostArr,
     postPicArr, setPostPicArr,
-    getSinglePost,
+    getSinglePost, deleteSinglePost,
+    changeOwnerName,
   } = useContext(Context);
 
+  const [isFull, setIsFull] = useState(false)
   const theme = useTheme()
-  const { editorPaperCss, className1, unstyledBlockCss, imageBlockCss, centerBlockCss, rightBlockCss, } = useStyles({})
+  const { editorPaperCss, className1, unstyledBlockCss, imageBlockCss, centerBlockCss, rightBlockCss, textFieldCss, labelShrinkCss } = useStyles({})
   const { mentionHeadRoot, mentionBodyRoot, mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel, } = mentionStyles();
 
 
@@ -157,19 +175,160 @@ export default function Content({ style }) {
   });
 
   useEffect(function () {
-    setTimeout(() => {
-      if (inView) {
-        getSinglePost(postArr.length)
-      }
-    }, 300);
+    // setTimeout(() => {
+    if ((inView) && (!isFull)) {
+      getSinglePost().then(postArr => {
+        //  alert(postCount)
+        if (postArr.length === 0) {
+          setIsFull(true)
+        }
+      })
+    }
+    //  }, 300);
 
 
-  }, [postArr, inView])
+  }, [isFull, postArr, inView])
+
+  const [open, setOpen] = useState(false);
+
+  const [newName, setNewName] = useState("")
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
 
   return (
     <>
 
       <Container disableGutters={false}   >
+
+
+        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">
+
+
+            <Chip
+              style={{ backgroundColor: "transparent" }}
+
+
+
+
+
+              avatar={< Avatar style={{ transform: "scale(2)" }} alt={null} src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+              />}
+              label={
+                <Typography variant="h5" >
+                  &nbsp;&nbsp;&nbsp;{token.userName}
+                </Typography>
+              }
+
+            />
+
+
+
+          </DialogTitle>
+          <DialogContent>
+            {/* <DialogContentText style={{ fontSize: "1.5rem" }}>
+              输入新名字/Input new name
+          </DialogContentText> */}
+            <TextField
+              InputLabelProps={{
+                classes: {
+                  root: textFieldCss,
+                  animated: textFieldCss,
+                  shrink: labelShrinkCss,
+                }
+
+              }}
+
+              InputProps={{
+                classes: {
+                  input: textFieldCss,
+
+                },
+              }}
+              value={newName}
+              onChange={function (e) {
+                setNewName(e.target.value)
+              }}
+              //   autoFocus
+
+              margin="dense"
+              id="name"
+              label="新名字/new name"
+            //type="email"
+            //  fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={function () {
+
+              setNewName("")
+              setOpen(false)
+
+            }}
+              style={{
+                fontSize: "2rem",
+                color: theme.palette.type === "dark"
+
+                  ? theme.palette.text.secondary
+                  : theme.palette.primary.main
+
+              }}>
+              Cancel
+          </Button>
+            <Button onClick={function () {
+              //   localStorage.set
+
+              const oldName = token.userName;
+              changeOwnerName(newName).then(result => {
+
+                if (!result) {
+                  alert("name is taken")
+                }
+                else {
+                  setPostArr(pre => {
+                    return [...pre.map(function (item) {
+                      console.log(item.ownerName, oldName)
+
+                      if (item.ownerName === oldName) { item.ownerName = newName; return item }
+
+                      else { return item }
+                    })]
+                  })
+                  setNewName("")
+                  setOpen(false)
+                }
+
+
+              })
+
+
+
+            }}
+              style={{
+                fontSize: "2rem",
+                color: theme.palette.type === "dark"
+
+                  ? theme.palette.text.secondary
+                  : theme.palette.primary.main
+
+              }}>
+              OK
+          </Button>
+          </DialogActions>
+        </Dialog>
+
+
+
+
+
 
         <Masonry
           breakpointCols={breakpointColumnsObj}
@@ -184,20 +343,15 @@ export default function Content({ style }) {
 
 
             return (
-              // <LazyLoad offset={0}>
-
-              // <Paper classes={{ root: editorPaperCss }} elevation={3}
-              //   style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal" }} key={index}>
 
 
-              //   {toHtml(postArr[index], postPicArr[index])}
+              <PaperContent postArr={postArr} postPicArr={postPicArr} index={index} editorPaperCss={editorPaperCss} toHtml={toHtml} token={token}
 
 
-
-              // </Paper>
-              // </LazyLoad>
-
-              <PaperContent postArr={postArr} postPicArr={postPicArr} index={index} editorPaperCss={editorPaperCss} toHtml={toHtml} />
+                mentionBodyRoot2={mentionBodyRoot2} mentionBodyLabel={mentionBodyLabel} deleteSinglePost={deleteSinglePost}
+                setOpen={setOpen}
+                key={item.postID}
+              />
             )
 
           })}
@@ -205,7 +359,15 @@ export default function Content({ style }) {
 
         </Masonry>
 
-        <div style={{ margin: "auto", backgroundColor: "pink", width: "100%", height: "30px", opacity: 0 }} ref={ref}>{inView + ""}</div>
+        <Paper
+          style={{
+            padding: theme.spacing(1), margin: "auto", backgroundColor: theme.palette.background.default, width: "100%",
+            opacity: Boolean(!isFull) && inView ? 1 : 0,
+            display: "flex", justifyContent: "center", alignItems: "center"
+          }}
+          ref={ref}>
+          <CircularProgress size="1.5rem" />
+        </Paper>
 
       </Container>
 
@@ -215,7 +377,7 @@ export default function Content({ style }) {
 
 }
 
-function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
+function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, token, mentionBodyRoot2, mentionBodyLabel, deleteSinglePost, setOpen }) {
   const theme = useTheme()
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -227,10 +389,12 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
   const [height, setHeight] = useState("auto")
   const [display, setDisplay] = useState("none")
   const panelRef = useRef()
+  // const [toShow, setToShow] = useState(true)
+
 
   useEffect(function () {
     // console.log(panelRef.current)
- //   console.log(window.getComputedStyle(panelRef.current)["height"])
+    //   console.log(window.getComputedStyle(panelRef.current)["height"])
 
     if (Number(window.getComputedStyle(panelRef.current)["height"].replace("px", "")) > 360) {
       setHeight("360px")
@@ -239,17 +403,62 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
 
   }, [])
 
+
   return (
-    <div ref={panelRef} style={{ position: "relative" }}>
+
+
+    <div ref={panelRef} style={{ position: "relative" }} >
+
+
+
       <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
         style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal", height: height }} key={index}>
 
-        {/* {`${inView}`} */}
-        {toHtml(postArr[index], postPicArr[index], inView)}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <Chip
+              style={{ backgroundColor: "transparent" }}
+
+              onClick={function () {
 
 
 
+
+                token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+
+              }}
+
+              // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+              key={index}
+              avatar={< Avatar alt={null} src={"https://api.multiavatar.com/" + postArr[index].ownerName + ".svg"}   //src={friendObj[person]}
+              />}
+              label={
+                <Typography style={{...token.userName === postArr[index].ownerName&&{color:theme.palette.primary.main,fontWeight:"bold"}}}>
+                  {postArr[index].ownerName}
+                </Typography>
+              }
+
+            />
+            <span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.8rem" }}>{formatDistanceToNow(postArr[index].postingTime)}</span>
+          </div>
+          {token.userName == postArr[index].ownerName && <IconButton size="small" style={{ float: "right" }}
+            onClick={function () {
+              //   alert(postArr[index].postID)
+
+              deleteSinglePost(postArr[index].postID).then(message => {
+
+              })
+
+
+            }}
+
+          >
+            <DeleteOutline style={{ transform: "scale(0.7) translateY(-0px)" }} />
+          </IconButton>}
+        </div>
+        {toHtml(postArr[index].content, postPicArr[index], inView)}
       </Paper>
+
       <Button
         onClick={function () {
           setHeight("auto")
@@ -260,7 +469,6 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
         style={{
           position: "absolute",
           bottom: 0,
-          zIndex:9000,
           display: display,
           width: "100%",
           opacity: 0.8,
@@ -268,7 +476,6 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml }) {
           borderTopLeftRadius: 0,
           backgroundColor: theme.palette.background.default,
           color: theme.palette.type === "dark"
-
             ? theme.palette.text.secondary
             : theme.palette.primary.main
 

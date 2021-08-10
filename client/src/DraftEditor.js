@@ -8,8 +8,8 @@ import Immutable from 'immutable';
 
 import chainable from 'draft-js-plugins-chainable';
 
-import axios from 'axios';
-import url from './config';
+//import axios from 'axios';
+import url, { axios } from './config';
 
 import createImagePlugin from './ImagePlugin';
 import createBoldPlugin from './BoldPlugin';
@@ -67,6 +67,14 @@ export const useStyles = makeStyles(theme => {
 
   return {
     ...obj,
+    labelShrinkCss: () => {
+      return { transform: "translate(0, 1.5px) scale(0.5)" }
+    },
+    textFieldCss: () => {
+      return { fontSize: "1.5rem" }
+    },
+
+
     editorPaperCss: ({ isLight, breakpointsAttribute, isEditorFocusOn }) => {
       // console.log(isLight)
       return {
@@ -238,7 +246,10 @@ const initialState = {
 
 export default function DraftEditor() {
 
-  const { isLight, setIsLight, breakpointsAttribute,
+  const {
+
+    token,
+    isLight, setIsLight, breakpointsAttribute,
     editorContent,
     setEditorContent,
     lgSizeObj, smSizeObj, deviceSize,
@@ -278,6 +289,12 @@ export default function DraftEditor() {
   //const [editorState, setEditorState] = useState(EditorState.createEmpty())
   //const [editorState, setEditorState] = useState(EditorState.createWithContent(ContentState.createFromText('some')))
   const [editorState, setEditorState] = useState(EditorState.createWithContent(convertFromRaw(initialState)))
+
+
+  const [enablePost, setEnablePost] = useState(true)
+
+
+
 
   useEffect(function () {
     setTimeout(() => {
@@ -730,25 +747,30 @@ export default function DraftEditor() {
 
       </Paper>
 
-      <Button variant="contained" color="primary" disabled={false}
+      <Button variant="contained" color="primary" disabled={!enablePost}
 
         style={{ display: "block", width: "100%", marginTop: theme.spacing(1) }}
         onClick={function (e) {
 
           editor.current.focus()
-
+          setEnablePost(false)
 
           const postID = String(Math.floor(Math.random() * 1000000)) + "_" + picArr.length
 
 
           axios.post(`${url}/article`, {
-            ownerName: "aaa",
+            ownerName: token.userName,
             content: toPreHtml(editorContent, postID),
             postID,
           }).then((response) => {
 
 
             console.log(response.data)
+            if (picArr.length === 0) {
+              setEnablePost(true)
+
+              setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
+            }
           })
 
 
@@ -769,13 +791,17 @@ export default function DraftEditor() {
 
             axios.post(`${url}/picture/uploadpicture`, data, {
               headers: { 'content-type': 'multipart/form-data' },
+            }).then(response => {
+              setEnablePost(true)
+              setPicArr([])
+              setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
             })
 
           }
 
 
 
-          setPostArr(pre => { return [toPreHtml(editorContent, "local"), ...pre,] })
+          setPostArr(pre => { return [{ ownerName: token.userName, postID, postingTime: Date.now(), content: toPreHtml(editorContent, "local") }, ...pre,] })
           setPostPicArr(pre => { return [picArr, ...pre,] })
 
         }}

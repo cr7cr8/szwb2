@@ -15,12 +15,21 @@ import {
   isChrome,
   browserName,
   engineName,
+  BrowserTypes,
+  deviceDetect
 } from "react-device-detect";
 
-import axios from 'axios';
-import url from './config';
+//import axios from 'axios';
+import url, { axios } from './config';
+import jwtDecode from 'jwt-decode';
 
 import yellow from '@material-ui/core/colors/yellow';
+import { PhoneMissed } from '@material-ui/icons';
+
+
+
+
+
 export const Context = createContext();
 const breakpoints = createBreakpoints({})
 
@@ -55,6 +64,14 @@ function breakpointsAttribute(...args) {
 export default function ContextProvider(props) {
 
 
+
+  const [token, setToken] = useState(
+    localStorage.getItem("token")
+      ? jwtDecode(localStorage.getItem("token"))
+      : { userName: "__temp__" }
+  );
+
+
   const [editorContent, setEditorContent] = useState(
     EditorState.createWithContent(ContentState.createFromText(''))
   );
@@ -65,30 +82,76 @@ export default function ContextProvider(props) {
   const [postArr, setPostArr] = useState([])
   const [postPicArr, setPostPicArr] = useState([])
 
-  const postCount = useRef(0)
+  //const postCount = useRef(0)
 
 
-  const getSinglePost = useCallback(function (num) {
+  const changeOwnerName = function (newName) {
 
-    if (num < postCount.current || num===0){
-      axios.get(`${url}/article/singlepost/${num}`).then(response => {
+    return axios.post(`${url}/article/changeownername`, { newName }).then(response => {
+
+      if(!response.data){
+        return response.data
+      }
+      else{
+        localStorage.setItem("token", response.headers["x-auth-token"])
+        setToken(jwtDecode(response.headers["x-auth-token"]));
+        return token
+      }
+
+
+    
+
+
+   
+    })
+
+  }
+
+  const getSinglePost = function () {
+    const postingTime = Math.min(...postArr.map(item => item.postingTime), Date.now())
+    console.log(...postArr.map(item => item.postingTime))
+
+
+
+    return axios.get(`${url}/article/singlepost2/${postingTime}`).then(response => {
 
       //  console.log(response.data)
+      if (response.data.length === 0) {
 
-        setPostArr(pre => { return [...pre, ...response.data.map(item => item.content),] })
-        setPostPicArr(pre => [...pre, ""])
+        return Promise.resolve(response.data)
+      }
+
+
+
+
+      setPostArr(pre => { return [...pre, ...response.data.map(item => item),] })
+      setPostPicArr(pre => [...pre, ""])
+
+      return response.data
+    })
+
+
+  }
+
+
+
+
+  const deleteSinglePost = useCallback(function (postID) {
+    return axios.get(`${url}/article/deletesinglepost/${postID}`).then(response => {
+      const postIndex = postArr.findIndex(item => { return item.postID === postID })
+
+      setPostArr(pre => { return pre.filter(item => item.postID !== postID) })
+      setPostPicArr(pre => {
+        return pre.filter((item, index) => { return index !== postIndex })
+
       })
-    }
+
+      return response.data
+    })
+
+
   })
 
-  // const [backImageArr, setBackImageArr] = useState(
-  //   [
-  //     "url(https://mernchen.herokuapp.com/api/picture/download/60b7028076fa440017fb5779)",
-  //     "url(https://mernchen.herokuapp.com/api/picture/download/60b6f77fae1acf0017a96c4b)",
-  //     "url(https://mernchen.herokuapp.com/api/picture/download/60b701a9dc07780017dcfd38)",
-  //   ])
-
-  // const [backImageIndex, setBackImageIndex] = useState(0)
 
 
   const sizeArr = ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
@@ -96,24 +159,18 @@ export default function ContextProvider(props) {
   //const iconSizeArr = ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
 
   useEffect(function () {
-    axios.get(`${url}/article/count`).then(response => {
-      postCount.current = response.data
-    })
-    //   axios.get(`${url}/article/singlepost/0`).then(response => {
 
-    //     console.log(response.data)
 
-    //     setPostArr(response.data.map(item => item.content))
-    //     setPostPicArr(new Array(response.data.length))
-    //   })
-    //   //picture/downloadpicture/905137_Capture-_887.PNG
+    if (token.userName === "__temp__") {
 
-    //   // axios.get(`${url}/picture/downloadpicture`).then(response => {
 
-    //   //   console.log(response.data)
-    //   //   setPostArr(response.data.map(item => item.content))
-    //   // })
+      axios.post(`${url}/user/register`, token).then(response => {
+        localStorage.setItem("token", response.headers["x-auth-token"])
+        setToken(jwtDecode(response.headers["x-auth-token"]));
+      })
 
+
+    }
   }, [])
 
 
@@ -123,19 +180,13 @@ export default function ContextProvider(props) {
     let muiTheme = createTheme({
 
       backgourndImageArr: [
-        // { backgroundImage: "url(https://picsum.photos/800/450)",color:"orange"},
-        // { backgroundImage: "url(https://picsum.photos/960/540)",color:"red"},
-        // { backgroundImage: "url(https://picsum.photos/880/490)",color:"yellow"},
-        // { backgroundImage: "url(https://picsum.photos/1024/576)",color:"pink"},
 
-        // { backgroundImage: "url(https://cors-anywhere.herokuapp.com/https://photo.weibo.com/7354287965/wbphotos/large/mid/4643997090057849/pid/0081HQfPly1gr50t2i2uaj31040kc0up)"}
-
-        //"url(https://picsum.photos/800/450)"
 
         { backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b7028076fa440017fb5779)", color: "darkgray" },
         { backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b6f77fae1acf0017a96c4b)", color: "orange" },
         { backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b701a9dc07780017dcfd38)", color: "white" },
         { backgroundImage: "url(https://picsum.photos/1024/576)", color: "white" },
+        { backgroundImage: "url(https://picsum.photos/512/288)", color: "white" },
       ],
       palette: {
         primary: primaryColor,
@@ -148,7 +199,21 @@ export default function ContextProvider(props) {
         body2: breakpointsAttribute(["fontSize", ...sizeArr])
       },
 
+
       overrides: {
+        //     MuiInputLabel: {
+        //       root: {
+        //         fontSize: "3rem",
+
+        //       },
+        //       animated: {
+        //         fontSize: "3rem",
+        //       },
+        //       shrink:{
+        //         transform: "translate(0, 1.5px) scale(0.5)"
+        // //        fontSize:"3rem",
+        //       },
+        //     },
 
         MuiAvatar: {
           root: {
@@ -163,6 +228,9 @@ export default function ContextProvider(props) {
         },
         MuiChip: {
           root: {
+
+            borderRadius: 0,
+            //  backgroundColor:"transparent",
             "& .MuiChip-avatar": {
               color: "#616161",
               marginLeft: "5px",
@@ -179,6 +247,8 @@ export default function ContextProvider(props) {
             }
           }
         },
+
+
       },
     })
     muiTheme.palette.mentionBackColor = isLight ? "#b7e1fc" : muiTheme.palette.primary.light;
@@ -209,12 +279,15 @@ export default function ContextProvider(props) {
 
   return (
     <Context.Provider value={{
+      token, setToken,
       isLight, setIsLight, theme, breakpointsAttribute, editorContent,
       setEditorContent, lgSizeObj, smSizeObj, deviceSize,
       picArr, setPicArr,
       postArr, setPostArr,
       postPicArr, setPostPicArr,
-      getSinglePost,
+      getSinglePost, deleteSinglePost,
+      changeOwnerName,
+
       // backImageArr, setBackImageArr,
       // backImageIndex, setBackImageIndex,
 

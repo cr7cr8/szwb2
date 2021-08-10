@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 const { User, Article } = require("../db/schema")
 const { authenticateToken, generateAndDispatchToken } = require('../middleware/auth')
 const mongoose = require("mongoose");
 
-
+const [{ checkConnState, deleteFileByPostID }] = require("../db/fileManager");
 
 router.get("/",/*authenticateToken*/function (req, res, next) {
 
@@ -18,12 +19,57 @@ router.get("/",/*authenticateToken*/function (req, res, next) {
 })
 
 
-router.get("/count",function(req,res,next){
+router.get("/count", function (req, res, next) {
 
   Article.countDocuments({}).exec(function (err, count) {
     res.json(count)
   })
 })
+
+
+router.post("/changeownername", authenticateToken,
+  function (req, res, next) {
+
+    Article.find({"ownerName":req.body.newName}).then(docs=>{
+
+      if (docs.length===0){
+        next()
+      }
+      else{
+        res.json(false)
+      }
+    })
+
+
+
+  },
+  function (req, res, next) {
+
+
+    Article.updateMany({ "ownerName": req.user.userName }, { $set: { "ownerName": req.body.newName } }, { new: true }).then(docs => {
+
+      const token = jwt.sign({ ...req.user, userName: req.body.newName }, 'secretKey')
+
+      res
+        .header("x-auth-token", token)
+        .header("access-control-expose-headers", "x-auth-token")
+        .json({ ...req.user, userName: req.body.newName })
+
+    })
+  })
+
+
+
+
+router.get("/singlepost2/:postingTime",
+
+  function (req, res, next) {
+    Article.find({ "postingTime": { $lt: Number(req.params.postingTime) } }).sort({ "postingTime": -1 }).limit(1).then(docs => {
+
+      res.json(docs)
+
+    })
+  })
 
 
 router.get("/singlepost/:num",
@@ -44,14 +90,24 @@ router.get("/singlepost/:num",
           res.json([docs.pop()])
         })
       }
-
-
     })
-
-
-
-
   })
+
+router.get("/deletesinglepost/:postid", authenticateToken, function (req, res, next) {
+
+
+  Article.deleteOne({ postID: req.params.postid }).then(doc => {
+    if ([...req.params.postid].pop() !== "0") {
+      next()
+    }
+    else {
+      res.json(`delete Article postID ${req.params.postid} done`)
+    }
+    //res.json(doc)
+  })
+
+
+}, checkConnState, deleteFileByPostID, function (req, res) { res.json(`delete picture ${req.params.postid} done`) })
 
 
 

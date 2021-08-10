@@ -1,13 +1,27 @@
 
 
+###
+GET http://localhost/api/user/register
+###
+
+###
+POST http://localhost/api/user/register
+Content-Type: application/json
+###
+
 
 ###
 GET http://localhost/api/article
 ###
 
+###
+GET http://localhost/api/article/deletesinglepost/60825_2
+###
+
+
 
 ###
-GET http://localhost/api/article/singlepost/3
+GET http://localhost/api/article/singlepost2/8628579747890
 ###
 
 

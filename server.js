@@ -4,6 +4,8 @@ const app = express();
 const article = require("./router/article")
 const picture = require("./router/picture")
 const clientPack = require("./router/clientPack")
+const user = require("./router/user")
+
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -17,6 +19,7 @@ if (!process.env.port) {
 
 app.use("/api/article",article)
 app.use("/api/picture",picture)
+app.use("/api/user",user)
 
 app.get("*", clientPack)
 

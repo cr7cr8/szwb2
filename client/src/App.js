@@ -11,29 +11,13 @@ import DetectableOverflow from 'react-detectable-overflow';
 import { useEffect, useState, useContext } from 'react';
 
 
-import { useInView } from 'react-intersection-observer';
 import { Context } from "./ContextProvider"
 
 function App() {
 
   const { getSinglePost } = useContext(Context);
 
-  // const { ref, inView, entry } = useInView({
-  //   /* Optional options */
-  //   threshold: 0.8,
-  //   triggerOnce: false,
-  //   initialInView: true,
-  // });
 
-  // useEffect(function(){
-  //   if(inView){
-  //     getSinglePost()
-  //   }
-
-  // })
-
-
-  //console.log(entry)
 
   return (
 

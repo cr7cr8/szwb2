@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     //     validate: [(val) => { return /\d{3}-\d{3}-\d{4}/.test(val) }, "please enter a valid userName"],
 
   },
+
   // password: {
   //     type: String,
   //     required: true,
@@ -25,7 +26,7 @@ const userSchema = new mongoose.Schema({
   {
     toObject: { virtuals: true },
     collection: "users",
-    //  timestamps: true, 
+    timestamps: true,
   }
 
 )
@@ -36,7 +37,7 @@ const articleSchema = new mongoose.Schema({
   ownerName: { type: String },
   content: { type: String },
   postID: { type: String },
-  postingTime: { type: Date, default: Date.now },
+  postingTime: { type: Number, default: Date.now },
 
 
 }, {

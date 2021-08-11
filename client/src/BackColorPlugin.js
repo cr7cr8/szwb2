@@ -117,6 +117,7 @@ export default function createBackColorPlugin() {
 
           display: "flex",
           justifyContent: "space-between",
+          flexWrap:"wrap",
         }}>
 
 

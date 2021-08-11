@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { authenticateToken, generateAndDispatchToken } = require('../middleware/auth');
 
-const [{ checkConnState, getFileArray, uploadFile, downloadFile, deleteFileById, deleteOldFile,downloadFileByName }] = require("../db/fileManager");
+const [{ checkConnState, getFileArray, uploadFile, downloadFile, deleteFileById, deleteOldFile, downloadFileByName },
+
+  { checkConnState: checkConnState2, downloadFile: downloadFile2 }
+
+] = require("../db/fileManager");
 
 
 
@@ -32,6 +36,13 @@ router.get("/downloadpicture/:picname",
   downloadFile,
 )
 
+router.get("/downloadbackpicture/:id",
+//function(req,res,next){res.json("aaa")},
+
+   checkConnState2,
+   downloadFile2
+
+)
 
 
 module.exports = router

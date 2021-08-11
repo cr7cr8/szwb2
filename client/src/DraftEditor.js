@@ -507,6 +507,16 @@ export default function DraftEditor() {
             <MentionButton color="primary" fontSize="small" isMentionPanelOn={isMentionPanelOn} setIsMentionPanelOn={setIsMentionPanelOn} />
 
             <ImageButton color="primary" fontSize="small" picArr={picArr} setPicArr={setPicArr} editor={editor} />
+            <AddBackColorButton editor={editor} color="primary" fontSize="small" isBackColorPanelOn={isBackColorPanelOn} setIsBackColorPanelOn={setIsBackColorPanelOn} />
+
+            <Button
+              onClick={function () { setIsLight(pre => !pre); editor.current.focus() }}
+              style={{ color: theme.palette.type === "dark" ? theme.palette.text.secondary : theme.palette.primary.main }}
+            >
+              {isLight ? <Brightness5 /> : <Brightness4 />}
+            </Button>
+
+
             {/* <TopImageButton color="primary" fontSize="small"  editor={editor} />  */}
           </ButtonGroup>
         </Paper>
@@ -523,27 +533,7 @@ export default function DraftEditor() {
             <AddBottomLineButton editor={editor} />
             <AlignCenterButton editor={editor} isCenterOn={isCenterOn} setIsCenterOn={setIsCenterOn} />
             <AlignRightButton editor={editor} isRightOn={isRightOn} setIsRightOn={setIsRightOn} />
-            <AddBackColorButton editor={editor} color="primary" fontSize="small" isBackColorPanelOn={isBackColorPanelOn} setIsBackColorPanelOn={setIsBackColorPanelOn} />
 
-            <Button
-
-              onClick={function () {
-                setIsLight(pre => !pre)
-                editor.current.focus()
-              }}
-              style={{
-                color: theme.palette.type === "dark"
-
-                  ? theme.palette.text.secondary
-                  : theme.palette.primary.main
-
-              }}
-            >
-              {isLight
-                ? <Brightness5 />
-                : <Brightness4 />
-              }
-            </Button>
           </ButtonGroup>
         </Paper>
 

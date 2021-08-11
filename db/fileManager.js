@@ -1,7 +1,7 @@
 const multer = require("multer");
 const mongoose = require("mongoose");
 const GridFsStorage = require("multer-gridfs-storage");
-const { connSzwb2DB, connEmojiDB } = require("./db")
+const { connSzwb2DB, connEmojiDB, connPictureDB } = require("./db")
 const Jimp = require('jimp');
 
 
@@ -55,7 +55,7 @@ function uploadFile(connDB, collectionName, req, res, next) {
 
 
     req.body.obj = typeof (req.body.obj) === "string" ? JSON.parse(req.body.obj) : req.body.obj
-  
+
     req.files.forEach(function (file, index) {
 
 
@@ -108,7 +108,7 @@ function uploadFile(connDB, collectionName, req, res, next) {
 
 function downloadFile(connDB, collectionName, req, res, next) {
 
-
+console.log( mongoose.Types.ObjectId(req.params.id))
     var gfs = new mongoose.mongo.GridFSBucket(connDB.db, {   //connDB3.db
         chunkSizeBytes: 255 * 1024,
         bucketName: collectionName,
@@ -302,14 +302,14 @@ function deleteFileById(connDB, collectionName, req, res, next) {
 
 }
 
-function deleteFileByPostID(connDB,collectionName,req,res,next){
+function deleteFileByPostID(connDB, collectionName, req, res, next) {
 
     const regex = new RegExp(`^${req.params.postid}_[\s\S]*`);
     var gfs = new mongoose.mongo.GridFSBucket(connDB.db, {
         chunkSizeBytes: 255 * 1024,
         bucketName: collectionName,
     });
-    const cursor = gfs.find({ 'metadata.picName': {$regex:regex}, }, { limit: 321 })
+    const cursor = gfs.find({ 'metadata.picName': { $regex: regex }, }, { limit: 321 })
 
 
     cursor.toArray().then(function (fileArr) {
@@ -343,7 +343,13 @@ module.exports = [
         deleteFileById_: deleteFileById,
 
     },
+    {
+        ...createFileManager(connPictureDB, "pic_uploads"),
+        uploadFile_: uploadFile,
+        downloadFile_: downloadFile,
+        deleteFileById_: deleteFileById,
 
+    },
 
 
 ]

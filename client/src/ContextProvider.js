@@ -89,20 +89,20 @@ export default function ContextProvider(props) {
 
     return axios.post(`${url}/article/changeownername`, { newName }).then(response => {
 
-      if(!response.data){
+      if (!response.data) {
         return response.data
       }
-      else{
+      else {
         localStorage.setItem("token", response.headers["x-auth-token"])
         setToken(jwtDecode(response.headers["x-auth-token"]));
         return token
       }
 
 
-    
 
 
-   
+
+
     })
 
   }
@@ -182,9 +182,9 @@ export default function ContextProvider(props) {
       backgourndImageArr: [
 
 
-        { backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b7028076fa440017fb5779)", color: "darkgray" },
-        { backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b6f77fae1acf0017a96c4b)", color: "orange" },
-        { backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b701a9dc07780017dcfd38)", color: "white" },
+        { backgroundImage: `url(${url}/picture/downloadbackpicture/60b7028076fa440017fb5779)`, color: "darkgray" },
+        { backgroundImage: `url(${url}/picture/downloadbackpicture/60b6f77fae1acf0017a96c4b)`, color: "orange" },
+        { backgroundImage: `url(${url}/picture/downloadbackpicture/60b701a9dc07780017dcfd38)`, color: "white" },
         { backgroundImage: "url(https://picsum.photos/1024/576)", color: "white" },
         { backgroundImage: "url(https://picsum.photos/512/288)", color: "white" },
       ],

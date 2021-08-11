@@ -453,7 +453,8 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             }}
 
           >
-            <DeleteOutline style={{ transform: "scale(0.7) translateY(-0px)" }} />
+            <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }} 
+            fontSize="small"/>
           </IconButton>}
         </div>
         {toHtml(postArr[index].content, postPicArr[index], inView)}

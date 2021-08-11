@@ -4,6 +4,7 @@ import { EditorState, KeyBindingUtil, convertToRaw, convertFromRaw, RichUtils, M
 import Immutable from 'immutable'
 
 import axios from "axios"
+import url from "./config"
 
 import { makeStyles, styled, useTheme } from '@material-ui/core/styles';
 import { Typography, Button, ButtonGroup, Container, Paper, Avatar } from "@material-ui/core";
@@ -21,7 +22,7 @@ import {
 
 
 export default function createImagePlugin() {
-  const url = "http://szwb1.herokuapp.com/api"
+//  const url = "http://szwb1.herokuapp.com/api"
   let externalES = null;
   let externalSetEditorState = null;
 
@@ -79,7 +80,7 @@ export default function createImagePlugin() {
     '\uD83E\uDD24',
     '\uD83E\uDD71'
   ]
-  const emojiUrl = `url(${url}/emoji/downloademoji/`
+  const emojiUrl = `url(${url}/picture/downloademoji/`
   let emoji = {}
 
   emojiArr.forEach(icon => {

@@ -108,16 +108,20 @@ function uploadFile(connDB, collectionName, req, res, next) {
 
 function downloadFile(connDB, collectionName, req, res, next) {
 
-console.log( mongoose.Types.ObjectId(req.params.id))
+    console.log(mongoose.Types.ObjectId(req.params.id))
     var gfs = new mongoose.mongo.GridFSBucket(connDB.db, {   //connDB3.db
         chunkSizeBytes: 255 * 1024,
         bucketName: collectionName,
         //  bucketName: "avatar",
     });
 
-    const querryObj = req.params.picname
+    let querryObj = req.params.picname
         ? { 'metadata.picName': req.params.picname }
         : { "_id": mongoose.Types.ObjectId(req.params.id) }
+
+    if (req.params.emojiname) {
+        querryObj = { 'filename': req.params.emojiname }
+    }
 
     const cursor = gfs.find({ ...querryObj }, { limit: 1 })
     // const cursor = gfs.find({ 'metadata.ownerName': req.params.username, /* "metadata.owner": req.user.username */ }, { limit: 1 })
@@ -350,7 +354,10 @@ module.exports = [
         deleteFileById_: deleteFileById,
 
     },
+    {
+        ...createFileManager(connEmojiDB, "emoji"),
 
+    }
 
 ]
 

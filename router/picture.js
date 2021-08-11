@@ -4,7 +4,8 @@ const { authenticateToken, generateAndDispatchToken } = require('../middleware/a
 
 const [{ checkConnState, getFileArray, uploadFile, downloadFile, deleteFileById, deleteOldFile, downloadFileByName },
 
-  { checkConnState: checkConnState2, downloadFile: downloadFile2 }
+  { checkConnState: checkConnState2, downloadFile: downloadFile2 },
+  { checkConnState: checkConnState3, downloadFile: downloadFile3 }
 
 ] = require("../db/fileManager");
 
@@ -37,10 +38,17 @@ router.get("/downloadpicture/:picname",
 )
 
 router.get("/downloadbackpicture/:id",
-//function(req,res,next){res.json("aaa")},
+  //function(req,res,next){res.json("aaa")},
+  checkConnState2,
+  downloadFile2
+)
 
-   checkConnState2,
-   downloadFile2
+router.get("/downloademoji/:emojiname",
+
+  checkConnState3,
+
+  downloadFile3
+
 
 )
 

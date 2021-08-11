@@ -85,6 +85,12 @@ export default function Content({ style }) {
         }
         if (node.name === "emoji") {
 
+
+          const emojiUrl = `url(${url}/picture/downloademoji/${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") + 1, node.attribs.imgurl.length )})`
+
+          //    node.attribs.imgurl.lastIndexOf("/")
+
+
           //   console.log(node.attribs.symbol, node.attribs.imgurl)
           return (
             <Typography variant="body2"
@@ -96,7 +102,7 @@ export default function Content({ style }) {
                 display: "inline-block",
                 textAlign: "right",
                 color: "rgba(0,0,0,0)",
-                backgroundImage: node.attribs.imgurl,
+                backgroundImage: emojiUrl,// node.attribs.imgurl,
                 transform: isMobile ? "scale(1.2)" : "scale(1.2)",
                 marginLeft: theme.typography.fontSize * 0.12,
                 marginRight: theme.typography.fontSize * 0.12,
@@ -433,7 +439,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
               avatar={< Avatar alt={null} src={"https://api.multiavatar.com/" + postArr[index].ownerName + ".svg"}   //src={friendObj[person]}
               />}
               label={
-                <Typography style={{...token.userName === postArr[index].ownerName&&{color:theme.palette.primary.main,fontWeight:"bold"}}}>
+                <Typography style={{ ...token.userName === postArr[index].ownerName && { color: theme.palette.primary.main, fontWeight: "bold" } }}>
                   {postArr[index].ownerName}
                 </Typography>
               }
@@ -453,8 +459,8 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             }}
 
           >
-            <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }} 
-            fontSize="small"/>
+            <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }}
+              fontSize="small" />
           </IconButton>}
         </div>
         {toHtml(postArr[index].content, postPicArr[index], inView)}
@@ -976,6 +982,11 @@ function LinkTag({ toHtml, node, index, imgArr, ...props }) {
 function BackColorTag({ backimage, textcolor, transformFn, node, index, arr, arr2, inView, ...props }) {
 
   const [isOverFlow, setIsOverFlow] = useState(false)
+
+  const backImageUrl = `url(${url}/picture/downloadbackpicture/${backimage.substring(backimage.lastIndexOf("/") + 1, backimage.length - 1)})`
+
+  //alert(backImageUrl)
+
   //console.log(backImage)
   return (
     <DetectableOverflow
@@ -989,7 +1000,7 @@ function BackColorTag({ backimage, textcolor, transformFn, node, index, arr, arr
         // backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60a204e70270cc001728285f)",
         // backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60a2062e95f2250017420aa4)",
         // backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b701a9dc07780017dcfd38)",
-        ...inView && { backgroundImage: backimage },
+        ...inView && { backgroundImage: backImageUrl },
         color: textcolor,
         //  backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b6f77fae1acf0017a96c4b)",
 

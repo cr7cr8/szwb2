@@ -7,7 +7,7 @@ import axios from "axios"
 import url from "./config"
 
 import { makeStyles, styled, useTheme } from '@material-ui/core/styles';
-import { Typography, Button, ButtonGroup, Container, Paper, Avatar } from "@material-ui/core";
+import { Typography, Button, ButtonGroup, Container, Paper, Avatar, IconButton } from "@material-ui/core";
 import { InsertEmoticon } from "@material-ui/icons";
 import { height } from '@material-ui/system';
 
@@ -22,7 +22,7 @@ import {
 
 
 export default function createImagePlugin() {
-//  const url = "http://szwb1.herokuapp.com/api"
+  //  const url = "http://szwb1.herokuapp.com/api"
   let externalES = null;
   let externalSetEditorState = null;
 
@@ -299,6 +299,9 @@ export default function createImagePlugin() {
 
 
     EmojiButton: function (props) { return <EmojiButton {...props} /> },
+
+    EmojiIconButton: function (props) { return <EmojiIconButton {...props} /> },
+
     EmojiPanel: function (props) { return <EmojiPanel emoji={emoji} insertEmoji={insertEmoji} {...props} /> },
 
 
@@ -343,6 +346,49 @@ function EmojiButton({ children, isEmojiPanelOn, setIsEmojiPanelOn, ...props }) 
   )
 
 }
+
+function EmojiIconButton({ children, isEmojiPanelOn, setIsEmojiPanelOn, ...props }) {
+
+  const theme = useTheme()
+
+  return (
+    <>
+      <Paper style={{ borderRadius: "1000px",  transform: "scale(0.8)",}} elevation={3}>
+        <IconButton size="small"
+          {...props}
+
+          style={{
+
+           
+            backgroundColor: isEmojiPanelOn ? theme.palette.primary.main : theme.palette.background.paper,// theme.palette.background.default,
+
+
+            color: theme.palette.type === "light"
+              ? isEmojiPanelOn
+                ? theme.palette.primary.contrastText
+                : theme.palette.primary.main
+              : isEmojiPanelOn
+                ? theme.palette.primary.contrastText
+                : theme.palette.text.secondary
+
+
+          }}
+
+
+          onClick={function (e) {
+            setIsEmojiPanelOn(pre => !pre)
+          }}
+        >
+          <InsertEmoticon />
+          {/* {children} */}
+        </IconButton>
+      </Paper>
+    </>
+  )
+
+}
+
+
 
 function EmojiPanel({ children, emoji, insertEmoji, isEmojiPanelOn, ...props }) {
 

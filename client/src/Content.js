@@ -52,6 +52,8 @@ import 'react-image-lightbox/style.css'; // This only needs to be imported once 
 
 
 import { useInView } from 'react-intersection-observer';
+import CommentEditor from "./CommentEditor";
+
 
 export default function Content({ style }) {
 
@@ -86,7 +88,7 @@ export default function Content({ style }) {
         if (node.name === "emoji") {
 
 
-          const emojiUrl = `url(${url}/picture/downloademoji/${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") + 1, node.attribs.imgurl.length )})`
+          const emojiUrl = `url(${url}/picture/downloademoji/${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") + 1, node.attribs.imgurl.length)})`
 
           //    node.attribs.imgurl.lastIndexOf("/")
 
@@ -397,6 +399,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
   const panelRef = useRef()
   // const [toShow, setToShow] = useState(true)
 
+  const [showComment, setShowComment] = useState(false)
 
   useEffect(function () {
     // console.log(panelRef.current)
@@ -418,7 +421,14 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
 
       <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
-        style={{ overflow: "hidden", padding: "0px", whiteSpace: "normal", height: height }} key={index}>
+        style={{
+
+
+          overflow: display === "none" ? "visible" : "hidden",
+
+
+          padding: "0px", whiteSpace: "normal", height: height
+        }} key={index}>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
@@ -462,9 +472,32 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }}
               fontSize="small" />
           </IconButton>}
+
+
+          <IconButton size="small" style={{ float: "right" }}
+            onClick={function () {
+              //   alert(postArr[index].postID)
+
+              setShowComment(pre => !pre)
+
+
+              setHeight("auto")
+              setDisplay("none")
+
+            }}
+
+          >
+            <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }}
+              fontSize="small" />
+          </IconButton>
+
+
         </div>
         {toHtml(postArr[index].content, postPicArr[index], inView)}
+        {/* {postArr[index].postID === "27762_1" && <CommentEditor postID={postArr[index].postID} />} */}
+        {/* {showComment && <CommentEditor postID={postArr[index].postID} />} */}
       </Paper>
+
 
       <Button
         onClick={function () {
@@ -983,8 +1016,9 @@ function BackColorTag({ backimage, textcolor, transformFn, node, index, arr, arr
 
   const [isOverFlow, setIsOverFlow] = useState(false)
 
-  const backImageUrl = `url(${url}/picture/downloadbackpicture/${backimage.substring(backimage.lastIndexOf("/") + 1, backimage.length - 1)})`
-
+  const backImageUrl = backimage.indexOf("downloadbackpicture") >= 0
+    ? `url(${url}/picture/downloadbackpicture/${backimage.substring(backimage.lastIndexOf("/") + 1, backimage.length - 1)})`
+    : backimage
   //alert(backImageUrl)
 
   //console.log(backImage)

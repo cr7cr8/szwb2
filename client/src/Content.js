@@ -469,12 +469,12 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             }}
 
           >
-            <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }}
-              fontSize="small" />
+            <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }} fontSize="small" />
+
           </IconButton>}
 
 
-          <IconButton size="small" style={{ float: "right" }}
+          {/* <IconButton size="small" style={{ float: "right" }}
             onClick={function () {
               //   alert(postArr[index].postID)
 
@@ -489,7 +489,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
           >
             <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }}
               fontSize="small" />
-          </IconButton>
+          </IconButton> */}
 
 
         </div>

@@ -23,8 +23,8 @@ import { stateToHTML } from 'draft-js-export-html';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2, } from 'react-html-parser';
 import { makeStyles, styled, useTheme } from '@material-ui/core/styles';
 
-import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, IconButton } from "@material-ui/core";
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, PaletteOutlined } from "@material-ui/icons";
+import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, IconButton, Icon, Chip } from "@material-ui/core";
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, PaletteOutlined, Send } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {
@@ -41,7 +41,7 @@ import {
 
 
 const { boldPlugin, BoldButton, ItalicButton, UnderlineButton, LargeButton, SmallButton, } = createBoldPlugin()
-const { emojiPlugin, EmojiButton, EmojiPanel,EmojiIconButton } = createEmojiPlugin()
+const { emojiPlugin, EmojiButton, EmojiPanel, EmojiIconButton } = createEmojiPlugin()
 const { imagePlugin, ImageButton, TopImageButton, ImageBlog, hasImageBlock } = createImagePlugin()
 const { mentionPlugin, MentionButton, MentionPanel, } = createMentionPlugin()
 const { linkPlugin } = createLinkPlugin()
@@ -101,85 +101,14 @@ export const useStyles = makeStyles(theme => {
     unstyledBlockCss: () => {
       return {
 
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1),
-      }
-    },
-    imageBlockCss: () => {
-      return {
-        margin: 0,
-        padding: 0,
-        //   position: "relative",
-        width: "100%",
-        height: 0,
-        paddingBottom: "56.25%",
-      }
-    },
-    centerBlockCss: () => {
-      return {
-        // display: "flex",
-        // justifyContent: "center",
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1),
-        textAlign: "center",
-      }
-
-    },
-    rightBlockCss: () => {
-      return {
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1),
-        textAlign: "end",
-
+        paddingLeft: "4px",//theme.spacing(1),
+        paddingRight: "4px",//theme.spacing(1),
       }
     },
 
 
 
 
-    colorBlockCss: () => {
-      // console.log(backImageArr, backImageIndex)
-      // if (!backImageArr) { return {} }
-      return {
-        position: "relative",
-        display: "flex",
-        backgroundColor: "wheat",
-        // width:"100%",
-        height: 0,
-        paddingBottom: "56.25%",
-        alignItems: "center",
-        justifyContent: "center",
-
-        overflow: "auto",
-        // overflow: "hidden",
-
-        // backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60a204e70270cc001728285f)",
-        // backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60a2062e95f2250017420aa4)",
-        //  backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b701a9dc07780017dcfd38)",
-        //    backgroundImage: backImageArr[backImageIndex],
-
-        //  backgroundImage: "url(https://mernchen.herokuapp.com/api/picture/download/60b6f77fae1acf0017a96c4b)",
-        //  backgroundImage: "url(https://picsum.photos/800/450)",
-        backgroundSize: "contain",
-        //color:"white",
-        // aspectRatio: "16 / 9",
-
-        "& > div": {
-          textAlign: "center",
-          position: "absolute",
-          top: "50%",
-          transform: "translateY(-50%)",
-          // color: "pink",
-
-        }
-
-
-
-
-      }
-
-
-    },
 
     className1: props => {
 
@@ -244,7 +173,7 @@ const initialState = {
   ]
 };
 
-export default function CommentEditor({ postID }) {
+export default function CommentEditor({ postID, index, toHtml }) {
 
   const {
 
@@ -253,9 +182,8 @@ export default function CommentEditor({ postID }) {
     editorContent,
     setEditorContent,
     lgSizeObj, smSizeObj, deviceSize,
-    picArr, setPicArr,
-    postArr, setPostArr,
-    postPicArr, setPostPicArr,
+
+
     // backImageArr, setBackImageArr,
     // backImageIndex, setBackImageIndex,
   } = useContext(Context)
@@ -263,19 +191,11 @@ export default function CommentEditor({ postID }) {
 
   // const [picArr,setPicArr] = useState([])
 
-  const [isBoldOn, setIsBoldOn] = useState(false)
-  const [isItalicOn, setIsItalicOn] = useState(false)
-  const [isUnderlineOn, setIsUnderlineOn] = useState(false)
-  const [isLargeOn, setIsLargeOn] = useState(false)
-  const [isSmallOn, setIsSmallOn] = useState(false)
 
 
   const [isEmojiPanelOn, setIsEmojiPanelOn] = useState(false)
   const [isMentionPanelOn, setIsMentionPanelOn] = useState(false)
-  const [isBackColorPanelOn, setIsBackColorPanelOn] = useState(false)
 
-  const [isCenterOn, setIsCenterOn] = useState(false)
-  const [isRightOn, setIsRightOn] = useState(false)
 
 
   const [isEditorFocusOn, setIsEditorFocusOn] = useState(false)
@@ -294,7 +214,7 @@ export default function CommentEditor({ postID }) {
   const [enablePost, setEnablePost] = useState(true)
 
 
-
+  const [commentArr, setCommentArr] = useState([])
 
   useEffect(function () {
     setTimeout(() => {
@@ -313,10 +233,11 @@ export default function CommentEditor({ postID }) {
         defaultBlockTag: "div",
 
         inlineStyles: {
-          LARGE: { style: { fontSize: lgSizeObj[deviceSize] }, },
-          //   LARGE: { style: { fontSize:"3.5rem" }},
-          SMALL: { style: { fontSize: smSizeObj[deviceSize] }, },
-          //   linkStyle: { style: { fontSize: 0 } }
+          //  LARGE: { style: { fontSize: lgSizeObj[deviceSize] }, },
+          //  SMALL: { style: { fontSize: smSizeObj[deviceSize] }, },
+
+          //  LARGE: { style: { fontSize:"3.5rem" }},
+          //  linkStyle: { style: { fontSize: 0 } }
           //  LARGE: { attributes: { class: "largeText" } },
         },
 
@@ -332,8 +253,9 @@ export default function CommentEditor({ postID }) {
 
               },
               style: {
-                paddingLeft: "8px",
-                paddingRight: "8px",
+              //  paddingLeft: "4px",
+              //  paddingRight: "4px",
+                fontSize: "1.2rem",
               }
             }
           }
@@ -413,33 +335,87 @@ export default function CommentEditor({ postID }) {
 
   return (
 
-    <Container disableGutters={true} maxWidth="lg" style={{ backgroundColor: theme.palette.action.disabledBackground, marginBottom:0  }}>
- {/* <CssBaseline /> */}
+    <Container disableGutters={true} maxWidth="lg" style={{ backgroundColor: theme.palette.action.disabledBackground, paddingBottom: theme.spacing(1) }}>
+      {/* <CssBaseline /> */}
       <Box style={{
-        marginBottom: "5px",
+        //     marginBottom: "5px",
 
         display: "flex", alignItems: "center", justifyContent: "flex-start", flexWrap: isMobile ? "wrap" : "wrap",
 
-        gap: theme.spacing(1),
-     
+        gap: theme.spacing(0),
+
         //   width: "100%",
       }}>
 
-        {/* <Paper
-          style={{
-
-            display: "flex", alignItems: "center", justifyContent: "flex-start", flexWrap: "wrap",
-            gap: theme.spacing(0),
-            //  width: "fit-content",
-          }}> */}
-          {/* <ButtonGroup variant="text" style={{}}> */}
-
-          {!isMobile && <EmojiIconButton color="primary" fontSize="small" isEmojiPanelOn={isEmojiPanelOn} setIsEmojiPanelOn={setIsEmojiPanelOn} />}
-
-          {/* <MentionButton color="primary" fontSize="small" isMentionPanelOn={isMentionPanelOn} setIsMentionPanelOn={setIsMentionPanelOn} /> */}
 
 
-          {/* </ButtonGroup> */}
+        <Chip
+          style={{ backgroundColor: "transparent" }}
+
+          // onClick={function () {
+          //   token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+          // }}
+
+          // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+          // key={index}
+          avatar={< Avatar alt={null} src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+          />}
+          label={
+            <Typography style={{ fontWeight: "bold" }}>
+              {token.userName}
+            </Typography>
+          }
+
+        />
+
+
+        {!isMobile && <EmojiIconButton color="primary" fontSize="small" isEmojiPanelOn={isEmojiPanelOn} setIsEmojiPanelOn={setIsEmojiPanelOn} />}
+
+        <Paper style={{ borderRadius: "1000px", transform: "scale(0.8)", padding: "0px" }} elevation={3}>
+          <IconButton size="small"
+            //    disabled={true}
+            style={{
+
+
+              //        backgroundColor: isEmojiPanelOn ? theme.palette.primary.main : theme.palette.background.paper,// theme.palette.background.default,
+
+
+              // color: theme.palette.type === "light"
+              //   ? isEmojiPanelOn
+              //     ? theme.palette.primary.contrastText
+              //     : theme.palette.primary.main
+              //   : isEmojiPanelOn
+              //     ? theme.palette.primary.contrastText
+              //     : theme.palette.text.secondary
+
+
+            }}
+
+            onClick={function () {
+              const content = toPreHtml(editorContent)
+
+              setCommentArr(pre => { return [content, ...pre] })
+
+              //alert(JSON.stringify(content))
+              //alert(postID)
+
+            }}
+
+          ><Send style={{ transform: "scale(0.9)", color: theme.palette.type === "light" ? theme.palette.primary.main : theme.palette.text.secondary }} /></IconButton></Paper>
+
+        {/* <Button
+          variant="contained"
+          color="primary"
+          // className={classes.button}
+          endIcon={<Send />}
+        >Send
+      </Button> */}
+
+
+        {/* <MentionButton color="primary" fontSize="small" isMentionPanelOn={isMentionPanelOn} setIsMentionPanelOn={setIsMentionPanelOn} /> */}
+
+
+        {/* </ButtonGroup> */}
         {/* </Paper> */}
 
       </Box>
@@ -449,11 +425,12 @@ export default function CommentEditor({ postID }) {
 
         elevation={isEditorFocusOn ? 3 : 2}
         //  className={editorPaperClass}
-        classes={{ root: editorPaperCss }}
+        //  classes={{ root: editorPaperCss }}
         style={{
 
-          marginLeft:"4px",
-          marginRight:"4px",
+          marginLeft: "2rem",
+          marginRight: "4px",
+          fontSize: "1.2rem",
           // backgroundColor: "pink"
           // backgroundImage
           // minHeight: "20vh",
@@ -493,15 +470,10 @@ export default function CommentEditor({ postID }) {
 
           plugins={//chainable(
             [
-              //    focusPlugin,
-
-              //  boldPlugin,
-              // imagePlugin,
               emojiPlugin,
               mentionPlugin,
               linkPlugin,
-              //  deleteBlogPlugin,
-              //  backColorPlugin,
+
             ]
             // )
           }
@@ -522,31 +494,6 @@ export default function CommentEditor({ postID }) {
 
             const styleNames = style.toObject();
 
-            if (styleNames.LARGE && styleNames.SMALL) {
-
-            }
-            else if (Boolean(styleNames.LARGE)) {
-              return {
-                //color: "red",  // display:"flex",   // justifyContent:"center",
-                fontSize: lgSizeObj[deviceSize],
-              }
-            }
-            else if (Boolean(styleNames.SMALL)) {
-              return {
-                //color: "blue", 
-                fontSize: smSizeObj[deviceSize]
-              }
-            }
-            else if (Boolean(styleNames.CENTER)) {
-
-              return {
-                display: "flex",
-                justifyContent: "center",
-              }
-            }
-            else {
-
-            }
           }}
 
           blockRenderMap={
@@ -597,78 +544,13 @@ export default function CommentEditor({ postID }) {
 
       </Paper>
 
-      <Button variant="contained" color="primary" disabled={!enablePost}
-
-        style={{ display: "block", width: "100%", marginTop: theme.spacing(1) }}
-        onClick={function (e) {
-
-          //editor.current.focus()
-          // setEnablePost(false)
-
-          const content = toPreHtml(editorContent)
-
-          alert(postID)
-          // const postID = String(Math.floor(Math.random() * 1000000)) + "_" + picArr.length
-
-
-          // axios.post(`${url}/article`, {
-          //   ownerName: token.userName,
-          //   content: toPreHtml(editorContent, postID),
-          //   postID,
-          // }).then((response) => {
-
-
-          //   console.log(response.data)
-          //   if (picArr.length === 0) {
-          //     setEnablePost(true)
-
-          //     setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
-          //   }
-          // })
-
-
-          // if (picArr.length > 0) {
-
-          //   const data = new FormData();
-          //   const obj = { ownerName: "aaa", picName: [] };
-          //   picArr.forEach((pic, index) => {
-          //     const picID = postID + "_" + index
-          //     data.append('file', pic)
-          //     obj.picName.push(picID)
-          //     pic.picID = picID
-          //     console.log(picID)
-          //   })
-
-
-          //   data.append('obj', JSON.stringify(obj));
-
-          //   axios.post(`${url}/picture/uploadpicture`, data, {
-          //     headers: { 'content-type': 'multipart/form-data' },
-          //   }).then(response => {
-          //     setEnablePost(true)
-          //     setPicArr([])
-          //     setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
-          //   })
-
-          // }
 
 
 
-          // setPostArr(pre => { return [{ ownerName: token.userName, postID, postingTime: Date.now(), content: toPreHtml(editorContent, "local") }, ...pre,] })
-          // setPostPicArr(pre => { return [picArr, ...pre,] })
 
-        }}
-      >Post</Button>
+      {!isMobile && <EmojiPanel isEmojiPanelOn={isEmojiPanelOn} marginBottom="0" />}
 
-      <BackColorPanel
-        editor={editor}
-        isBackColorPanelOn={isBackColorPanelOn}
-
-      />
-
-      {!isMobile && <EmojiPanel isEmojiPanelOn={isEmojiPanelOn} />}
-
-      <MentionPanel isMentionPanelOn={isMentionPanelOn} />
+      {/* <MentionPanel isMentionPanelOn={isMentionPanelOn} /> */}
 
       {/* <div style={{ whiteSpace: "pre-wrap", display: "flex", fontSize: 15 }}>
         <div>{JSON.stringify(editorState.getCurrentContent(), null, 2)}</div>
@@ -677,6 +559,44 @@ export default function CommentEditor({ postID }) {
       </div> */}
 
       {/* {toPreHtml(editorContent)} */}
+
+
+      {commentArr.map(comment => {
+
+        return (
+          <>
+            <Chip
+              style={{ backgroundColor: "transparent" }}
+
+              // onClick={function () {
+              //   token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+              // }}
+
+              // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+              // key={index}
+              avatar={< Avatar alt={null} src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+              />}
+              label={
+                <Typography style={{ fontWeight: "bold" }}>
+                  {token.userName}
+                </Typography>
+              }
+
+
+            />
+            <Paper style={{ marginLeft: "2rem", paddingLeft:"4px",marginRight: "4px",fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>{toHtml(comment,null,null,true)}</Paper>
+          </>
+        )
+
+      })}
+
+
+
+
+
+
+
+
     </Container>
   )
 

@@ -124,6 +124,8 @@ export default function createDeleteBlogPlugin() {
 
     contentState = Modifier.setBlockType(contentState, selection, currentType === "unstyled" ? pos : currentType === pos ? "unstyled" : pos)
 
+        
+
     externalES = EditorState.push(externalES, contentState, "change-block-type");
     externalES = EditorState.acceptSelection(externalES, selection)
 

@@ -27,7 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, DeleteOutline } from "@material-ui/icons";
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useStyles } from './DraftEditor';
@@ -72,14 +72,13 @@ export default function Content({ style }) {
   const { mentionHeadRoot, mentionBodyRoot, mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel, } = mentionStyles();
 
 
-  function toHtml(preHtml, imgArr, inView) {
+  function toHtml(preHtml, imgArr, inView, isComment) {
     //  alert("bbbb")
     const html = ReactHtmlParser(preHtml, {
 
 
 
       transform: function transformFn(node, index) {
-
 
 
         if (node.name === "imgtag") {
@@ -95,7 +94,7 @@ export default function Content({ style }) {
 
           //   console.log(node.attribs.symbol, node.attribs.imgurl)
           return (
-            <Typography variant="body2"
+            <Typography variant={isComment ? "" : "body2"}
               key={index}
               style={{
                 backgroundRepeat: "no-repeat",
@@ -105,7 +104,7 @@ export default function Content({ style }) {
                 textAlign: "right",
                 color: "rgba(0,0,0,0)",
                 backgroundImage: emojiUrl,// node.attribs.imgurl,
-                transform: isMobile ? "scale(1.2)" : "scale(1.2)",
+                transform: isMobile ? isComment ? "scale(1.2)" : "scale(1.2)" : isComment ? "scale(1.2)" : "scale(1.2)",
                 marginLeft: theme.typography.fontSize * 0.12,
                 marginRight: theme.typography.fontSize * 0.12,
               }}
@@ -137,8 +136,9 @@ export default function Content({ style }) {
             />
           )
         }
-        if (Object.keys(node.attribs || {}).includes("colorblock")) {
 
+        if (Object.keys(node.attribs || {}).includes("colorblock")) {
+          //  console.log(JSON.stringify(node.attribs))
           const arr = [];
           const arr2 = [];
           const backimage = node.attribs.backimage
@@ -152,6 +152,12 @@ export default function Content({ style }) {
             <BackColorTag arr={arr} transformFn={transformFn} index={index} arr2={arr2} backimage={backimage} textcolor={textcolor} inView={inView} key={Math.random()} />
           )
         }
+
+
+
+
+
+
         if (node.name === "linkoff") {
 
           const arr = [];
@@ -431,17 +437,15 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         }} key={index}>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
+
+
+
+          <div style={{ display: "flex", alignItems: "center" }}>
             <Chip
               style={{ backgroundColor: "transparent" }}
 
               onClick={function () {
-
-
-
-
                 token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-
               }}
 
               // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
@@ -456,46 +460,44 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
             />
             <span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.8rem" }}>{formatDistanceToNow(postArr[index].postingTime)}</span>
+
+            &nbsp;<IconButton size="small" style={{ float: "right" }}
+              onClick={function () {
+                //   alert(postArr[index].postID)
+                setShowComment(pre => !pre)
+                setHeight("auto")
+                setDisplay("none")
+              }}
+            >
+
+              <TextsmsOutlined style={{ transform: "scale(0.9) translateY(-0px) translateX(-0px)" }} fontSize="small" />
+            </IconButton>
+
           </div>
+
+
+
+
           {token.userName == postArr[index].ownerName && <IconButton size="small" style={{ float: "right" }}
             onClick={function () {
-              //   alert(postArr[index].postID)
-
-              deleteSinglePost(postArr[index].postID).then(message => {
-
-              })
-
-
+              deleteSinglePost(postArr[index].postID).then(message => { })
             }}
-
           >
             <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }} fontSize="small" />
-
           </IconButton>}
 
 
-          {/* <IconButton size="small" style={{ float: "right" }}
-            onClick={function () {
-              //   alert(postArr[index].postID)
 
-              setShowComment(pre => !pre)
-
-
-              setHeight("auto")
-              setDisplay("none")
-
-            }}
-
-          >
-            <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }}
-              fontSize="small" />
-          </IconButton> */}
 
 
         </div>
+
+
+
+
         {toHtml(postArr[index].content, postPicArr[index], inView)}
         {/* {postArr[index].postID === "27762_1" && <CommentEditor postID={postArr[index].postID} />} */}
-        {/* {showComment && <CommentEditor postID={postArr[index].postID} />} */}
+        {showComment && <CommentEditor postID={postArr[index].postID} index={index} toHtml={toHtml} />}
       </Paper>
 
 
@@ -518,7 +520,6 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
           color: theme.palette.type === "dark"
             ? theme.palette.text.secondary
             : theme.palette.primary.main
-
         }}
 
       ><ExpandMore /></Button>

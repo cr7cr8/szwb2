@@ -353,13 +353,13 @@ function EmojiIconButton({ children, isEmojiPanelOn, setIsEmojiPanelOn, ...props
 
   return (
     <>
-      <Paper style={{ borderRadius: "1000px",  transform: "scale(0.8)",}} elevation={3}>
+      <Paper style={{ borderRadius: "1000px", transform: "scale(0.8)", }} elevation={3}>
         <IconButton size="small"
           {...props}
 
           style={{
 
-           
+
             backgroundColor: isEmojiPanelOn ? theme.palette.primary.main : theme.palette.background.paper,// theme.palette.background.default,
 
 
@@ -390,7 +390,7 @@ function EmojiIconButton({ children, isEmojiPanelOn, setIsEmojiPanelOn, ...props
 
 
 
-function EmojiPanel({ children, emoji, insertEmoji, isEmojiPanelOn, ...props }) {
+function EmojiPanel({ children, emoji, insertEmoji, isEmojiPanelOn, marginBottom, ...props }) {
 
   const theme = useTheme()
 
@@ -411,7 +411,7 @@ function EmojiPanel({ children, emoji, insertEmoji, isEmojiPanelOn, ...props }) 
         transitionDuration: "0.2s",
         opacity: isEmojiPanelOn ? 1 : 0,
         // marginBottom: isEmojiPanelOn ? theme.spacing(2) : 0
-        marginBottom: theme.spacing(2),
+        marginBottom: marginBottom || theme.spacing(2),
       }}>
 
 

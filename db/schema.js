@@ -56,7 +56,30 @@ userSchema.virtual("userArticle", {
   justOne: false
 })
 
+
+
+const commentSchema = new mongoose.Schema({
+
+  ownerName: { type: String },
+  postID: { type: String },//{ type: mongoose.Types.ObjectId, required: true },
+  content: { type: String },
+  postingTime: { type: Number, default: Date.now },
+}, {
+  toObject: { virtuals: true },
+  collection: "comments",
+})
+
+articleSchema.virtual("articleComment", {
+  localField: "postID",
+  foreignField: "postID",
+  ref: "comments",
+  justOne: false,
+
+})
+
+
 const User = connSzwb2DB.model("users", userSchema);
 const Article = connSzwb2DB.model("articles", articleSchema);
+const Comment = connSzwb2DB.model("comments", commentSchema);
 
-module.exports = { User, Article, }
+module.exports = { User, Article, Comment }

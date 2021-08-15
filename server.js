@@ -1,6 +1,7 @@
 const express = require("express")
 const app = express();
 
+const comment = require("./router/comment")
 const article = require("./router/article")
 const picture = require("./router/picture")
 const clientPack = require("./router/clientPack")
@@ -16,10 +17,10 @@ if (!process.env.port) {
 }
 
 
-
-app.use("/api/article",article)
-app.use("/api/picture",picture)
-app.use("/api/user",user)
+app.use("/api/comment", comment)
+app.use("/api/article", article)
+app.use("/api/picture", picture)
+app.use("/api/user", user)
 
 app.get("*", clientPack)
 
@@ -27,7 +28,7 @@ app.get("*", clientPack)
 // app.get("/",function(req,res,next){
 
 //   res.send("aaaa")
-  
+
 // })
 
 

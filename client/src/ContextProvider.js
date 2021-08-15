@@ -118,11 +118,14 @@ export default function ContextProvider(props) {
       //  console.log(response.data)
       if (response.data.length === 0) {
 
+
+
+
         return Promise.resolve(response.data)
       }
 
 
-
+      // alert(JSON.stringify(Object.keys(response.data[0])))
 
       setPostArr(pre => { return [...pre, ...response.data.map(item => item),] })
       setPostPicArr(pre => [...pre, ""])
@@ -230,7 +233,7 @@ export default function ContextProvider(props) {
           root: {
 
             borderRadius: 0,
-            //  backgroundColor:"transparent",
+            backgroundColor: "transparent",
             "& .MuiChip-avatar": {
               color: "#616161",
               marginLeft: "5px",
@@ -240,6 +243,11 @@ export default function ContextProvider(props) {
 
               ...breakpointsAttribute(["width", ...sizeArr], ["height", ...sizeArr])
             },
+            //  backgroundColor:"transparent",
+
+
+
+
           },
           label: {
             "& > .MuiTypography-root.MuiTypography-body2": {

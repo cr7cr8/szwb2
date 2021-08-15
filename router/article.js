@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { User, Article } = require("../db/schema")
+const { User, Article, Comment } = require("../db/schema")
 const { authenticateToken, generateAndDispatchToken } = require('../middleware/auth')
 const mongoose = require("mongoose");
 
@@ -30,12 +30,12 @@ router.get("/count", function (req, res, next) {
 router.post("/changeownername", authenticateToken,
   function (req, res, next) {
 
-    Article.find({"ownerName":req.body.newName}).then(docs=>{
+    Article.find({ "ownerName": req.body.newName }).then(docs => {
 
-      if (docs.length===0){
+      if (docs.length === 0) {
         next()
       }
-      else{
+      else {
         res.json(false)
       }
     })
@@ -64,11 +64,29 @@ router.post("/changeownername", authenticateToken,
 router.get("/singlepost2/:postingTime",
 
   function (req, res, next) {
-    Article.find({ "postingTime": { $lt: Number(req.params.postingTime) } }).sort({ "postingTime": -1 }).limit(1).then(docs => {
+    Article.find({ "postingTime": { $lt: Number(req.params.postingTime) } })
+      .sort({ "postingTime": -1 })
+      .limit(1)
+      .populate("articleComment")
+        .exec()
+      .then(docs => {
 
-      res.json(docs)
+        //   const obj=docs[0]
+        //   console.log(...obj)
+        //    docs[0].commentCount = docs[0].articleComment.length
 
-    })
+        //   console.log(docs[0].commentCount, docs[0],docs)
+        //  res.json(docs)
+        //     docs[0]._doc.commentCount = docs[0]._doc.articleComment
+
+        // console.log(Object.keys(docs[0].$$populatedVirtuals))
+        //console.log(docs[0].$$populatedVirtuals)
+
+        //      console.log(...docs[0])
+
+        res.json([{ ...docs[0]._doc, commentCount: docs[0].$$populatedVirtuals.articleComment.length }])
+       // console.log({ ...docs[0]._doc, commentCount: docs[0].$$populatedVirtuals.articleComment.length })
+      })
   })
 
 

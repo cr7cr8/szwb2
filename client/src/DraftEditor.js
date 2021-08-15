@@ -340,11 +340,11 @@ export default function DraftEditor() {
           if (type === "centerBlock") {
             return {
               attributes: {
-          //      className: centerBlockCss, // may loose when state update 
-      
+                //      className: centerBlockCss, // may loose when state update 
+
               },
-              style:{
-      
+              style: {
+
                 paddingLeft: theme.spacing(1),
                 paddingRight: theme.spacing(1),
                 textAlign: "center",
@@ -354,9 +354,9 @@ export default function DraftEditor() {
           if (type === "rightBlock") {
             return {
               attributes: {
-             //   className: rightBlockCss,// may loose when state update 
+                //   className: rightBlockCss,// may loose when state update 
               },
-              style:{
+              style: {
                 paddingLeft: theme.spacing(1),
                 paddingRight: theme.spacing(1),
                 textAlign: "end",
@@ -692,7 +692,7 @@ export default function DraftEditor() {
               return imageBlockCss
             }
             if (type === "centerBlock") {
-              return centerBlockCss 
+              return centerBlockCss
             }
             if (type === "rightBlock") {
               return rightBlockCss
@@ -704,7 +704,7 @@ export default function DraftEditor() {
                 return item.backgroundImage === imgUrl
               })
 
-              return colorBlockCss  + " " + restCss["css" + index]
+              return colorBlockCss + " " + restCss["css" + index]
             }
           }}
 
@@ -744,6 +744,12 @@ export default function DraftEditor() {
 
               setEditorState(RichUtils.handleKeyCommand(editorState, command))
             }
+          }}
+
+          stripPastedStyles={true}
+          handlePastedText={function (text, html, editorState,props) {
+            return true
+
           }}
         />
 

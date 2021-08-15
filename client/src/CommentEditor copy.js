@@ -8,7 +8,6 @@ import Immutable from 'immutable';
 
 import chainable from 'draft-js-plugins-chainable';
 
-import { compareAsc, format, formatDistanceToNow, } from 'date-fns';
 //import axios from 'axios';
 import url, { axios } from './config';
 
@@ -222,17 +221,8 @@ export default function CommentEditor({ postID, index, toHtml }) {
       editor.current.focus()
       EditorState.moveFocusToEnd(editorState)
     }, 0);
-
-
-  
-    axios.get(`${url}/comment/${postID}`).then(response=>{
- 
-      setCommentArr(response.data)
-    })
-
   }, [])
 
- 
 
   function toPreHtml(editorContent, postID = "local") {
 
@@ -263,8 +253,8 @@ export default function CommentEditor({ postID, index, toHtml }) {
 
               },
               style: {
-                //  paddingLeft: "4px",
-                //  paddingRight: "4px",
+              //  paddingLeft: "4px",
+              //  paddingRight: "4px",
                 fontSize: "1.2rem",
               }
             }
@@ -358,39 +348,25 @@ export default function CommentEditor({ postID, index, toHtml }) {
       }}>
 
 
+
         <Chip
+          style={{ backgroundColor: "transparent" }}
 
-
-          //style={{ backgroundColor: "transparent" }}
-
-          onClick={function () {
-            //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-          }}
+          // onClick={function () {
+          //   token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+          // }}
 
           // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-          key={index}
-
-
-
-          avatar={
-            < Avatar alt={null}
-
-          
-
-              src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
-            />
-          }
+          // key={index}
+          avatar={< Avatar alt={null} src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+          />}
           label={
-            <Typography
-
-              style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize:"0.9rem" }}>
+            <Typography style={{ fontWeight: "bold" }}>
               {token.userName}
-
             </Typography>
           }
 
         />
-
 
 
         {!isMobile && <EmojiIconButton color="primary" fontSize="small" isEmojiPanelOn={isEmojiPanelOn} setIsEmojiPanelOn={setIsEmojiPanelOn} />}
@@ -418,24 +394,7 @@ export default function CommentEditor({ postID, index, toHtml }) {
             onClick={function () {
               const content = toPreHtml(editorContent)
 
-           
-
-              axios.post(`${url}/comment`,{
-                ownerName:token.userName,
-                content:content,
-                postID:postID,
-                postingTime:Date.now()
-
-              }).then(response=>{
-                setCommentArr(pre => { return [{
-                  ownerName:token.userName,
-                  content:content,
-                  postID:postID,
-                  postingTime:Date.now()
-  
-                }, ...pre] })
-
-              })
+              setCommentArr(pre => { return [content, ...pre] })
 
               //alert(JSON.stringify(content))
               //alert(postID)
@@ -444,7 +403,20 @@ export default function CommentEditor({ postID, index, toHtml }) {
 
           ><Send style={{ transform: "scale(0.9)", color: theme.palette.type === "light" ? theme.palette.primary.main : theme.palette.text.secondary }} /></IconButton></Paper>
 
-     
+        {/* <Button
+          variant="contained"
+          color="primary"
+          // className={classes.button}
+          endIcon={<Send />}
+        >Send
+      </Button> */}
+
+
+        {/* <MentionButton color="primary" fontSize="small" isMentionPanelOn={isMentionPanelOn} setIsMentionPanelOn={setIsMentionPanelOn} /> */}
+
+
+        {/* </ButtonGroup> */}
+        {/* </Paper> */}
 
       </Box>
 
@@ -594,40 +566,25 @@ export default function CommentEditor({ postID, index, toHtml }) {
         return (
           <>
             <Chip
+              style={{ backgroundColor: "transparent" }}
 
-
-              //style={{ backgroundColor: "transparent" }}
-
-              onClick={function () {
-                //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-              }}
+              // onClick={function () {
+              //   token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+              // }}
 
               // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-              key={index}
-
-
-
-              avatar={
-                < Avatar alt={null}
-
-               //   style={{ width: "1.5rem", height: "1.5rem", }}
-
-                  src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
-                />
-              }
+              // key={index}
+              avatar={< Avatar alt={null} src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+              />}
               label={
-                <Typography
-
-
-                  style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold",fontSize:"0.9rem" }}>
-                  {comment.ownerName}
-                  &nbsp;<span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>{formatDistanceToNow(Number(comment.postingTime))}</span>
-
+                <Typography style={{ fontWeight: "bold" }}>
+                  {token.userName}
                 </Typography>
               }
 
+
             />
-            <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>{toHtml(comment.content, null, null, true)}</Paper>
+            <Paper style={{ marginLeft: "2rem", paddingLeft:"4px",marginRight: "4px",fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>{toHtml(comment,null,null,true)}</Paper>
           </>
         )
 

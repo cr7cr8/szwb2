@@ -59,6 +59,7 @@ export default function Content({ style }) {
 
   const {
     token, setToken,
+    breakpointsAttribute,
     editorContent, setEditorContent, lgSizeObj, smSizeObj, deviceSize, picArr, setPicArr,
     postArr, setPostArr,
     postPicArr, setPostPicArr,
@@ -363,8 +364,10 @@ export default function Content({ style }) {
 
 
                 mentionBodyRoot2={mentionBodyRoot2} mentionBodyLabel={mentionBodyLabel} deleteSinglePost={deleteSinglePost}
+                breakpointsAttribute={breakpointsAttribute}
                 setOpen={setOpen}
                 key={item.postID}
+                mentionHeadAvatar={mentionHeadAvatar}
               />
             )
 
@@ -391,7 +394,7 @@ export default function Content({ style }) {
 
 }
 
-function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, token, mentionBodyRoot2, mentionBodyLabel, deleteSinglePost, setOpen }) {
+function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, token, mentionBodyRoot2, mentionHeadAvatar, mentionBodyLabel, breakpointsAttribute, deleteSinglePost, setOpen }) {
   const theme = useTheme()
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -436,13 +439,15 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
           padding: "0px", whiteSpace: "normal", height: height
         }} key={index}>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "2px", paddingBottom: "2px" }}>
 
 
+          <div>
 
-          <div style={{ display: "flex", alignItems: "center" }}>
             <Chip
-              style={{ backgroundColor: "transparent" }}
+
+
+              //style={{ backgroundColor: "transparent" }}
 
               onClick={function () {
                 token.userName === postArr[index].ownerName && setOpen(pre => !pre)
@@ -450,18 +455,30 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
               // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
               key={index}
-              avatar={< Avatar alt={null} src={"https://api.multiavatar.com/" + postArr[index].ownerName + ".svg"}   //src={friendObj[person]}
-              />}
+
+
+
+              avatar={
+                < Avatar alt={null}
+
+                  style={{ width: "1.8rem", height: "1.8rem", }}
+
+                  src={"https://api.multiavatar.com/" + postArr[index].ownerName + ".svg"}   //src={friendObj[person]}
+                />
+              }
               label={
-                <Typography style={{ ...token.userName === postArr[index].ownerName && { color: theme.palette.primary.main, fontWeight: "bold" } }}>
-                  {postArr[index].ownerName}
+                <Typography
+
+
+                  style={{ marginTop:"3px",lineHeight: "1.0", fontWeight: "bold", ...token.userName === postArr[index].ownerName && { color: theme.palette.primary.main, } }}>
+                  {postArr[index].ownerName}<br />
+                  <span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>{formatDistanceToNow(postArr[index].postingTime)}</span>
+
                 </Typography>
               }
 
             />
-            <span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.8rem" }}>{formatDistanceToNow(postArr[index].postingTime)}</span>
-
-            &nbsp;<IconButton size="small" style={{ float: "right" }}
+            <IconButton size="small" style={{ justifySelf: "right" }}
               onClick={function () {
                 //   alert(postArr[index].postID)
                 setShowComment(pre => !pre)
@@ -470,21 +487,24 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
               }}
             >
 
-              <TextsmsOutlined style={{ transform: "scale(0.9) translateY(-0px) translateX(-0px)" }} fontSize="small" />
+              <TextsmsOutlined style={{ fontSize: "1.2rem" }} />
+              &nbsp;<span style={{ fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{postArr[index].commentCount}</span>
             </IconButton>
+        
 
           </div>
 
-
-
-
-          {token.userName == postArr[index].ownerName && <IconButton size="small" style={{ float: "right" }}
+          {token.userName == postArr[index].ownerName && <IconButton size="small"
             onClick={function () {
               deleteSinglePost(postArr[index].postID).then(message => { })
             }}
           >
-            <DeleteOutline style={{ transform: "scale(1) translateY(-0px) translateX(-0px)" }} fontSize="small" />
+            <DeleteOutline style={{ fontSize: "1.5rem" }} />
           </IconButton>}
+
+
+
+
 
 
 

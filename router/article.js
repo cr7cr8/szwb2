@@ -71,6 +71,7 @@ router.get("/singlepost2/:postingTime",
         .exec()
       .then(docs => {
 
+        if(!docs[0]){res.json([])}
         //   const obj=docs[0]
         //   console.log(...obj)
         //    docs[0].commentCount = docs[0].articleComment.length

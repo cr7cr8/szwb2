@@ -85,7 +85,9 @@ router.get("/singlepost2/:postingTime",
 
         //      console.log(...docs[0])
 
+       else{
         res.json([{ ...docs[0]._doc, commentCount: docs[0].$$populatedVirtuals.articleComment.length }])
+       } 
        // console.log({ ...docs[0]._doc, commentCount: docs[0].$$populatedVirtuals.articleComment.length })
       })
   })

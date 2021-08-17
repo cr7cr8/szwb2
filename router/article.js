@@ -7,6 +7,10 @@ const mongoose = require("mongoose");
 
 const [{ checkConnState, deleteFileByPostID }] = require("../db/fileManager");
 
+
+
+
+
 router.get("/",/*authenticateToken*/function (req, res, next) {
 
   Article.find({}).sort({ "postingTime": -1 }).then(docs => {
@@ -29,36 +33,36 @@ router.get("/count", function (req, res, next) {
 
 router.post("/changeownername", authenticateToken,
   function (req, res, next) {
-
     Article.find({ "ownerName": req.body.newName }).then(docs => {
-
-      if (docs.length === 0) {
-        next()
-      }
-      else {
-        res.json(false)
-      }
+      if (docs.length === 0) { next() }
+      else { res.json(false) }
     })
-
-
-
   },
+
   function (req, res, next) {
+    Comment.find({ "ownerName": req.body.newName }).then(docs => {
+      if (docs.length === 0) { next() }
+      else { res.json(false) }
+    })
+  },
 
+  function (req, res, next) {
+    Comment.updateMany({ "ownerName": req.user.userName }, { $set: { "ownerName": req.body.newName } }, { new: true }).then(docs => {
+      next()
+    })
+  },
 
+  function (req, res, next) {
     Article.updateMany({ "ownerName": req.user.userName }, { $set: { "ownerName": req.body.newName } }, { new: true }).then(docs => {
-
       const token = jwt.sign({ ...req.user, userName: req.body.newName }, 'secretKey')
-
       res
         .header("x-auth-token", token)
         .header("access-control-expose-headers", "x-auth-token")
         .json({ ...req.user, userName: req.body.newName })
-
     })
-  })
+  }
 
-
+)
 
 
 router.get("/singlepost2/:postingTime",
@@ -68,10 +72,10 @@ router.get("/singlepost2/:postingTime",
       .sort({ "postingTime": -1 })
       .limit(1)
       .populate("articleComment")
-        .exec()
+      .exec()
       .then(docs => {
 
-        if(!docs[0]){res.json([])}
+        if (!docs[0]) { res.json([]) }
         //   const obj=docs[0]
         //   console.log(...obj)
         //    docs[0].commentCount = docs[0].articleComment.length
@@ -85,10 +89,10 @@ router.get("/singlepost2/:postingTime",
 
         //      console.log(...docs[0])
 
-       else{
-        res.json([{ ...docs[0]._doc, commentCount: docs[0].$$populatedVirtuals.articleComment.length }])
-       } 
-       // console.log({ ...docs[0]._doc, commentCount: docs[0].$$populatedVirtuals.articleComment.length })
+        else {
+          res.json([{ ...docs[0]._doc, commentCount: docs[0].$$populatedVirtuals.articleComment.length }])
+        }
+        // console.log({ ...docs[0]._doc, commentCount: docs[0].$$populatedVirtuals.articleComment.length })
       })
   })
 
@@ -117,6 +121,13 @@ router.get("/singlepost/:num",
 router.get("/deletesinglepost/:postid", authenticateToken, function (req, res, next) {
 
 
+
+
+
+  Comment.deleteMany({ postID: req.params.postid }).then(docs => {
+    // console.log(docs)
+  })
+
   Article.deleteOne({ postID: req.params.postid }).then(doc => {
     if ([...req.params.postid].pop() !== "0") {
       next()
@@ -126,6 +137,7 @@ router.get("/deletesinglepost/:postid", authenticateToken, function (req, res, n
     }
     //res.json(doc)
   })
+
 
 
 }, checkConnState, deleteFileByPostID, function (req, res) { res.json(`delete picture ${req.params.postid} done`) })

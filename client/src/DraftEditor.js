@@ -770,6 +770,7 @@ export default function DraftEditor() {
             ownerName: token.userName,
             content: toPreHtml(editorContent, postID),
             postID,
+        
           }).then((response) => {
 
 
@@ -809,7 +810,7 @@ export default function DraftEditor() {
 
 
 
-          setPostArr(pre => { return [{ ownerName: token.userName, postID, postingTime: Date.now(), content: toPreHtml(editorContent, "local") }, ...pre,] })
+          setPostArr(pre => { return [{  ownerName: token.userName, postID, postingTime: Date.now(), content: toPreHtml(editorContent, "local") }, ...pre,] })
           setPostPicArr(pre => { return [picArr, ...pre,] })
 
         }}

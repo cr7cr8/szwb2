@@ -24,8 +24,8 @@ import { stateToHTML } from 'draft-js-export-html';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2, } from 'react-html-parser';
 import { makeStyles, styled, useTheme } from '@material-ui/core/styles';
 
-import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, IconButton, Icon, Chip } from "@material-ui/core";
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, PaletteOutlined, Send } from "@material-ui/icons";
+import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, IconButton, Icon, Chip, Divider } from "@material-ui/core";
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, PaletteOutlined, Send, DeleteOutline } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {
@@ -174,7 +174,117 @@ const initialState = {
   ]
 };
 
-export default function CommentEditor({ postID, index, toHtml }) {
+
+function toPreHtml(editorContent, postID = "local") {
+
+
+  const preHtml = stateToHTML(
+    editorContent.getCurrentContent(),
+    {
+      defaultBlockTag: "div",
+
+      inlineStyles: {
+        //  LARGE: { style: { fontSize: lgSizeObj[deviceSize] }, },
+        //  SMALL: { style: { fontSize: smSizeObj[deviceSize] }, },
+
+        //  LARGE: { style: { fontSize:"3.5rem" }},
+        //  linkStyle: { style: { fontSize: 0 } }
+        //  LARGE: { attributes: { class: "largeText" } },
+      },
+
+
+      blockStyleFn: function (block) {
+        const type = block.getType()
+        // console.log(type)
+
+        if (type === "unstyled") {
+          return {
+            attributes: {
+              //className: unstyledBlockCss,
+
+            },
+            style: {
+              //  paddingLeft: "4px",
+              //  paddingRight: "4px",
+              fontSize: "1.2rem",
+            }
+          }
+        }
+
+
+
+      },
+
+      blockRenderers: {
+
+      },
+
+      entityStyleFn: function (entity) {
+        const { type, data, mutablity } = entity.toObject()
+        if (type === "shortMentionOff") {
+          return {
+            element: "shortMentionoff",
+          }
+        }
+        if (type === "longMentionOff_HEAD") {
+
+          return {
+
+            element: "longmentionoff_head",
+            attributes: {
+              imgurl: data.imgurl,
+              person: data.person,
+            },
+            style: {}
+          }
+        }
+        if (type === "longMentionOff_BODY") {
+
+          return {
+
+            element: "longmentionoff_body",
+            attributes: {
+              imgurl: data.imgurl,
+              person: data.person,
+            },
+
+          }
+
+        }
+        if (type === "EMOJI") {
+          console.log(data.url)
+
+          return {
+            element: "emoji",
+            attributes: {
+              imgurl: data.url,
+              symbol: data.symbol
+            }
+          }
+        }
+        // if (type === "linkOn") {
+        //   const {linkType,linkAddress,linkHost} = data
+        // }
+        if (type === "linkOff") {
+          // alert("xxx")
+          const { linkType, linkAddress, linkHost } = data
+          return {
+            element: "linkoff",
+            attributes: {
+              ...data
+            }
+          }
+        }
+
+      },
+
+    }
+  )
+  return preHtml
+}
+
+
+export default function CommentEditor({ postID, index, toHtml, setCommentCount }) {
 
   const {
 
@@ -217,6 +327,9 @@ export default function CommentEditor({ postID, index, toHtml }) {
 
   const [commentArr, setCommentArr] = useState([])
 
+  const [replyNum, setReplyNum] = useState(999)
+
+
   useEffect(function () {
     setTimeout(() => {
       editor.current.focus()
@@ -224,229 +337,94 @@ export default function CommentEditor({ postID, index, toHtml }) {
     }, 0);
 
 
-  
-    axios.get(`${url}/comment/${postID}`).then(response=>{
- 
+
+    axios.get(`${url}/comment/${postID}`).then(response => {
+
       setCommentArr(response.data)
     })
 
   }, [])
 
- 
+  function createCommentEditorHeader() {
 
-  function toPreHtml(editorContent, postID = "local") {
+    return <Box style={{
+      //     marginBottom: "5px",
 
+      display: "flex", alignItems: "center", justifyContent: "flex-start", flexWrap: isMobile ? "wrap" : "wrap",
 
-    const preHtml = stateToHTML(
-      editorContent.getCurrentContent(),
-      {
-        defaultBlockTag: "div",
+      gap: theme.spacing(0),
 
-        inlineStyles: {
-          //  LARGE: { style: { fontSize: lgSizeObj[deviceSize] }, },
-          //  SMALL: { style: { fontSize: smSizeObj[deviceSize] }, },
-
-          //  LARGE: { style: { fontSize:"3.5rem" }},
-          //  linkStyle: { style: { fontSize: 0 } }
-          //  LARGE: { attributes: { class: "largeText" } },
-        },
+      //   width: "100%",
+    }}>
 
 
-        blockStyleFn: function (block) {
-          const type = block.getType()
-          // console.log(type)
+      <Chip
 
-          if (type === "unstyled") {
-            return {
-              attributes: {
-                //className: unstyledBlockCss,
+        onClick={function () {
+          //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+        }}
+        // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+        key={index}
+        avatar={
+          < Avatar alt={null}
+            src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+          />
+        }
+        label={
+          <Typography
+            style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize: "0.9rem" }}>
+            {token.userName}
+          </Typography>
+        }
+      />
+      {!isMobile && <EmojiIconButton color="primary" fontSize="small" isEmojiPanelOn={isEmojiPanelOn} setIsEmojiPanelOn={setIsEmojiPanelOn} />}
+      <Paper style={{ borderRadius: "1000px", transform: "scale(0.8)", padding: "0px" }} elevation={3}>
+        <IconButton size="small"
+          //    disabled={true}
+          style={{
 
-              },
-              style: {
-                //  paddingLeft: "4px",
-                //  paddingRight: "4px",
-                fontSize: "1.2rem",
-              }
-            }
-          }
-
-
-
-        },
-
-        blockRenderers: {
-
-        },
-
-        entityStyleFn: function (entity) {
-          const { type, data, mutablity } = entity.toObject()
-          if (type === "shortMentionOff") {
-            return {
-              element: "shortMentionoff",
-            }
-          }
-          if (type === "longMentionOff_HEAD") {
-
-            return {
-
-              element: "longmentionoff_head",
-              attributes: {
-                imgurl: data.imgurl,
-                person: data.person,
-              },
-              style: {}
-            }
-          }
-          if (type === "longMentionOff_BODY") {
-
-            return {
-
-              element: "longmentionoff_body",
-              attributes: {
-                imgurl: data.imgurl,
-                person: data.person,
-              },
-
-            }
-
-          }
-          if (type === "EMOJI") {
-            console.log(data.url)
-
-            return {
-              element: "emoji",
-              attributes: {
-                imgurl: data.url,
-                symbol: data.symbol
-              }
-            }
-          }
-          // if (type === "linkOn") {
-          //   const {linkType,linkAddress,linkHost} = data
-          // }
-          if (type === "linkOff") {
-            // alert("xxx")
-            const { linkType, linkAddress, linkHost } = data
-            return {
-              element: "linkoff",
-              attributes: {
-                ...data
-              }
-            }
-          }
-
-        },
-
-      }
-    )
-    return preHtml
-  }
-
-
-  return (
-
-    <Container disableGutters={true} maxWidth="lg" style={{ backgroundColor: theme.palette.action.disabledBackground, paddingBottom: theme.spacing(1) }}>
-      {/* <CssBaseline /> */}
-      <Box style={{
-        //     marginBottom: "5px",
-
-        display: "flex", alignItems: "center", justifyContent: "flex-start", flexWrap: isMobile ? "wrap" : "wrap",
-
-        gap: theme.spacing(0),
-
-        //   width: "100%",
-      }}>
-
-
-        <Chip
-
-
-          //style={{ backgroundColor: "transparent" }}
-
-          onClick={function () {
-            //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
           }}
 
-          // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-          key={index}
+          onClick={function () {
+            const content = toPreHtml(editorContent)
+            const commentID = String(Math.floor(Math.random() * 1000000))
+            axios.post(`${url}/comment`, {
+              ownerName: token.userName,
+              content: content,
+              postID: postID,
+              postingTime: Date.now(),
+              commentID,
 
+            }).then(response => {
+              setCommentArr(pre => {
+                return [{
+                  ownerName: token.userName,
+                  content: content,
+                  postID: postID,
+                  postingTime: Date.now(),
+                  commentID,
 
-
-          avatar={
-            < Avatar alt={null}
-
-          
-
-              src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
-            />
-          }
-          label={
-            <Typography
-
-              style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize:"0.9rem" }}>
-              {token.userName}
-
-            </Typography>
-          }
-
-        />
-
-
-
-        {!isMobile && <EmojiIconButton color="primary" fontSize="small" isEmojiPanelOn={isEmojiPanelOn} setIsEmojiPanelOn={setIsEmojiPanelOn} />}
-
-        <Paper style={{ borderRadius: "1000px", transform: "scale(0.8)", padding: "0px" }} elevation={3}>
-          <IconButton size="small"
-            //    disabled={true}
-            style={{
-
-
-              //        backgroundColor: isEmojiPanelOn ? theme.palette.primary.main : theme.palette.background.paper,// theme.palette.background.default,
-
-
-              // color: theme.palette.type === "light"
-              //   ? isEmojiPanelOn
-              //     ? theme.palette.primary.contrastText
-              //     : theme.palette.primary.main
-              //   : isEmojiPanelOn
-              //     ? theme.palette.primary.contrastText
-              //     : theme.palette.text.secondary
-
-
-            }}
-
-            onClick={function () {
-              const content = toPreHtml(editorContent)
-
-           
-
-              axios.post(`${url}/comment`,{
-                ownerName:token.userName,
-                content:content,
-                postID:postID,
-                postingTime:Date.now()
-
-              }).then(response=>{
-                setCommentArr(pre => { return [{
-                  ownerName:token.userName,
-                  content:content,
-                  postID:postID,
-                  postingTime:Date.now()
-  
-                }, ...pre] })
-
+                }, ...pre]
               })
+              setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
+              setCommentCount(pre => Number(pre) + 1)
+            })
+          }}
+        ><Send style={{ transform: "scale(0.9)", color: theme.palette.type === "light" ? theme.palette.primary.main : theme.palette.text.secondary }} /></IconButton></Paper>
+    </Box>
 
-              //alert(JSON.stringify(content))
-              //alert(postID)
 
-            }}
+  }
 
-          ><Send style={{ transform: "scale(0.9)", color: theme.palette.type === "light" ? theme.palette.primary.main : theme.palette.text.secondary }} /></IconButton></Paper>
+  function createCommentEditor() {
+    return <>
 
-     
+      {replyNum === 999 && createCommentEditorHeader()}
 
-      </Box>
+
+
+      {replyNum !== 999 && <div style={{ margin: theme.spacing(1) }} />}
+
 
 
       <Paper
@@ -571,70 +549,150 @@ export default function CommentEditor({ postID, index, toHtml }) {
         />
 
       </Paper>
-
-
-
-
-
       {!isMobile && <EmojiPanel isEmojiPanelOn={isEmojiPanelOn} marginBottom="0" />}
-
-      {/* <MentionPanel isMentionPanelOn={isMentionPanelOn} /> */}
-
-      {/* <div style={{ whiteSpace: "pre-wrap", display: "flex", fontSize: 15 }}>
-        <div>{JSON.stringify(editorState.getCurrentContent(), null, 2)}</div>
-        <hr />
-        <div>{JSON.stringify(convertToRaw(editorState.getCurrentContent()), null, 2)}</div>
-      </div> */}
-
-      {/* {toPreHtml(editorContent)} */}
+     
+    </>
+  }
 
 
-      {commentArr.map(comment => {
+
+
+
+
+
+
+  return (
+    <Container disableGutters={true} maxWidth="lg" style={{ backgroundColor: theme.palette.action.disabledBackground, paddingBottom: theme.spacing(1) }}>
+
+      {(replyNum === 999) && createCommentEditor()}
+      {commentArr.map((comment, listIndex) => {
 
         return (
-          <>
-            <Chip
+          <span key={comment.commentID}>
+
+            <Box style={{
+              //     marginBottom: "5px",
+
+              display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: isMobile ? "nowrap" : "nowrap",
+
+              gap: theme.spacing(0),
+
+              //   width: "100%",
+            }}>
+
+              <Chip
+
+                onClick={function () {
+                  //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+                  setReplyNum(listIndex)
+                  setTimeout(() => {
+                    editor.current.focus();
+                    EditorState.moveFocusToEnd(editorState);
+
+                  }, 0)
+
+                }}
+
+                // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+                key={index}
+
+                avatar={
+                  < Avatar alt={null}
+                    //   style={{ width: "1.5rem", height: "1.5rem", }}
+                    src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
+                  />
+                }
+                label={
+                  <Typography
+                    style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize: "0.9rem" }}>
+                    {comment.ownerName}
+                    &nbsp;<span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>
+                      {formatDistanceToNow(Number(comment.postingTime))}
+                    </span>
+                  </Typography>
+                }
+
+              />
+
+              {replyNum === listIndex && !isMobile && <span ><EmojiIconButton  color="primary" fontSize="small" isEmojiPanelOn={isEmojiPanelOn} setIsEmojiPanelOn={setIsEmojiPanelOn} /></span>}
+
+              {replyNum === listIndex && <Paper style={{ borderRadius: "1000px", transform:"scale(0.8)",  padding: "0px" }} elevation={3}>
+                <IconButton size="small"
+                  //    disabled={true}
+                  style={{
+
+                  }}
+
+                  onClick={function () {
+                    const content = toPreHtml(editorContent)
+                    const commentID = String(Math.floor(Math.random() * 1000000))
+                    axios.post(`${url}/comment`, {
+                      ownerName: token.userName,
+                      content: content,
+                      postID: postID,
+                      postingTime: Date.now(),
+                      commentID,
+
+                    }).then(response => {
+                      setCommentArr(pre => {
+                        return [{
+                          ownerName: token.userName,
+                          content: content,
+                          postID: postID,
+                          postingTime: Date.now(),
+                          commentID,
+
+                        }, ...pre]
+                      })
+                      setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
+                      setCommentCount(pre => Number(pre) + 1)
+                    })
+                  }}
+                ><Send style={{ transform: "scale(0.9)", color: theme.palette.type === "light" ? theme.palette.primary.main : theme.palette.text.secondary }} /></IconButton></Paper>}
 
 
-              //style={{ backgroundColor: "transparent" }}
 
-              onClick={function () {
-                //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-              }}
+              {token.userName == comment.ownerName && <IconButton size="small"
+                style={{ float: "right", marginTop: "4px" }}
+                onClick={function () {
 
-              // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-              key={index}
+                  setCommentArr(pre => {
+                    return pre.filter(item => {
+                      return item.commentID !== comment.commentID
+                    })
+                  })
+
+                  axios.get(`${url}/comment/deletecomment/${comment.commentID}`).then(response => {
+                    //  alert(JSON.stringify(response.data))
+                    setCommentCount(pre => Number(pre) - 1)
+                  })
+                }}
+              >
+                <DeleteOutline style={{ fontSize: "1.5rem" }} />
+              </IconButton>}
+
+            </Box>
 
 
 
-              avatar={
-                < Avatar alt={null}
+            <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", paddingRight:"4px",marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>
+              {toHtml(comment.content, null, null, true)}
+              <Divider light={false} variant="fullWidth"/>
+              {toHtml(comment.content, null, null, true)}
+            </Paper>
 
-               //   style={{ width: "1.5rem", height: "1.5rem", }}
-
-                  src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
-                />
-              }
-              label={
-                <Typography
+            {(replyNum === listIndex) && createCommentEditor()}
+            {((replyNum === listIndex) && (listIndex!==commentArr.length-1)) &&<Divider light={false} style={{marginTop:"8px"}}/>}
 
 
-                  style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold",fontSize:"0.9rem" }}>
-                  {comment.ownerName}
-                  &nbsp;<span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>{formatDistanceToNow(Number(comment.postingTime))}</span>
 
-                </Typography>
-              }
-
-            />
-            <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>{toHtml(comment.content, null, null, true)}</Paper>
-          </>
+          </span>
         )
 
       })}
 
 
-
+      {/* <Comments commentArr={commentArr} index={index} theme={theme} token={token} setCommentArr={setCommentArr} setCommentCount={setCommentCount} toHtml={toHtml} /> */}
 
 
 
@@ -644,4 +702,285 @@ export default function CommentEditor({ postID, index, toHtml }) {
   )
 
 }
+
+function Comments({ commentArr, index, theme, token, setCommentArr, setCommentCount, toHtml }) {
+
+
+  return (
+    commentArr.map(comment => {
+
+
+
+
+
+      return <span key={comment.commentID}>
+
+        <Chip
+
+
+          //style={{ backgroundColor: "transparent" }}
+
+          onClick={function () {
+            //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+          }}
+
+          // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+          key={index}
+
+
+
+          avatar={
+            < Avatar alt={null}
+
+              //   style={{ width: "1.5rem", height: "1.5rem", }}
+
+              src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
+            />
+          }
+          label={
+            <Typography
+
+
+              style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize: "0.9rem" }}>
+              {comment.ownerName}
+              &nbsp;<span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>{formatDistanceToNow(Number(comment.postingTime))}</span>
+
+            </Typography>
+          }
+
+        />
+
+        {token.userName == comment.ownerName && <IconButton size="small"
+          style={{ float: "right", marginTop: "4px" }}
+          onClick={function () {
+
+            setCommentArr(pre => {
+              return pre.filter(item => {
+                return item.commentID !== comment.commentID
+              })
+            })
+
+
+            axios.get(`${url}/comment/deletecomment/${comment.commentID}`).then(response => {
+              //  alert(JSON.stringify(response.data))
+              setCommentCount(pre => Number(pre) - 1)
+            })
+
+
+
+          }}
+        >
+          <DeleteOutline style={{ fontSize: "1.5rem" }} />
+        </IconButton>}
+
+
+        <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>
+          {toHtml(comment.content, null, null, true)}
+        </Paper>
+      </span>
+
+    })
+
+  )
+}
+
+
+
+
+// function CommentEditor_({theme,index,token,isEmojiPanelOn,setIsEmojiPanelOn,editorContent,postID,setCommentArr,setEditorState,setCommentCount,editorState,setIsEditorFocusOn,
+// setEditorContent,unstyledBlockCss,editor,isEditorFocusOn
+// }) {
+//   return <>
+
+//     <Box style={{
+//       //     marginBottom: "5px",
+
+//       display: "flex", alignItems: "center", justifyContent: "flex-start", flexWrap: isMobile ? "wrap" : "wrap",
+
+//       gap: theme.spacing(0),
+
+//       //   width: "100%",
+//     }}>
+
+
+//       <Chip
+
+//         onClick={function () {
+//           //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+//         }}
+//         // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+//         key={index}
+//         avatar={
+//           < Avatar alt={null}
+//             src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+//           />
+//         }
+//         label={
+//           <Typography
+//             style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize: "0.9rem" }}>
+//             {token.userName}
+//           </Typography>
+//         }
+//       />
+//       {!isMobile && <EmojiIconButton color="primary" fontSize="small" isEmojiPanelOn={isEmojiPanelOn} setIsEmojiPanelOn={setIsEmojiPanelOn} />}
+//       <Paper style={{ borderRadius: "1000px", transform: "scale(0.8)", padding: "0px" }} elevation={3}>
+//         <IconButton size="small"
+//           //    disabled={true}
+//           style={{
+
+//           }}
+
+//           onClick={function () {
+//             const content = toPreHtml(editorContent)
+//             const commentID = String(Math.floor(Math.random() * 1000000))
+//             axios.post(`${url}/comment`, {
+//               ownerName: token.userName,
+//               content: content,
+//               postID: postID,
+//               postingTime: Date.now(),
+//               commentID,
+
+//             }).then(response => {
+//               setCommentArr(pre => {
+//                 return [{
+//                   ownerName: token.userName,
+//                   content: content,
+//                   postID: postID,
+//                   postingTime: Date.now(),
+//                   commentID,
+
+//                 }, ...pre]
+//               })
+//               setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
+//               setCommentCount(pre => Number(pre) + 1)
+//             })
+//           }}
+//         ><Send style={{ transform: "scale(0.9)", color: theme.palette.type === "light" ? theme.palette.primary.main : theme.palette.text.secondary }} /></IconButton></Paper>
+//     </Box>
+
+//     <Paper
+
+//       elevation={isEditorFocusOn ? 3 : 2}
+//       //  className={editorPaperClass}
+//       //  classes={{ root: editorPaperCss }}
+//       style={{
+
+//         marginLeft: "2rem",
+//         marginRight: "4px",
+//         fontSize: "1.2rem",
+//         // backgroundColor: "pink"
+//         // backgroundImage
+//         // minHeight: "20vh",
+//         // backgroundImage:"url(https://source.unsplash.com/random/800x800)",
+//         // opacity:0.3
+//       }}
+//       onClick={function () {
+
+//         let editorState_ = EditorState.moveSelectionToEnd(editorState);
+
+//         setEditorState(EditorState.forceSelection(editorState_, editorState.getSelection()));
+//         setIsEditorFocusOn(true)
+//       }}
+//     >
+
+//       <Editor
+//         ref={function (element) { editor.current = element; }}
+//         editorState={editorState}
+
+
+//         onChange={function (newState, { ...props }) {
+
+
+
+//           const selection = newState.getSelection()
+
+
+
+
+//           setIsEditorFocusOn(selection.hasFocus)
+
+
+//           setEditorContent(newState)
+//           setEditorState(newState)
+
+//         }}
+
+//         plugins={//chainable(
+//           [
+//             emojiPlugin,
+//             mentionPlugin,
+//             linkPlugin,
+
+//           ]
+//           // )
+//         }
+
+
+//         // placeholder="hihihi"
+//         preserveSelectionOnBlur={true}
+
+//         customStyleMap={
+//           Immutable.Map({
+//             // stylename1_: {
+//             //   color: "rgba(200,0,0,1)",
+
+//           })
+//         }
+
+//         customStyleFn={function (style, block) {
+
+//           const styleNames = style.toObject();
+
+//         }}
+
+//         blockRenderMap={
+//           Immutable.Map({
+//             // 'unstyled': { 
+//             //   element: 'h3',
+//             //   wrapper: <Typography variant='body2'/>,
+//             //  }
+
+//             // "colorBlock": {
+//             //   style: "backgournd-color:red"
+//             // }
+//           })
+//         }
+
+
+
+//         blockStyleFn={function (block) {
+//           const type = block.getType()
+//           const text = block.getText()
+
+//           //    const {colorBlockCss0} = useStyles(data.img)
+
+//           // console.log(colorBlockCss)
+
+//           if (type === "unstyled") {
+//             return unstyledBlockCss
+//           }
+
+//         }}
+
+//         blockRendererFn={function (block) {
+
+//           const text = block.getText()
+//           const data = block.getData().toObject()
+//           const type = block.getType()
+//           //   const entityId = editorState.getCurrentContent().getEntityAt(0);
+
+//           return null
+
+
+//         }}
+//         handleKeyCommand={function (command, editorState, evenTimeStamp, { getEditorState }) {
+
+
+//         }}
+//       />
+
+//     </Paper>
+//     {!isMobile && <EmojiPanel isEmojiPanelOn={isEmojiPanelOn} marginBottom="0" />}
+//   </>
+// }
 

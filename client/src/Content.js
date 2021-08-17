@@ -33,7 +33,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useStyles } from './DraftEditor';
 import { useStyles as mentionStyles } from './MentionPlugin';
 
-import url from './config';
+import url, { axios } from './config';
 
 
 import { compareAsc, format, formatDistanceToNow, } from 'date-fns';
@@ -73,106 +73,109 @@ export default function Content({ style }) {
   const { mentionHeadRoot, mentionBodyRoot, mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel, } = mentionStyles();
 
 
-  function toHtml(preHtml, imgArr, inView, isComment) {
-    //  alert("bbbb")
-    const html = ReactHtmlParser(preHtml, {
+  const toHtml = useCallback(
+    function (preHtml, imgArr, inView, isComment) {
+      //  alert("bbbb")
+      const html = ReactHtmlParser(preHtml, {
 
 
 
-      transform: function transformFn(node, index) {
+        transform: function transformFn(node, index) {
 
 
-        if (node.name === "imgtag") {
-          return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} />)
-        }
-        if (node.name === "emoji") {
+          if (node.name === "imgtag") {
+            return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} />)
+          }
+          if (node.name === "emoji") {
 
 
-          const emojiUrl = `url(${url}/picture/downloademoji/${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") + 1, node.attribs.imgurl.length)})`
+            const emojiUrl = `url(${url}/picture/downloademoji/${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") + 1, node.attribs.imgurl.length)})`
 
-          //    node.attribs.imgurl.lastIndexOf("/")
-
-
-          //   console.log(node.attribs.symbol, node.attribs.imgurl)
-          return (
-            <Typography variant={isComment ? "" : "body2"}
-              key={index}
-              style={{
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center center",
-                backgroundSize: "contain",
-                display: "inline-block",
-                textAlign: "right",
-                color: "rgba(0,0,0,0)",
-                backgroundImage: emojiUrl,// node.attribs.imgurl,
-                transform: isMobile ? isComment ? "scale(1.2)" : "scale(1.2)" : isComment ? "scale(1.2)" : "scale(1.2)",
-                marginLeft: theme.typography.fontSize * 0.12,
-                marginRight: theme.typography.fontSize * 0.12,
-              }}
-            >{node.attribs.symbol}</Typography>
-          )
-        }
-        if (node.name === "longmentionoff_head") {
-          return (<span key={index}></span>)
-        }
-        if (node.name === "longmentionoff_body") {
-
-          const arr = [];
-          node.children.forEach(element => {
-            arr.push(convertNodeToElement(element))
-          })
-          return (
-            <Chip classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-              key={index}
-              avatar={< Avatar alt={null} src={node.attribs.imgurl.replace("url(", "").replace(")", "")}   //src={friendObj[person]}
-              />}
-              label={
-                <Typography variant="body2">
-                  {arr.map((element, index) => {
-                    return <span key={index}>{element}</span>
-                  })}
-                </Typography>
-              }
-            // label={< Typography variant="body2" >{node.attribs.person}</Typography >}
-            />
-          )
-        }
-
-        if (Object.keys(node.attribs || {}).includes("colorblock")) {
-          //  console.log(JSON.stringify(node.attribs))
-          const arr = [];
-          const arr2 = [];
-          const backimage = node.attribs.backimage
-          const textcolor = node.attribs.textcolor
-          node.children.forEach(item => {
-
-            arr.push(item.type === "tag" ? item : item.data)
-            arr2.push(convertNodeToElement(item))
-          })
-          return (
-            <BackColorTag arr={arr} transformFn={transformFn} index={index} arr2={arr2} backimage={backimage} textcolor={textcolor} inView={inView} key={Math.random()} />
-          )
-        }
+            //    node.attribs.imgurl.lastIndexOf("/")
 
 
+            //   console.log(node.attribs.symbol, node.attribs.imgurl)
+            return (
+              <Typography variant={isComment ? "inherit" : "body2"}
+                key={index}
+                style={{
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center center",
+                  backgroundSize: "contain",
+                  display: "inline-block",
+                  textAlign: "right",
+                  color: "rgba(0,0,0,0)",
+                  backgroundImage: emojiUrl,// node.attribs.imgurl,
+                  transform: isMobile ? isComment ? "scale(1.2)" : "scale(1.2)" : isComment ? "scale(1.2)" : "scale(1.2)",
+                  marginLeft: theme.typography.fontSize * 0.12,
+                  marginRight: theme.typography.fontSize * 0.12,
+                }}
+              >{node.attribs.symbol}</Typography>
+            )
+          }
+          if (node.name === "longmentionoff_head") {
+            return (<span key={index}></span>)
+          }
+          if (node.name === "longmentionoff_body") {
 
+            const arr = [];
+            node.children.forEach(element => {
+              arr.push(convertNodeToElement(element))
+            })
+            return (
+              <Chip classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+                key={index}
+                avatar={< Avatar alt={null} src={node.attribs.imgurl.replace("url(", "").replace(")", "")}   //src={friendObj[person]}
+                />}
+                label={
+                  <Typography variant="body2">
+                    {arr.map((element, index) => {
+                      return <span key={index}>{element}</span>
+                    })}
+                  </Typography>
+                }
+              // label={< Typography variant="body2" >{node.attribs.person}</Typography >}
+              />
+            )
+          }
+
+          if (Object.keys(node.attribs || {}).includes("colorblock")) {
+            //  console.log(JSON.stringify(node.attribs))
+            const arr = [];
+            const arr2 = [];
+            const backimage = node.attribs.backimage
+            const textcolor = node.attribs.textcolor
+            node.children.forEach(item => {
+
+              arr.push(item.type === "tag" ? item : item.data)
+              arr2.push(convertNodeToElement(item))
+            })
+            return (
+              <BackColorTag arr={arr} transformFn={transformFn} index={index} arr2={arr2} backimage={backimage} textcolor={textcolor} inView={inView} key={Math.random()} />
+            )
+          }
 
 
 
-        if (node.name === "linkoff") {
 
-          const arr = [];
-          node.children.forEach(element => {
-            arr.push(convertNodeToElement(element))
-          })
-          return <span key={index}><LinkTag toHtml={toHtml} node={node} imgArr={imgArr} index={index} /></span>
-        }
 
-      },
-    })
 
-    return html
-  }
+          if (node.name === "linkoff") {
+
+            const arr = [];
+            node.children.forEach(element => {
+              arr.push(convertNodeToElement(element))
+            })
+            return <span key={index}><LinkTag toHtml={toHtml} node={node} imgArr={imgArr} index={index} /></span>
+          }
+
+        },
+      })
+
+      return html
+    }, [])
+
+
 
   const breakpointColumnsObj = {
     [theme.breakpoints.values.xs]: 1,
@@ -289,7 +292,7 @@ export default function Content({ style }) {
 
             }}
               style={{
-                fontSize: "2rem",
+                fontSize: "1.5rem",
                 color: theme.palette.type === "dark"
 
                   ? theme.palette.text.secondary
@@ -304,13 +307,15 @@ export default function Content({ style }) {
               const oldName = token.userName;
               changeOwnerName(newName).then(result => {
 
+
+
                 if (!result) {
                   alert("name is taken")
                 }
                 else {
                   setPostArr(pre => {
                     return [...pre.map(function (item) {
-                      console.log(item.ownerName, oldName)
+
 
                       if (item.ownerName === oldName) { item.ownerName = newName; return item }
 
@@ -328,7 +333,7 @@ export default function Content({ style }) {
 
             }}
               style={{
-                fontSize: "2rem",
+                fontSize: "1.5rem",
                 color: theme.palette.type === "dark"
 
                   ? theme.palette.text.secondary
@@ -360,13 +365,16 @@ export default function Content({ style }) {
             return (
 
 
-              <PaperContent postArr={postArr} postPicArr={postPicArr} index={index} editorPaperCss={editorPaperCss} toHtml={toHtml} token={token}
+              <PaperContent
+
+                key={item.postID}
+                postArr={postArr} postPicArr={postPicArr} index={index} editorPaperCss={editorPaperCss} toHtml={toHtml} token={token}
 
 
                 mentionBodyRoot2={mentionBodyRoot2} mentionBodyLabel={mentionBodyLabel} deleteSinglePost={deleteSinglePost}
                 breakpointsAttribute={breakpointsAttribute}
                 setOpen={setOpen}
-                key={item.postID}
+
                 mentionHeadAvatar={mentionHeadAvatar}
               />
             )
@@ -409,6 +417,8 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
   // const [toShow, setToShow] = useState(true)
 
   const [showComment, setShowComment] = useState(false)
+
+  const [commentCount, setCommentCount] = useState(postArr[index].commentCount)
 
   useEffect(function () {
     // console.log(panelRef.current)
@@ -470,7 +480,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
                 <Typography
 
 
-                  style={{ marginTop:"3px",lineHeight: "1.0", fontWeight: "bold", ...token.userName === postArr[index].ownerName && { color: theme.palette.primary.main, } }}>
+                  style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", ...token.userName === postArr[index].ownerName && { color: theme.palette.primary.main, } }}>
                   {postArr[index].ownerName}<br />
                   <span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>{formatDistanceToNow(postArr[index].postingTime)}</span>
 
@@ -484,13 +494,16 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
                 setShowComment(pre => !pre)
                 setHeight("auto")
                 setDisplay("none")
+                axios.get(`${url}/comment/count/${postArr[index].postID}`).then(response => {
+                  setCommentCount(response.data)
+                })
               }}
             >
 
               <TextsmsOutlined style={{ fontSize: "1.2rem" }} />
-              &nbsp;<span style={{ fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{postArr[index].commentCount}</span>
+              &nbsp;<span style={{ fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{commentCount}</span>
             </IconButton>
-        
+
 
           </div>
 
@@ -517,7 +530,11 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
         {toHtml(postArr[index].content, postPicArr[index], inView)}
         {/* {postArr[index].postID === "27762_1" && <CommentEditor postID={postArr[index].postID} />} */}
-        {showComment && <CommentEditor postID={postArr[index].postID} index={index} toHtml={toHtml} />}
+        {showComment && <CommentEditor
+          key={postArr[index].postID}
+          postID={postArr[index].postID} index={index}
+          toHtml={toHtml} setCommentCount={setCommentCount}
+        />}
       </Paper>
 
 

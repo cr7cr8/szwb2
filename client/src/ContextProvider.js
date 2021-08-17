@@ -89,6 +89,8 @@ export default function ContextProvider(props) {
 
     return axios.post(`${url}/article/changeownername`, { newName }).then(response => {
 
+     
+
       if (!response.data) {
         return response.data
       }
@@ -109,7 +111,7 @@ export default function ContextProvider(props) {
 
   const getSinglePost = function () {
     const postingTime = Math.min(...postArr.map(item => item.postingTime), Date.now())
-    console.log(...postArr.map(item => item.postingTime))
+ //   console.log(...postArr.map(item => item.postingTime))
 
 
 

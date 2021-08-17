@@ -62,7 +62,8 @@ const commentSchema = new mongoose.Schema({
 
   ownerName: { type: String },
   postID: { type: String },//{ type: mongoose.Types.ObjectId, required: true },
-  content: { type: String },
+  commentID: { type: String, default: () => Math.floor(Math.random() * 1000000), required: true },
+  content: { type: String, },
   postingTime: { type: Number, default: Date.now },
 }, {
   toObject: { virtuals: true },

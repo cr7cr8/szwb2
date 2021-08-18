@@ -23,7 +23,6 @@ router.post("/uploadpicture",
   checkConnState,
   getFileArray,
   uploadFile,
-
   function (req, res, next) {
 
     console.log("got picture")

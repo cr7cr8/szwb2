@@ -78,9 +78,35 @@ articleSchema.virtual("articleComment", {
 
 })
 
+const subCommentSchema = new mongoose.Schema({
+
+  ownerName: { type: String },
+  postID: { type: String },//{ type: mongoose.Types.ObjectId, required: true },
+  commentID: { type: String, default: () => Math.floor(Math.random() * 1000000), required: true },
+  subCommentID: { type: String, default: () => Math.floor(Math.random() * 1000000), required: true },
+  content: { type: String, },
+  postingTime: { type: Number, default: Date.now },
+}, {
+  toObject: { virtuals: true },
+  collection: "subComments",
+})
+
+commentSchema.virtual("comentSubComment", {
+  localField: "commentID",
+  foreignField: "subCommentID",
+  ref: "subComments",
+  justOne: false,
+
+})
+
+
+
+
 
 const User = connSzwb2DB.model("users", userSchema);
 const Article = connSzwb2DB.model("articles", articleSchema);
 const Comment = connSzwb2DB.model("comments", commentSchema);
+const SubComment = connSzwb2DB.model("subComments", subCommentSchema)
 
-module.exports = { User, Article, Comment }
+
+module.exports = { User, Article, Comment, SubComment }

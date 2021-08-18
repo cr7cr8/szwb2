@@ -1,6 +1,8 @@
 const express = require("express")
 const app = express();
 
+
+const subComment = require("./router/subComment")
 const comment = require("./router/comment")
 const article = require("./router/article")
 const picture = require("./router/picture")
@@ -16,7 +18,7 @@ if (!process.env.port) {
     app.use(cors());
 }
 
-
+app.use("/api/subcomment", subComment)
 app.use("/api/comment", comment)
 app.use("/api/article", article)
 app.use("/api/picture", picture)

@@ -52,3 +52,19 @@ Content-Type: application/json
 
 }
 ###
+
+
+###
+POST http://localhost/api/subcomment
+Content-Type: application/json
+
+{
+    "ownerName":"ccc",
+    "content":"cccdd",
+    "postID":"Fdfewfsa",
+    "subCommentID":"78973984",
+    "postingTime":"434534343",
+    "commentID":3554657
+
+}
+###

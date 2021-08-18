@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useContext, useCallback, createContext, useMemo, Component } from 'react';
+import { useState, useRef, useEffect, useContext, useCallback, createContext, useMemo } from 'react';
 import { Context } from "./ContextProvider"
 import CssBaseline from '@material-ui/core/CssBaseline';
 
@@ -326,13 +326,9 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
 
   const [commentArr, setCommentArr] = useState([])
-  const commentObjList = useRef([])
-
-
 
   const [replyNum, setReplyNum] = useState(999)
 
-  //
 
   useEffect(function () {
     setTimeout(() => {
@@ -429,17 +425,11 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
                 subCommentID,
 
               }).then(response => {
-                //  alert(JSON.stringify(response.data))
+                alert(JSON.stringify(response.data))
 
-                console.log(commentObjList.current)
 
-                const subCommentHead = commentObjList.current.find(comment => {
 
-                  return comment.commentID === commentID
 
-                })
-
-                subCommentHead.updateSubCommentArr(response.data)
 
                 // setCommentArr(pre => {
                 //   return [{
@@ -457,6 +447,10 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
 
             }
+
+
+
+
           }}
         ><Send style={{ transform: "scale(0.9)", color: theme.palette.type === "light" ? theme.palette.primary.main : theme.palette.text.secondary }} /></IconButton></Paper>
     </Box >
@@ -488,7 +482,7 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
           fontSize: "1.2rem",
           borderWidth: "2px",
           borderColor: "rgb(63, 81, 181)",
-          borderStyle: "solid",
+          borderStyle:"solid",
 
           // backgroundImage
           // minHeight: "20vh",
@@ -615,7 +609,15 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
         return (
           <span key={comment.commentID}>
 
+            {/* <Box style={{
+              //     marginBottom: "5px",
 
+              display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: isMobile ? "nowrap" : "nowrap",
+
+              gap: theme.spacing(0),
+
+              //   width: "100%",
+            }}> */}
 
             <Chip
               onClick={function () {
@@ -686,6 +688,7 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
               <DeleteOutline style={{ fontSize: "1.5rem" }} />
             </IconButton>}
 
+            {/* </Box> */}
 
 
 
@@ -703,12 +706,8 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
             {(replyNum === listIndex) && createCommentEditor(true, comment.commentID)}
 
 
-            <SubComments_ setReplyNum={setReplyNum} replyNum={replyNum} listIndex={listIndex}
-              commentArr={commentArr} toHtml={toHtml} comment={comment} theme={theme} index={index} editor={editor}
-              commentObjList={commentObjList}
-
-
-            />
+            <SubComments setReplyNum={setReplyNum} replyNum={replyNum} listIndex={listIndex}
+              commentArr={commentArr} toHtml={toHtml} comment={comment} theme={theme} index={index} editor={editor} />
 
 
 
@@ -735,154 +734,6 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
   )
 
 }
-
-
-class SubComments_ extends Component {
-
-  constructor(props, context) {
-    super(props, context)
-
-
-    this.commentID = this.props.comment.commentID
-    this.state = { subCommentArr: [] }
-
-  }
-
-
-  //shouldComponentUpdate(nextProps, nextState) { }
-
-
-
-
-  //componentDidUpdate(prevProps) { }
-
-  updateSubCommentArr = (obj) => {
-
-
-
-    this.setState(pre => {
-
-      const arr = pre.subCommentArr;
-      // if (arr.findIndex(aaa => { return aaa.subCommentID === obj.subCommentID }) >= 0) {
-
-      //   return pre
-      // }
-
-
-
-
-
-
-
-
-
-      return {
-
-        subCommentArr: [obj,...arr, ]
-      }
-
-
-
-    })
-
-  }
-
-  componentDidMount() {
-
-    console.log(this.props.commentID + "-----")
-    axios.get(`${url}/subcomment/${this.props.comment.commentID}`).then(response => {
-
-      //   alert(comment.commentID+JSON.stringify(response.data))
-
-      this.setState(pre => {
-        return pre.subCommentArr = response.data
-      })
-
-      this.props.commentObjList.current.push(this)
-
-
-    })
-
-
-  }
-
-
-  render() {
-    return (
-      <>
-
-
-
-        {this.state.subCommentArr.map((subComment, subListIndex) => {
-
-          return <span key={subComment.subCommentID}>
-
-            <Chip
-              style={{
-                marginLeft: "1.6rem"
-              }}
-              onClick={function () {
-                // token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-                // setReplyNum(listIndex)
-                // setTimeout(() => {
-                //   editor.current.focus();
-                //   EditorState.moveFocusToEnd(editorState);
-
-                // }, 0)
-                //alert(JSON.stringify(comment))
-              }}
-
-              // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-            
-              avatar={
-                < Avatar alt={null}
-                  //   style={{ width: "1.5rem", height: "1.5rem", }}
-                  src={"https://api.multiavatar.com/" + subComment.ownerName + ".svg"}   //src={friendObj[person]}
-                />
-              }
-              label={
-                <Typography
-                  style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize: "0.9rem" }}>
-                  {subComment.ownerName}
-                  &nbsp;<span style={{ color: this.props.theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>
-                    {formatDistanceToNow(Number(subComment.postingTime))}
-                    {/* {this.commentID}-{subComment.subCommentID} */}
-                  </span>
-                </Typography>
-              }
-
-            />
-
-            <IconButton size="small"
-              style={{ float: "right", marginTop: "4px" }}
-              onClick={function () {
-
-              }}
-            >
-              <DeleteOutline style={{ fontSize: "1.5rem" }} />
-            </IconButton>
-
-
-            <Paper style={{ marginLeft: "3.6rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: this.props.theme.palette.background.default }}>
-              {this.props.toHtml(subComment.content, null, null, true)}
-            </Paper>
-
-
-
-          </span>
-
-        })}
-
-
-
-
-      </>
-    )
-
-
-  }
-}
-
 
 
 function SubComments({ setReplyNum, replyNum, listIndex, commentArr, toHtml, comment, theme, editorState, index, editor }) {

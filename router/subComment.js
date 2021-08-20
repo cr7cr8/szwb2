@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 router.get("/:commentid", function (req, res, next) {
 
 
-  console.log(req.params.commentid)
+ // console.log(req.params.commentid)
   SubComment.find({ commentID: req.params.commentid }).sort({ "postingTime": -1 }).then(docs => {
   // console.log(docs)
     res.json(docs)
@@ -40,6 +40,16 @@ router.get("/count/:subcommentid", function (req, res, next) {
  
   
 })
+
+router.get("/deletesubcomment/:subcommentid", function(req,res,next){
+
+
+  SubComment.deleteOne({subCommentID:req.params.subcommentid}).then(doc=>{
+    res.json(doc)
+  })
+
+})
+
 
 
 module.exports = router

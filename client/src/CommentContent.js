@@ -24,8 +24,9 @@ import { stateToHTML } from 'draft-js-export-html';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2, } from 'react-html-parser';
 import { makeStyles, styled, useTheme } from '@material-ui/core/styles';
 
-import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, IconButton, Icon, Chip, Divider } from "@material-ui/core";
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, PaletteOutlined, Send, Reply, DeleteOutline, Cancel } from "@material-ui/icons";
+import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, IconButton, Icon, Chip, Divider, CircularProgress } from "@material-ui/core";
+
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, PaletteOutlined, Send, Reply, DeleteOutline, Cancel, ExpandMore } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {
@@ -128,47 +129,9 @@ export const useStyles = makeStyles(theme => {
 
 const initialState = {
   entityMap: {
-    // "0": {
-    //     type: "image",
-    //     mutability: "IMMUTABLE",
-    //     data: {
-    //         src:
-    //             "https://www.draft-js-plugins.com/images/canada-landscape-small.jpg"
-    //     }
-    // }
+
   },
   blocks: [
-    // {
-    //   key: "1111",
-    //   text: "ewijveoij http://weibo.com/aas vvv @mmm fdsfd  \n \n \n \n \n dsd",//`  @aaa @的就是dds http://asd.com `,//  \uD83D\uDE47\u200D\u2640\uFE0F   `,   //  \uD83D\uDE33`,
-    //   type: "unstyled",
-    //   // type:"unstyled",
-    //   depth: 0,
-    //   inlineStyleRanges: [
-    //     //    {
-    //     //         offset: 4,
-    //     //         length: 10,
-    //     //         style: "HIGHLIGHT"
-    //     //    },
-    //   ],
-    //   entityRanges: [],
-    //   data: {}
-    // },
-
-
-
-    // {
-    //   key: "2222",
-    //   text: `  @aaa @的就是dds http://asd.com `,//  \uD83D\uDE47\u200D\u2640\uFE0F   `,   //  \uD83D\uDE33`,
-    //   type: "unstyled",
-    //   depth: 0,
-
-    //   // data: {
-    //   //   imgUrl: "https://source.unsplash.com/random/800x800",//"blob:http://localhost:3000/3d815879-af57-4950-a82c-a6301402fa99",
-    //   //   imgId: "",
-    //   //   imgArr: ["https://source.unsplash.com/random/1300x400", "https://mernchen.herokuapp.com/api/picture/download/5f197ef0452cc60017f9f488", "https://source.unsplash.com/random/800x751", "https://source.unsplash.com/random/100x252"]
-    //   // }
-    // },
 
 
   ]
@@ -284,7 +247,7 @@ function toPreHtml(editorContent, postID = "local") {
 }
 
 
-export default function CommentEditor({ postID, index, toHtml, setCommentCount }) {
+export default function CommentContent({ postID, index, toHtml, setCommentCount, commentCount }) {
 
   const {
 
@@ -332,7 +295,9 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
   const [replyNum, setReplyNum] = useState(999)
 
-  //
+  // const [subCommentCount, setSubCommentCount] = useState(0)
+
+
 
   useEffect(function () {
     setTimeout(() => {
@@ -342,10 +307,17 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
 
 
-    axios.get(`${url}/comment/${postID}`).then(response => {
+    axios.get(`${url}/comment/loadfive/${postID}/${Date.now()}`).then(response => {
 
       setCommentArr(response.data)
+
     })
+
+    // axios.get(`${url}/comment/${postID}`).then(response => {
+
+    //   setCommentArr(response.data)
+
+    // })
 
   }, [])
 
@@ -357,7 +329,8 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
       display: "flex", alignItems: "center", justifyContent: "flex-start", flexWrap: isMobile ? "wrap" : "wrap",
 
       gap: theme.spacing(0),
-      ...isSubCommentEditor && { marginLeft: "1.6rem" }
+      ...isSubCommentEditor && { marginLeft: "1.6rem" },
+
 
       //   width: "100%",
     }}>
@@ -365,10 +338,10 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
       <Chip
 
-        onClick={function () {
-          //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-          alert(commentID)
-        }}
+        // onClick={function () {
+
+        //   alert(commentID)
+        // }}
         // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
         key={index}
         avatar={
@@ -439,19 +412,23 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
                 })
 
-                subCommentHead.updateSubCommentArr(response.data)
+                setCommentArr(pre => {
+                  // return pre.filter(item => {
+                  //   return item.commentID !== comment.commentID
+                  // })
+                  pre.forEach(item => {
+                    if (item.commentID === commentID) {
+                      if (item.subCommentCount) { item.subCommentCount++ }
+                      else { item.subCommentCount = 1 }
+                    }
+                  })
+                  return pre
+                })
 
-                // setCommentArr(pre => {
-                //   return [{
-                //     ownerName: token.userName,
-                //     content: content,
-                //     postID: postID,
-                //     postingTime: Date.now(),
-                //     commentID,
-                //   }, ...pre]
-                // })
-                // setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
-                // setCommentCount(pre => Number(pre) + 1)
+
+                subCommentHead.updateSubCommentArr(response.data)
+                setEditorState(EditorState.createWithContent(convertFromRaw(initialState)))
+
 
               })
 
@@ -602,12 +579,18 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
       </Paper>
       {!isMobile && <EmojiPanel isEmojiPanelOn={isEmojiPanelOn} marginBottom="0" />}
-
+      {!isSubCommentEditor && commentArr.length > 0 && <Divider style={{ marginTop: theme.spacing(1) }} />}
     </>
   }
 
   return (
-    <Container disableGutters={true} maxWidth="lg" style={{ backgroundColor: theme.palette.action.disabledBackground, paddingBottom: theme.spacing(1) }}>
+    <Container disableGutters={true} maxWidth="lg" style={{
+      backgroundColor: theme.palette.action.disabledBackground, paddingBottom: theme.spacing(0),
+      //height:"auto",
+      display: "flex", flexDirection: "column", justifyContent: "space-between",
+      // transition: "height 10s",
+
+    }}>
 
       {(replyNum === 999) && createCommentEditor(false, null)}
       {commentArr.map((comment, listIndex) => {
@@ -618,8 +601,17 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
 
             <Chip
+
+              style={{ verticalAlign: "top" }}
+
               onClick={function () {
-                //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+                const subCommentHead = commentObjList.current.find(item => {
+                  return comment.commentID === item.commentID
+                })
+
+                replyNum === listIndex
+                  ? subCommentHead.clearSubComments()
+                  : subCommentHead.loadSubComments()
                 setReplyNum(pre => pre === listIndex ? 999 : listIndex)
                 setTimeout(() => {
                   editor.current.focus();
@@ -629,6 +621,34 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
 
               }}
 
+              deleteIcon={
+
+                <>{replyNum === listIndex
+                  ? <Cancel style={{ fontSize: "1.2rem", color: theme.palette.text.secondary, }} />
+                  : <Reply style={{ fontSize: "1.2rem", color: theme.palette.text.secondary, }} />
+                }
+                  <span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle" }}>
+                    {comment.subCommentCount}
+                  </span>
+                </>
+              }
+              onDelete={function () {
+                const subCommentHead = commentObjList.current.find(item => {
+                  return comment.commentID === item.commentID
+                })
+
+                replyNum === listIndex
+                  ? subCommentHead.clearSubComments()
+                  : subCommentHead.loadSubComments()
+                setReplyNum(pre => pre === listIndex ? 999 : listIndex)
+                setTimeout(() => {
+                  editor.current.focus();
+                  EditorState.moveFocusToEnd(editorState);
+
+                }, 0)
+
+
+              }}
 
               // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
               key={index}
@@ -641,34 +661,20 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
               }
               label={
                 <Typography
-                  style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize: "0.9rem" }}>
+                  style={{  fontWeight: "bold", fontSize: "0.9rem" }}>
                   {comment.ownerName}
-                  &nbsp;<span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>
-                    {formatDistanceToNow(Number(comment.postingTime))}
+                  &nbsp;<span style={{ color: theme.palette.text.secondary,  fontSize: "0.7rem", fontWeight: "normal" }}>
+                    {formatDistanceToNow(Number(comment.postingTime)).replace("less than ", "").replace("about ", "")}
                   </span>
                 </Typography>
               }
 
             />
 
-            <IconButton size="small"
-              // style={{  marginTop: "4px" }}
-              onClick={function () {
-                //  token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-                setReplyNum(pre => pre === listIndex ? 999 : listIndex)
-                setTimeout(() => {
-                  editor.current.focus();
-                  EditorState.moveFocusToEnd(editorState);
-
-                }, 0)
-
-              }}
-            >
-              {replyNum === listIndex ? <Cancel style={{ fontSize: "1.5rem" }} /> : <Reply style={{ fontSize: "1.5rem" }} />}
-            </IconButton>
+         
 
             {token.userName == comment.ownerName && <IconButton size="small"
-              style={{ float: "right", marginTop: "4px" }}
+              style={{ float: "right",  }}
               onClick={function () {
 
                 setCommentArr(pre => {
@@ -686,37 +692,24 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
               <DeleteOutline style={{ fontSize: "1.5rem" }} />
             </IconButton>}
 
-
-
-
             <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>
               {toHtml(comment.content, null, null, true)}
-              {/* <Divider light={false} variant="fullWidth"/> */}
-              {/* {toHtml(comment.content, null, null, true)} */}
-
-
-
-
             </Paper>
-
 
             {(replyNum === listIndex) && createCommentEditor(true, comment.commentID)}
 
 
-            <SubComments_ setReplyNum={setReplyNum} replyNum={replyNum} listIndex={listIndex}
+            <SubComments setReplyNum={setReplyNum} replyNum={replyNum} listIndex={listIndex}
               commentArr={commentArr} toHtml={toHtml} comment={comment} theme={theme} index={index} editor={editor}
               commentObjList={commentObjList}
-
-
+              setCommentArr={setCommentArr}
+              token={token}
             />
 
 
-
-
-
-
-            {/* {((replyNum === listIndex) && (listIndex !== commentArr.length - 1)) && <Divider light={false} style={{ marginTop: "8px" }} />} */}
             {(listIndex !== commentArr.length - 1) && <Divider light={false} style={{ marginTop: "8px" }} />}
+
+
 
 
           </span>
@@ -725,19 +718,48 @@ export default function CommentEditor({ postID, index, toHtml, setCommentCount }
       })}
 
 
-      {/* <Comments commentArr={commentArr} index={index} theme={theme} token={token} setCommentArr={setCommentArr} setCommentCount={setCommentCount} toHtml={toHtml} /> */}
+      {commentArr.length < commentCount
+        ? <Button
+
+          onClick={function () {
 
 
+            const postingTime = Math.min(...commentArr.map(item => item.postingTime))
+            const postID = commentArr.find(item => item.postingTime === postingTime).postID
+            axios.get(`${url}/comment/loadfive/${postID}/${postingTime}`).then(response => {
+              setCommentArr(pre => { return [...pre, ...response.data] })
 
 
+            })
+          }}
 
+          style={{
+            marginTop: "8px",
+            borderTopLeftRadius: 0,
+            borderTopRightRadius: 0,
+            padding: 0, boxShadow: theme.shadows[0],
+            color: theme.palette.type === "dark"
+              ? theme.palette.text.secondary
+              : theme.palette.primary.main
+          }}
+          size="small" disableElevation fullWidth={true}
+        >
+          {/* <CircularProgress size="1rem" style={{
+            color: theme.palette.type === "dark"
+              ? theme.palette.text.secondary
+              : theme.palette.primary.main
+          }} /> */}
+          <ExpandMore />&nbsp;{commentArr.length}/{commentCount}
+        </Button>
+        : <div style={{ marginTop: "16px" }}></div>
+      }
     </Container>
   )
 
 }
 
 
-class SubComments_ extends Component {
+class SubComments extends Component {
 
   constructor(props, context) {
     super(props, context)
@@ -748,48 +770,25 @@ class SubComments_ extends Component {
 
   }
 
-
   //shouldComponentUpdate(nextProps, nextState) { }
-
-
-
-
   //componentDidUpdate(prevProps) { }
 
   updateSubCommentArr = (obj) => {
 
-
-
     this.setState(pre => {
-
       const arr = pre.subCommentArr;
       // if (arr.findIndex(aaa => { return aaa.subCommentID === obj.subCommentID }) >= 0) {
-
       //   return pre
       // }
-
-
-
-
-
-
-
-
-
       return {
-
-        subCommentArr: [obj,...arr, ]
+        subCommentArr: [obj, ...arr,]
       }
-
-
 
     })
 
   }
 
-  componentDidMount() {
-
-    console.log(this.props.commentID + "-----")
+  loadSubComments = () => {
     axios.get(`${url}/subcomment/${this.props.comment.commentID}`).then(response => {
 
       //   alert(comment.commentID+JSON.stringify(response.data))
@@ -802,6 +801,34 @@ class SubComments_ extends Component {
 
 
     })
+  }
+
+  clearSubComments = () => {
+    this.setState(pre => {
+      return pre.subCommentArr = []
+    })
+
+  }
+
+
+
+
+  componentDidMount() {
+
+    this.props.commentObjList.current.push(this)
+    // console.log(this.props.commentID + "-----")
+    // axios.get(`${url}/subcomment/${this.props.comment.commentID}`).then(response => {
+
+    //   //   alert(comment.commentID+JSON.stringify(response.data))
+
+    //   this.setState(pre => {
+    //     return pre.subCommentArr = response.data
+    //   })
+
+    //   this.props.commentObjList.current.push(this)
+
+
+    // })
 
 
   }
@@ -819,9 +846,10 @@ class SubComments_ extends Component {
 
             <Chip
               style={{
-                marginLeft: "1.6rem"
+                marginLeft: "1.6rem",
+              //  verticalAlign:"top",
               }}
-              onClick={function () {
+            //  onClick={() => {
                 // token.userName === postArr[index].ownerName && setOpen(pre => !pre)
                 // setReplyNum(listIndex)
                 // setTimeout(() => {
@@ -830,10 +858,10 @@ class SubComments_ extends Component {
 
                 // }, 0)
                 //alert(JSON.stringify(comment))
-              }}
+          //    }}
 
               // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-            
+
               avatar={
                 < Avatar alt={null}
                   //   style={{ width: "1.5rem", height: "1.5rem", }}
@@ -842,26 +870,54 @@ class SubComments_ extends Component {
               }
               label={
                 <Typography
-                  style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize: "0.9rem" }}>
+                  style={{  fontWeight: "bold", fontSize: "0.9rem" }}>
                   {subComment.ownerName}
                   &nbsp;<span style={{ color: this.props.theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>
-                    {formatDistanceToNow(Number(subComment.postingTime))}
-                    {/* {this.commentID}-{subComment.subCommentID} */}
+                    {formatDistanceToNow(Number(subComment.postingTime)).replace("less than ", "").replace("about ", "")}
                   </span>
                 </Typography>
               }
 
             />
 
-            <IconButton size="small"
-              style={{ float: "right", marginTop: "4px" }}
-              onClick={function () {
+            {this.props.token.userName === subComment.ownerName &&
+              <IconButton size="small"
+                style={{ float: "right", marginTop: "4px" }}
+                onClick={() => {
 
-              }}
-            >
-              <DeleteOutline style={{ fontSize: "1.5rem" }} />
-            </IconButton>
 
+                  axios.get(`${url}/subcomment/deletesubcomment/${subComment.subCommentID}`).then(reponse => {
+                    this.setState(pre => {
+                      return {
+                        subCommentArr: pre.subCommentArr.filter(item => { return item.subCommentID !== subComment.subCommentID })
+                      }
+
+                    })
+
+
+                    //  alert(this.commentID)
+
+                    this.props.setCommentArr(pre => {
+                      // return pre.filter(item => {
+                      //   return item.commentID !== comment.commentID
+                      // })
+                      pre.forEach(item => {
+                        if (item.commentID === this.commentID) {
+                          if (item.subCommentCount) { item.subCommentCount-- }
+                          else { item.subCommentCount = 1 }
+                        }
+                      })
+                      return [...pre]
+                    })
+
+
+
+                  })
+                }}
+              >
+                <DeleteOutline style={{ fontSize: "1.5rem" }} />
+              </IconButton>
+            }
 
             <Paper style={{ marginLeft: "3.6rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: this.props.theme.palette.background.default }}>
               {this.props.toHtml(subComment.content, null, null, true)}
@@ -871,7 +927,8 @@ class SubComments_ extends Component {
 
           </span>
 
-        })}
+        })
+        }
 
 
 
@@ -885,96 +942,5 @@ class SubComments_ extends Component {
 
 
 
-function SubComments({ setReplyNum, replyNum, listIndex, commentArr, toHtml, comment, theme, editorState, index, editor }) {
-
-
-
-  const [subCommentArr, setSubCommentArr] = useState([])
-
-
-  useEffect(function () {
-    axios.get(`${url}/subcomment/${comment.commentID}`).then(response => {
-
-      //   alert(comment.commentID+JSON.stringify(response.data))
-      setSubCommentArr(response.data)
-    })
-
-  }, [])
-
-  return (
-    <>
-
-
-      {subCommentArr.map((subComment, subListIndex) => {
-
-
-        return (
-          <>
-            <Chip
-              style={{
-                marginLeft: "1.6rem"
-              }}
-              onClick={function () {
-                // token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-                // setReplyNum(listIndex)
-                // setTimeout(() => {
-                //   editor.current.focus();
-                //   EditorState.moveFocusToEnd(editorState);
-
-                // }, 0)
-                alert(JSON.stringify(comment))
-              }}
-
-              // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-              key={index}
-
-              avatar={
-                < Avatar alt={null}
-                  //   style={{ width: "1.5rem", height: "1.5rem", }}
-                  src={"https://api.multiavatar.com/" + subComment.ownerName + ".svg"}   //src={friendObj[person]}
-                />
-              }
-              label={
-                <Typography
-                  style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", fontSize: "0.9rem" }}>
-                  {subComment.ownerName}
-                  &nbsp;<span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>
-                    {formatDistanceToNow(Number(subComment.postingTime))}
-                  </span>
-                </Typography>
-              }
-
-            />
-
-
-
-            <IconButton size="small"
-              style={{ float: "right", marginTop: "4px" }}
-              onClick={function () {
-
-              }}
-            >
-              <DeleteOutline style={{ fontSize: "1.5rem" }} />
-            </IconButton>
-
-
-
-
-
-            <Paper style={{ marginLeft: "3.6rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>
-              {toHtml(subComment.content, null, null, true)}
-            </Paper>
-          </>
-        )
-
-      })}
-
-
-    </>
-  )
-
-
-
-}
 
 

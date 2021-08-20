@@ -52,7 +52,7 @@ import 'react-image-lightbox/style.css'; // This only needs to be imported once 
 
 
 import { useInView } from 'react-intersection-observer';
-import CommentEditor from "./CommentEditor";
+import CommentContent from "./CommentContent";
 
 
 export default function Content({ style }) {
@@ -233,11 +233,6 @@ export default function Content({ style }) {
 
             <Chip
               style={{ backgroundColor: "transparent" }}
-
-
-
-
-
               avatar={< Avatar style={{ transform: "scale(2)" }} alt={null} src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
               />}
               label={
@@ -359,9 +354,6 @@ export default function Content({ style }) {
           {postArr.map(function (item, index) {
 
 
-
-
-
             return (
 
 
@@ -446,10 +438,11 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
           overflow: display === "none" ? "visible" : "hidden",
 
 
-          padding: "0px", whiteSpace: "normal", height: height
+          padding: "0px", whiteSpace: "normal", height: height,
+
         }} key={index}>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "2px", paddingBottom: "2px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "2px", paddingBottom: "0px" }}>
 
 
           <div>
@@ -501,7 +494,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             >
 
               <TextsmsOutlined style={{ fontSize: "1.2rem" }} />
-              &nbsp;<span style={{ fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{commentCount}</span>
+              &nbsp;<span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{commentCount}</span>
             </IconButton>
 
 
@@ -530,36 +523,57 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
         {toHtml(postArr[index].content, postPicArr[index], inView)}
         {/* {postArr[index].postID === "27762_1" && <CommentEditor postID={postArr[index].postID} />} */}
-        {showComment && <CommentEditor
+        {showComment && <CommentContent
           key={postArr[index].postID}
           postID={postArr[index].postID} index={index}
           toHtml={toHtml} setCommentCount={setCommentCount}
+          commentCount={commentCount}
         />}
+
+
+
       </Paper>
 
 
+
       <Button
+      
+        style={{
+          marginTop: "8px",
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          padding: 0,
+          position: "absolute",
+          bottom: 0,
+          opacity: 0.8,
+          ...display === "none" && { display: "none" },
+          backgroundColor: theme.palette.background.default,
+          boxShadow:theme.shadows[1],
+          color: theme.palette.type === "dark"
+            ? theme.palette.text.secondary
+            : theme.palette.primary.main
+          
+
+        }}
         onClick={function () {
           setHeight("auto")
           setDisplay("none")
 
         }}
-        size="small"
-        style={{
-          position: "absolute",
-          bottom: 0,
-          display: display,
-          width: "100%",
-          opacity: 0.8,
-          borderTopRightRadius: 0,
-          borderTopLeftRadius: 0,
-          backgroundColor: theme.palette.background.default,
-          color: theme.palette.type === "dark"
-            ? theme.palette.text.secondary
-            : theme.palette.primary.main
-        }}
 
-      ><ExpandMore /></Button>
+        size="small"
+    
+        color="primary"
+        fullWidth={true}
+      >
+
+      
+        <ExpandMore  />
+
+      </Button>
+
+
+ 
     </div>
   )
 }

@@ -91,9 +91,9 @@ const subCommentSchema = new mongoose.Schema({
   collection: "subComments",
 })
 
-commentSchema.virtual("comentSubComment", {
+commentSchema.virtual("commentSubComment", {
   localField: "commentID",
-  foreignField: "subCommentID",
+  foreignField: "commentID",
   ref: "subComments",
   justOne: false,
 

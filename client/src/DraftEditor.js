@@ -332,8 +332,8 @@ export default function DraftEditor() {
 
               },
               style: {
-                paddingLeft: "8px",
-                paddingRight: "8px",
+                paddingLeft: "4px",
+                paddingRight: "4px",
               }
             }
           }

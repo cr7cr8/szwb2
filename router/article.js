@@ -121,9 +121,6 @@ router.get("/singlepost/:num",
 router.get("/deletesinglepost/:postid", authenticateToken, function (req, res, next) {
 
 
-
-
-
   Comment.deleteMany({ postID: req.params.postid }).then(docs => {
     // console.log(docs)
   })

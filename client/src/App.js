@@ -13,10 +13,23 @@ import { useEffect, useState, useContext } from 'react';
 
 import { Context } from "./ContextProvider"
 
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2, } from 'react-html-parser';
+
+//import multiavatar from '@multiavatar/multiavatar'
+//import yellow from '@material-ui/core/colors/yellow';
+
+
 function App() {
 
-  const { getSinglePost } = useContext(Context);
 
+  //return  <div dangerouslySetInnerHTML={{__html: svgCode}} />
+
+  //eturn ReactHtmlParser(svgCode)
+  // return (
+
+  //   <img src={`http://localhost/aaa.svg`} />
+
+  // )
 
 
   return (

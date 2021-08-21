@@ -18,9 +18,8 @@ import {
   engineName,
 } from "react-device-detect";
 
-import axios from "axios";
-
-
+//import axios from "axios";
+import {axios,avatarUrl} from "./config";
 
 
 export const useStyles = makeStyles(props => {
@@ -124,10 +123,11 @@ export const useStyles = makeStyles(props => {
 
 export default function createMentionPlugin() {
   //  const url = "http://szwb1.herokuapp.com/api";
-  const url = "https://api.multiavatar.com"
+ // const url = "https://api.multiavatar.com"
 
+  const url = avatarUrl
 
-
+  
   let externalES = null;
   let externalSetEditorState = null;
   //let friendsList = ["mmm", "唐大大", "nbwb"];

@@ -37,11 +37,9 @@ import {
   engineName,
 } from "react-device-detect";
 
-import multiavatar from '@multiavatar/multiavatar'
+
 //import yellow from '@material-ui/core/colors/yellow';
 
-//const multiavatar = require('@multiavatar/multiavatar')
-let svgCode = multiavatar('yuan')
 
 
 const { boldPlugin, BoldButton, ItalicButton, UnderlineButton, LargeButton, SmallButton, } = createBoldPlugin()
@@ -347,11 +345,8 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
         // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
         key={index}
         avatar={
-          <Avatar alt={null}
-            //   src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
-
-            src={`${url}/avatar/${token.userName}.svg`}
-            //   src={(svgCode)}
+          < Avatar alt={null}
+            src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
           />
         }
         label={
@@ -661,15 +656,14 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
               avatar={
                 < Avatar alt={null}
                   //   style={{ width: "1.5rem", height: "1.5rem", }}
-               //   src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
-                  src={`${url}/avatar/${comment.ownerName}.svg`}
+                  src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
                 />
               }
               label={
                 <Typography
-                  style={{ fontWeight: "bold", fontSize: "0.9rem" }}>
+                  style={{  fontWeight: "bold", fontSize: "0.9rem" }}>
                   {comment.ownerName}
-                  &nbsp;<span style={{ color: theme.palette.text.secondary, fontSize: "0.7rem", fontWeight: "normal" }}>
+                  &nbsp;<span style={{ color: theme.palette.text.secondary,  fontSize: "0.7rem", fontWeight: "normal" }}>
                     {formatDistanceToNow(Number(comment.postingTime)).replace("less than ", "").replace("about ", "")}
                   </span>
                 </Typography>
@@ -677,10 +671,10 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
 
             />
 
-
+         
 
             {token.userName == comment.ownerName && <IconButton size="small"
-              style={{ float: "right", }}
+              style={{ float: "right",  }}
               onClick={function () {
 
                 setCommentArr(pre => {
@@ -690,7 +684,7 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
                 })
 
                 axios.get(`${url}/comment/deletecomment/${comment.commentID}`).then(response => {
-
+                  //  alert(JSON.stringify(response.data))
                   setCommentCount(pre => Number(pre) - 1)
                 })
               }}
@@ -773,7 +767,7 @@ class SubComments extends Component {
 
     this.commentID = this.props.comment.commentID
     this.state = { subCommentArr: [] }
-    this.subCommentCount = this.props.comment.subCommentCount
+
   }
 
   //shouldComponentUpdate(nextProps, nextState) { }
@@ -795,12 +789,9 @@ class SubComments extends Component {
   }
 
   loadSubComments = () => {
+    axios.get(`${url}/subcomment/${this.props.comment.commentID}`).then(response => {
 
-
-
-    axios.get(`${url}/subcomment/loadfive/${this.props.comment.commentID}/${Math.min(...this.state.subCommentArr.map(item => item.postingTime)) || Date.now()}`).then(response => {
-
-
+      //   alert(comment.commentID+JSON.stringify(response.data))
 
       this.setState(pre => {
         return pre.subCommentArr = response.data
@@ -823,7 +814,23 @@ class SubComments extends Component {
 
 
   componentDidMount() {
+
     this.props.commentObjList.current.push(this)
+    // console.log(this.props.commentID + "-----")
+    // axios.get(`${url}/subcomment/${this.props.comment.commentID}`).then(response => {
+
+    //   //   alert(comment.commentID+JSON.stringify(response.data))
+
+    //   this.setState(pre => {
+    //     return pre.subCommentArr = response.data
+    //   })
+
+    //   this.props.commentObjList.current.push(this)
+
+
+    // })
+
+
   }
 
 
@@ -840,33 +847,30 @@ class SubComments extends Component {
             <Chip
               style={{
                 marginLeft: "1.6rem",
-                //  verticalAlign:"top",
+              //  verticalAlign:"top",
               }}
-              //  onClick={() => {
-              // token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-              // setReplyNum(listIndex)
-              // setTimeout(() => {
-              //   editor.current.focus();
-              //   EditorState.moveFocusToEnd(editorState);
+            //  onClick={() => {
+                // token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+                // setReplyNum(listIndex)
+                // setTimeout(() => {
+                //   editor.current.focus();
+                //   EditorState.moveFocusToEnd(editorState);
 
-              // }, 0)
-              //alert(JSON.stringify(comment))
-              //    }}
+                // }, 0)
+                //alert(JSON.stringify(comment))
+          //    }}
 
               // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
 
               avatar={
                 < Avatar alt={null}
                   //   style={{ width: "1.5rem", height: "1.5rem", }}
-                 // src={"https://api.multiavatar.com/" + subComment.ownerName + ".svg"}
-                  src={`${url}/avatar/${subComment.ownerName}.svg`}
-                //src={friendObj[person]}
-
+                  src={"https://api.multiavatar.com/" + subComment.ownerName + ".svg"}   //src={friendObj[person]}
                 />
               }
               label={
                 <Typography
-                  style={{ fontWeight: "bold", fontSize: "0.9rem" }}>
+                  style={{  fontWeight: "bold", fontSize: "0.9rem" }}>
                   {subComment.ownerName}
                   &nbsp;<span style={{ color: this.props.theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>
                     {formatDistanceToNow(Number(subComment.postingTime)).replace("less than ", "").replace("about ", "")}
@@ -935,5 +939,8 @@ class SubComments extends Component {
 
   }
 }
+
+
+
 
 

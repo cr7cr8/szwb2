@@ -233,7 +233,7 @@ export default function Content({ style }) {
 
             <Chip
               style={{ backgroundColor: "transparent" }}
-              avatar={< Avatar style={{ transform: "scale(2)" }} alt={null} src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+              avatar={< Avatar style={{ transform: "scale(2)" }} alt={null} src={`${url}/avatar/${token.userName}.svg`}                   //src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
               />}
               label={
                 <Typography variant="h5" >
@@ -466,7 +466,9 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
                   style={{ width: "1.8rem", height: "1.8rem", }}
 
-                  src={"https://api.multiavatar.com/" + postArr[index].ownerName + ".svg"}   //src={friendObj[person]}
+                  src={`${url}/avatar/${postArr[index].ownerName}.svg`}
+                //  src={"https://api.multiavatar.com/" + postArr[index].ownerName + ".svg"}   //src={friendObj[person]}
+                //    src={`http://localhost/aaa.svg`} 
                 />
               }
               label={
@@ -537,7 +539,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
 
       <Button
-      
+
         style={{
           marginTop: "8px",
           borderTopLeftRadius: 0,
@@ -548,11 +550,11 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
           opacity: 0.8,
           ...display === "none" && { display: "none" },
           backgroundColor: theme.palette.background.default,
-          boxShadow:theme.shadows[1],
+          boxShadow: theme.shadows[1],
           color: theme.palette.type === "dark"
             ? theme.palette.text.secondary
             : theme.palette.primary.main
-          
+
 
         }}
         onClick={function () {
@@ -562,18 +564,18 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         }}
 
         size="small"
-    
+
         color="primary"
         fullWidth={true}
       >
 
-      
-        <ExpandMore  />
+
+        <ExpandMore />
 
       </Button>
 
 
- 
+
     </div>
   )
 }

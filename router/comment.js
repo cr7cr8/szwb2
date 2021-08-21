@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { User, Article, Comment } = require("../db/schema")
+const { User, Article, Comment, SubComment } = require("../db/schema")
 const { authenticateToken, generateAndDispatchToken } = require('../middleware/auth')
 const mongoose = require("mongoose");
 
@@ -84,6 +84,11 @@ router.get("/:postid", function (req, res, next) {
 
 
 router.get("/deletecomment/:commentid", authenticateToken, function (req, res, next) {
+ 
+  SubComment.deleteOne({ commentID: req.params.commentid }).then(doc => {
+   
+  })
+ 
   Comment.deleteOne({ commentID: req.params.commentid }).then(doc => {
     res.json(doc)
   })

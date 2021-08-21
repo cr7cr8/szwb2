@@ -2,16 +2,18 @@ import axios from 'axios'
 
 
 
-let url = ""
+let url = "";
+let avatarUrl =""
 
 if (process.env.NODE_ENV === "development") {
 
     // url="http://localhost/api"
-    url = "http://192.168.0.100/api"
+    url = "http://192.168.0.100/api";
+    avatarUrl = "http://192.168.0.100/api/avatar";
 }
 else {
     url = "/api"
-
+    avatarUrl="/api/avatar"
 }
 
 axios.interceptors.request.use(
@@ -38,5 +40,5 @@ axios.interceptors.request.use(
 
 
 
-export { axios };
+export { axios,avatarUrl };
 export default url;

@@ -68,3 +68,11 @@ Content-Type: application/json
 
 }
 ###
+
+
+GET https://api.multiavatar.com/yuan.svg
+
+
+
+
+###

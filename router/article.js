@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { User, Article, Comment } = require("../db/schema")
+const { User, Article, Comment, SubComment } = require("../db/schema")
 const { authenticateToken, generateAndDispatchToken } = require('../middleware/auth')
 const mongoose = require("mongoose");
 
@@ -46,8 +46,24 @@ router.post("/changeownername", authenticateToken,
     })
   },
 
+
+  function (req, res, next) {
+    SubComment.find({ "ownerName": req.body.newName }).then(docs => {
+      if (docs.length === 0) { next() }
+      else { res.json(false) }
+    })
+  },
+
+
+
   function (req, res, next) {
     Comment.updateMany({ "ownerName": req.user.userName }, { $set: { "ownerName": req.body.newName } }, { new: true }).then(docs => {
+      next()
+    })
+  },
+
+  function (req, res, next) {
+    SubComment.updateMany({ "ownerName": req.user.userName }, { $set: { "ownerName": req.body.newName } }, { new: true }).then(docs => {
       next()
     })
   },
@@ -122,6 +138,10 @@ router.get("/deletesinglepost/:postid", authenticateToken, function (req, res, n
 
 
   Comment.deleteMany({ postID: req.params.postid }).then(docs => {
+    // console.log(docs)
+  })
+
+  SubComment.deleteMany({ postID: req.params.postid }).then(docs => {
     // console.log(docs)
   })
 

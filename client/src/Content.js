@@ -122,10 +122,17 @@ export default function Content({ style }) {
             node.children.forEach(element => {
               arr.push(convertNodeToElement(element))
             })
+
+
+            const avatarUrl = `${url}/avatar${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") , node.attribs.imgurl.length)}`.replace(").",".")
+
+
+         //   alert(avatarUrl)
+
             return (
               <Chip classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
                 key={index}
-                avatar={< Avatar alt={null} src={node.attribs.imgurl.replace("url(", "").replace(")", "")}   //src={friendObj[person]}
+                avatar={< Avatar alt={null} src={avatarUrl}       //src={node.attribs.imgurl.replace("url(", "").replace(")", "")}   //src={friendObj[person]}
                 />}
                 label={
                   <Typography variant="body2">

@@ -27,7 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline } from "@material-ui/icons";
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useStyles } from './DraftEditor';
@@ -494,11 +494,14 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
   const [commentCount, setCommentCount] = useState(postArr[index].commentCount)
 
+  const [shrinkBar, setShrinkBar] = useState(false)
+
   useEffect(function () {
     // console.log(panelRef.current)
     //   console.log(window.getComputedStyle(panelRef.current)["height"])
 
     if (Number(window.getComputedStyle(panelRef.current)["height"].replace("px", "")) > 360) {
+      setShrinkBar(true)
       setHeight("360px")
       setDisplay("block")
     }
@@ -596,7 +599,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         {toHtml(postArr[index].content, postPicArr[index], inView)}
 
 
-        <Button
+        {shrinkBar && <Button
 
           style={{
             marginTop: "8px",
@@ -607,12 +610,12 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             borderBottomRightRadius: showComment ? 0 : "4px",
 
             padding: 0,
-            position: "absolute",
+            position: display === "none" ? "static" : "absolute",
             bottom: 0,
             opacity: 0.8,
-            ...display === "none" && { display: "none" },
+            //    ...display === "none" && { display: "none" },
             backgroundColor: theme.palette.background.default,
-            boxShadow: theme.shadows[5],
+            boxShadow: display === "none" ? theme.shadows[0] : theme.shadows[5],
 
             color: theme.palette.type === "dark"
               ? theme.palette.text.secondary
@@ -621,8 +624,8 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
           }}
           onClick={function () {
-            setHeight("auto")
-            setDisplay("none")
+            setHeight(pre => { return pre === "auto" ? "360px" : "auto" })
+            setDisplay(pre => { return pre === "none" ? "auto" : "none" })
 
           }}
 
@@ -633,9 +636,9 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         >
 
 
-          <ExpandMore />
+          {display === "none" ? <ExpandLess /> : <ExpandMore />}
 
-        </Button>
+        </Button>}
       </div>
       {showComment && <CommentContent
         key={postArr[index].postID}

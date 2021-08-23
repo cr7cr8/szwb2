@@ -192,6 +192,14 @@ export default function ContextProvider(props) {
         { backgroundImage: `url(${url}/picture/downloadbackpicture/60b701a9dc07780017dcfd38)`, color: "white" },
         { backgroundImage: "url(https://picsum.photos/1024/576)", color: "white" },
         { backgroundImage: "url(https://picsum.photos/512/288)", color: "white" },
+        { backgroundImage: "url(https://picsum.photos/800/450)", color: "white" },
+        { backgroundImage: "url(https://picsum.photos/640/360)", color: "white" },
+        { backgroundImage: "url(https://picsum.photos/600/337)", color: "white" },
+        { backgroundImage: "url(https://picsum.photos/640/361)", color: "white" },
+        { backgroundImage: "url(https://picsum.photos/600/338)", color: "white" },
+        { backgroundImage: "url(https://picsum.photos/800/451)", color: "white" },
+      
+        
       ],
       palette: {
         primary: primaryColor,

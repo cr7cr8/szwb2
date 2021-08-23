@@ -602,7 +602,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         {shrinkBar && <Button
 
           style={{
-            marginTop: "8px",
+      //      marginTop: "0px",
             borderTopLeftRadius: 0,
             borderTopRightRadius: 0,
 
@@ -610,18 +610,18 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             borderBottomRightRadius: showComment ? 0 : "4px",
 
             padding: 0,
-            position: display === "none" ? "static" : "absolute",
+            position: display === "none" ? "relative" : "absolute",
             bottom: 0,
             opacity: 0.8,
-            //    ...display === "none" && { display: "none" },
+         
             backgroundColor: theme.palette.background.default,
             boxShadow: display === "none" ? theme.shadows[0] : theme.shadows[5],
 
             color: theme.palette.type === "dark"
               ? theme.palette.text.secondary
-              : theme.palette.primary.main
-
-
+              : theme.palette.primary.main,
+             ...display==="none"&&{display:"block"},
+          
           }}
           onClick={function () {
             setHeight(pre => { return pre === "auto" ? "360px" : "auto" })
@@ -631,7 +631,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
           size="small"
 
-          color="primary"
+        //  color="primary"
           fullWidth={true}
         >
 

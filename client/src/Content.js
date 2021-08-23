@@ -620,8 +620,9 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             color: theme.palette.type === "dark"
               ? theme.palette.text.secondary
               : theme.palette.primary.main,
-             ...display==="none"&&{display:"block"},
-          
+             ...display==="none"&&{display:"flex"},
+            //verticalAlign:"top",
+
           }}
           onClick={function () {
             setHeight(pre => { return pre === "auto" ? "360px" : "auto" })

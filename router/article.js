@@ -5,9 +5,24 @@ const { User, Article, Comment, SubComment } = require("../db/schema")
 const { authenticateToken, generateAndDispatchToken } = require('../middleware/auth')
 const mongoose = require("mongoose");
 
+const { connSzwb2DB } = require("../db/db")
+
 const [{ checkConnState, deleteFileByPostID }] = require("../db/fileManager");
 
 
+// connSzwb2DB.db.collection("avatar.files").updateMany({ "metadata.ownerName": "LocalChrome" }, { $set: { "metadata.ownerName": "aaa" } })
+// .then(result=>{   console.log(result)})
+
+// setTimeout(() => {
+//   // connSzwb2DB.db.collection("avatar.files").find({ "metadata.ownerName": "LocalChrome"}).toArray(function (err, docs) {
+//   //   console.log(docs)
+//   // })
+
+//   connSzwb2DB.db.collection("avatar.files").updateMany({ "metadata.ownerName": "LocalChrome" }, { $set: { "metadata.ownerName": "aaa" } })
+//     .then(result => { console.log(result) })
+
+
+// }, 3000);
 
 
 
@@ -32,6 +47,14 @@ router.get("/count", function (req, res, next) {
 
 
 router.post("/changeownername", authenticateToken,
+
+  function (req, res, next) {
+    connSzwb2DB.db.collection("avatar.files").find({ "metadata.ownerName": req.body.newName }).toArray(function (err, docs) {
+      if (docs.length === 0) { next() }
+      else { res.json(false) }
+    })
+  },
+
   function (req, res, next) {
     Article.find({ "ownerName": req.body.newName }).then(docs => {
       if (docs.length === 0) { next() }
@@ -54,7 +77,18 @@ router.post("/changeownername", authenticateToken,
     })
   },
 
+  function (req, res, next) {
 
+    connSzwb2DB.db.collection("avatar.files").updateMany({ "metadata.ownerName": req.user.userName }, { $set: { "metadata.ownerName": req.body.newName } })
+      .then(result => {
+
+    //   console.log(result)
+
+        next()
+      })
+
+
+  },
 
   function (req, res, next) {
     Comment.updateMany({ "ownerName": req.user.userName }, { $set: { "ownerName": req.body.newName } }, { new: true }).then(docs => {
@@ -67,6 +101,9 @@ router.post("/changeownername", authenticateToken,
       next()
     })
   },
+
+
+
 
   function (req, res, next) {
     Article.updateMany({ "ownerName": req.user.userName }, { $set: { "ownerName": req.body.newName } }, { new: true }).then(docs => {
@@ -127,7 +164,7 @@ router.get("/singlepost/:num",
       else {
 
         Article.find({}).sort({ "postingTime": -1 }).limit(Number(req.params.num) + 1).then(docs => {
-          console.log(docs.length)
+          //  console.log(docs.length)
           res.json([docs.pop()])
         })
       }

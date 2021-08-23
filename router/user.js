@@ -8,7 +8,7 @@ const { authenticateToken, generateAndDispatchToken } = require('../middleware/a
 
 router.get("/register", function (req, res, next) {
 
-  console.log(req.headers)
+//  console.log(req.headers)
 
   res.send("fdfdf")
 })
@@ -28,7 +28,7 @@ router.post("/register", function (req, res, next) {
 
 
   req.body = { userName: "user" + Math.floor(Math.random() * 1000), userId: "u" + Math.floor(Math.random() * 1000000000) }
-  console.log(req.body)
+ // console.log(req.body)
   next()
 
 

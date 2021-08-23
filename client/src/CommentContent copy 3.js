@@ -249,7 +249,7 @@ function toPreHtml(editorContent, postID = "local") {
 }
 
 
-export default function CommentContent({ postID, index, toHtml, setCommentCount, commentCount, avatarPic }) {
+export default function CommentContent({ postID, index, toHtml, setCommentCount, commentCount }) {
 
   const {
 
@@ -330,7 +330,6 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
 
       display: "flex", alignItems: "center", justifyContent: "flex-start", flexWrap: isMobile ? "wrap" : "wrap",
 
-
       gap: theme.spacing(0),
       ...isSubCommentEditor && { marginLeft: "1.6rem" },
 
@@ -351,8 +350,8 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
           <Avatar alt={null}
             //   src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
 
-            src={avatarPic ? URL.createObjectURL(avatarPic) : `${url}/avatar/${token.userName}.svg`}
-          //   src={(svgCode)}
+            src={`${url}/avatar/${token.userName}.svg`}
+            //   src={(svgCode)}
           />
         }
         label={
@@ -596,7 +595,6 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
       display: "flex", flexDirection: "column", justifyContent: "space-between",
       // transition: "height 10s",
 
-
     }}>
 
       {(replyNum === 999) && createCommentEditor(false, null)}
@@ -663,8 +661,8 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
               avatar={
                 < Avatar alt={null}
                   //   style={{ width: "1.5rem", height: "1.5rem", }}
-                  //   src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
-                  src={avatarPic && token.userName === comment.ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${comment.ownerName}.svg`}
+               //   src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
+                  src={`${url}/avatar/${comment.ownerName}.svg`}
                 />
               }
               label={
@@ -712,7 +710,6 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
               commentObjList={commentObjList}
               setCommentArr={setCommentArr}
               token={token}
-              avatarPic={avatarPic}
             />
 
 
@@ -749,8 +746,7 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
             padding: 0, boxShadow: theme.shadows[0],
             color: theme.palette.type === "dark"
               ? theme.palette.text.secondary
-              : theme.palette.primary.main,
-            fontWeight: "bold",
+              : theme.palette.primary.main
           }}
           size="small" disableElevation fullWidth={true}
         >
@@ -774,15 +770,10 @@ class SubComments extends Component {
   constructor(props, context) {
     super(props, context)
 
+
     this.commentID = this.props.comment.commentID
-    this.state = {
-      subCommentArr: [],
-      showingCount: 5,
-    }
+    this.state = { subCommentArr: [] }
     this.subCommentCount = this.props.comment.subCommentCount
-
-
-
   }
 
   //shouldComponentUpdate(nextProps, nextState) { }
@@ -796,8 +787,7 @@ class SubComments extends Component {
       //   return pre
       // }
       return {
-        subCommentArr: [obj, ...arr,],
-        showingCount: Math.min(pre.showingCount + 1, pre.subCommentArr.length + 1)
+        subCommentArr: [obj, ...arr,]
       }
 
     })
@@ -808,14 +798,12 @@ class SubComments extends Component {
 
 
 
-    axios.get(`${url}/subcomment/${this.props.comment.commentID}`).then(response => {
+    axios.get(`${url}/subcomment/loadfive/${this.props.comment.commentID}/${Math.min(...this.state.subCommentArr.map(item => item.postingTime)) || Date.now()}`).then(response => {
 
 
 
       this.setState(pre => {
-        pre.subCommentArr = response.data
-        pre.showingCount = 5
-        return pre
+        return pre.subCommentArr = response.data
       })
 
       this.props.commentObjList.current.push(this)
@@ -826,12 +814,13 @@ class SubComments extends Component {
 
   clearSubComments = () => {
     this.setState(pre => {
-      pre.subCommentArr = []
-      pre.showingCount = 5
-      return pre
+      return pre.subCommentArr = []
     })
 
   }
+
+
+
 
   componentDidMount() {
     this.props.commentObjList.current.push(this)
@@ -842,141 +831,98 @@ class SubComments extends Component {
     return (
       <>
 
+
+
         {this.state.subCommentArr.map((subComment, subListIndex) => {
 
-          if ((subListIndex) > this.state.showingCount) {
-            return <></>
-          }
-          else if (subListIndex === (this.state.showingCount)) {
-            return (
+          return <span key={subComment.subCommentID}>
 
-              <div style={{ marginLeft: "3.6rem", marginRight: "4px", marginTop: "4px", display: "flex", justifyContent: "center", height: "1.5rem" }}>
-                <Button fullWidth={true} size="small"
-                  disableElevation={true}
-                  style={{
-                    // color: this.props.themepalette.type === "dark"
-                    //   ? this.props.theme.palette.text.secondary
-                    //   : this.props.theme.palette.primary.main,
-                    color: this.props.theme.palette.text.secondary,
-                    fontWeight: "bold",
+            <Chip
+              style={{
+                marginLeft: "1.6rem",
+                //  verticalAlign:"top",
+              }}
+              //  onClick={() => {
+              // token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+              // setReplyNum(listIndex)
+              // setTimeout(() => {
+              //   editor.current.focus();
+              //   EditorState.moveFocusToEnd(editorState);
 
-                  }}
+              // }, 0)
+              //alert(JSON.stringify(comment))
+              //    }}
 
-                  onClick={() => {
-                    this.setState(pre => {
+              // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
 
-                      return {
-                        ...pre,
-                        showingCount: Math.min(pre.showingCount + 5, pre.subCommentArr.length)
+              avatar={
+                < Avatar alt={null}
+                  //   style={{ width: "1.5rem", height: "1.5rem", }}
+                 // src={"https://api.multiavatar.com/" + subComment.ownerName + ".svg"}
+                  src={`${url}/avatar/${subComment.ownerName}.svg`}
+                //src={friendObj[person]}
 
-                      }
-
-                      //   return pre.showingCount = Math.min(pre.showingCount + 5, pre.subCommentArr.length)
-
-                    })
-
-                  }}
-
-                ><ExpandMore />{this.state.showingCount}/{this.state.subCommentArr.length}</Button>
-              </div>
-            )
-          }
-
-          else {
-            return <span key={subComment.subCommentID}>
-
-              <Chip
-                style={{
-                  marginLeft: "1.6rem",
-                  //  verticalAlign:"top",
-                }}
-                //  onClick={() => {
-                // token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-                // setReplyNum(listIndex)
-                // setTimeout(() => {
-                //   editor.current.focus();
-                //   EditorState.moveFocusToEnd(editorState);
-
-                // }, 0)
-                //alert(JSON.stringify(comment))
-                //    }}
-
-                // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-
-                avatar={
-                  < Avatar alt={null}
-                    //   style={{ width: "1.5rem", height: "1.5rem", }}
-                    // src={"https://api.multiavatar.com/" + subComment.ownerName + ".svg"}
-                    src={this.props.avatarPic && this.props.token.userName === subComment.ownerName ? URL.createObjectURL(this.props.avatarPic) : `${url}/avatar/${subComment.ownerName}.svg`}
-                  //src={friendObj[person]}
-
-                  />
-                }
-                label={
-                  <Typography
-                    style={{ fontWeight: "bold", fontSize: "0.9rem" }}>
-                    {subComment.ownerName}
-                    &nbsp;<span style={{ color: this.props.theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>
-                      {formatDistanceToNow(Number(subComment.postingTime)).replace("less than ", "").replace("about ", "")}
-                    </span>
-                  </Typography>
-                }
-
-              />
-
-              {this.props.token.userName === subComment.ownerName &&
-                <IconButton size="small"
-                  style={{ float: "right", marginTop: "4px" }}
-                  onClick={() => {
-
-
-                    axios.get(`${url}/subcomment/deletesubcomment/${subComment.subCommentID}`).then(reponse => {
-                      this.setState(pre => {
-                        return {
-                          subCommentArr: pre.subCommentArr.filter(item => { return item.subCommentID !== subComment.subCommentID }),
-
-
-                          showingCount: Math.max(pre.showingCount - 1, 0)
-                        }
-
-                      })
-
-
-                      //  alert(this.commentID)
-
-                      this.props.setCommentArr(pre => {
-                        // return pre.filter(item => {
-                        //   return item.commentID !== comment.commentID
-                        // })
-                        pre.forEach(item => {
-                          if (item.commentID === this.commentID) {
-                            if (item.subCommentCount) { item.subCommentCount-- }
-                            else { item.subCommentCount = 1 }
-                          }
-                        })
-                        return [...pre]
-                      })
-
-
-
-                    })
-                  }}
-                >
-                  <DeleteOutline style={{ fontSize: "1.5rem" }} />
-                </IconButton>
+                />
+              }
+              label={
+                <Typography
+                  style={{ fontWeight: "bold", fontSize: "0.9rem" }}>
+                  {subComment.ownerName}
+                  &nbsp;<span style={{ color: this.props.theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>
+                    {formatDistanceToNow(Number(subComment.postingTime)).replace("less than ", "").replace("about ", "")}
+                  </span>
+                </Typography>
               }
 
-              <Paper style={{ marginLeft: "3.6rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: this.props.theme.palette.background.default }}>
-                {this.props.toHtml(subComment.content, null, null, true)}
-              </Paper>
+            />
+
+            {this.props.token.userName === subComment.ownerName &&
+              <IconButton size="small"
+                style={{ float: "right", marginTop: "4px" }}
+                onClick={() => {
+
+
+                  axios.get(`${url}/subcomment/deletesubcomment/${subComment.subCommentID}`).then(reponse => {
+                    this.setState(pre => {
+                      return {
+                        subCommentArr: pre.subCommentArr.filter(item => { return item.subCommentID !== subComment.subCommentID })
+                      }
+
+                    })
+
+
+                    //  alert(this.commentID)
+
+                    this.props.setCommentArr(pre => {
+                      // return pre.filter(item => {
+                      //   return item.commentID !== comment.commentID
+                      // })
+                      pre.forEach(item => {
+                        if (item.commentID === this.commentID) {
+                          if (item.subCommentCount) { item.subCommentCount-- }
+                          else { item.subCommentCount = 1 }
+                        }
+                      })
+                      return [...pre]
+                    })
 
 
 
+                  })
+                }}
+              >
+                <DeleteOutline style={{ fontSize: "1.5rem" }} />
+              </IconButton>
+            }
+
+            <Paper style={{ marginLeft: "3.6rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: this.props.theme.palette.background.default }}>
+              {this.props.toHtml(subComment.content, null, null, true)}
+            </Paper>
 
 
 
-            </span>
-          }
+          </span>
+
         })
         }
 

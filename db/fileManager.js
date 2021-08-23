@@ -76,7 +76,7 @@ function uploadFile(connDB, collectionName, req, res, next) {
                 ...req.body.obj, fieldname, originalname, encoding, mimetype, size, oriantation,
 
                 mongooseID: String(mongooseID),
-                picName: req.body.obj.picName[index]
+                ...req.body.obj.picName&&{picName: req.body.obj.picName[index]},
             },
             contentType: file.mimetype,
         })
@@ -108,7 +108,7 @@ function uploadFile(connDB, collectionName, req, res, next) {
 
 function downloadFile(connDB, collectionName, req, res, next) {
 
-    console.log(mongoose.Types.ObjectId(req.params.id))
+    //console.log(mongoose.Types.ObjectId(req.params.id))
     var gfs = new mongoose.mongo.GridFSBucket(connDB.db, {   //connDB3.db
         chunkSizeBytes: 255 * 1024,
         bucketName: collectionName,
@@ -356,6 +356,10 @@ module.exports = [
     },
     {
         ...createFileManager(connEmojiDB, "emoji"),
+
+    },
+    {
+        ...createFileManager(connSzwb2DB, "avatar"),
 
     }
 

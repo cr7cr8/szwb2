@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 mongoose.connection.on('error', function (err) {
   // console.log('Mongoose default connection error: ' + err);
 
-  console.log("aaaaaaaaaaaaaaa")
+ // console.log("aaaaaaaaaaaaaaa")
 });
 
 const { connSzwb2DB, connEmojiDB, connPictureDB, connParam } = {

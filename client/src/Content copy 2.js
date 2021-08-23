@@ -67,8 +67,6 @@ export default function Content({ style }) {
     changeOwnerName,
   } = useContext(Context);
 
-  const [avatarPic, setAvatarPic] = useState()
-
   const [isFull, setIsFull] = useState(false)
   const theme = useTheme()
   const { editorPaperCss, className1, unstyledBlockCss, imageBlockCss, centerBlockCss, rightBlockCss, textFieldCss, labelShrinkCss } = useStyles({})
@@ -126,17 +124,15 @@ export default function Content({ style }) {
             })
 
 
-            const avatarUrl = `${url}/avatar${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/"), node.attribs.imgurl.length)}`.replace(").", ".")
+            const avatarUrl = `${url}/avatar${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") , node.attribs.imgurl.length)}`.replace(").",".")
 
 
-            const personName = node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") + 1, node.attribs.imgurl.length - 5)
-
-            //   alert(avatarUrl)
+         //   alert(avatarUrl)
 
             return (
               <Chip classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
                 key={index}
-                avatar={< Avatar alt={null} src={avatarPic && token.userName === personName ? URL.createObjectURL(avatarPic) : avatarUrl}       //src={node.attribs.imgurl.replace("url(", "").replace(")", "")}   //src={friendObj[person]}
+                avatar={< Avatar alt={null} src={avatarUrl}       //src={node.attribs.imgurl.replace("url(", "").replace(")", "")}   //src={friendObj[person]}
                 />}
                 label={
                   <Typography variant="body2">
@@ -230,10 +226,7 @@ export default function Content({ style }) {
     setOpen(false);
   };
 
-  const inputRef = useRef()
-  //file.localUrl = URL.createObjectURL(e.currentTarget.files[0])
 
-  const [showOk, setShowOk] = useState(true)
 
   return (
     <>
@@ -244,41 +237,17 @@ export default function Content({ style }) {
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">
 
-            <input type="file" style={{ display: "none" }} ref={inputRef}
-              onClick={function (e) {
-                e.currentTarget.value = null;
-              }}
 
-              accept="image/*"
-              onChange={function (e) {
-                if (e.currentTarget.files[0].name.trim().match(/\.(gif|jpe?g|tiff|png|webp|bmp|svg)$/i)) {
-                  setAvatarPic(e.currentTarget.files[0])
-                }
-              }}
-            />
             <Chip
               style={{ backgroundColor: "transparent" }}
-              avatar={< Avatar style={{ transform: "scale(2)" }} alt={null}
-                src={avatarPic ? URL.createObjectURL(avatarPic) : `${url}/avatar/${token.userName}.svg`}                   //src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
+              avatar={< Avatar style={{ transform: "scale(2)" }} alt={null} src={`${url}/avatar/${token.userName}.svg`}                   //src={"https://api.multiavatar.com/" + token.userName + ".svg"}   //src={friendObj[person]}
               />}
               label={
                 <Typography variant="h5" >
                   &nbsp;&nbsp;&nbsp;{token.userName}
                 </Typography>
               }
-              onClick={function () {
-                setAvatarPic(null); inputRef.current.click()
 
-
-
-
-
-              }}
-
-            // deleteIcon={<DeleteOutline>change</DeleteOutline>}
-            // onDelete={function(){
-
-            // }}
             />
 
 
@@ -317,12 +286,12 @@ export default function Content({ style }) {
             //  fullWidth
             />
           </DialogContent>
-          {showOk && <DialogActions>
+          <DialogActions>
             <Button onClick={function () {
 
               setNewName("")
               setOpen(false)
-              setAvatarPic(null)
+
             }}
               style={{
                 fontSize: "1.5rem",
@@ -336,78 +305,31 @@ export default function Content({ style }) {
           </Button>
             <Button onClick={function () {
               //   localStorage.set
-              setShowOk(false)
+
               const oldName = token.userName;
+              changeOwnerName(newName).then(result => {
 
 
-              if (avatarPic) {
 
-                const data = new FormData();
-                data.append('file', avatarPic);
-                data.append('obj',
-                  JSON.stringify({
-                    filename: avatarPic.name.trim(),
-                    ownerName: oldName,
-                    uploadTime: Date.now(),
-                    //   picName:[0]
+                if (!result) {
+                  alert("name is taken")
+                }
+                else {
+                  setPostArr(pre => {
+                    return [...pre.map(function (item) {
 
+
+                      if (item.ownerName === oldName) { item.ownerName = newName; return item }
+
+                      else { return item }
+                    })]
                   })
-                );
-                return axios.post(`${url}/avatar`, data, {
-                  headers: { 'content-type': 'multipart/form-data' },
-                }).then(response => {
-                  // alert(response.data);
-
-                  if (newName) {
-
-                    changeOwnerName(newName).then(result => {
-                      if (!result) {
-                        alert("name is taken")
-                      }
-                      else {
-                        setPostArr(pre => {
-                          return [...pre.map(function (item) {
-                            if (item.ownerName === oldName) { item.ownerName = newName; return item }
-                            else { return item }
-                          })]
-                        })
-                        setNewName("")
-                        setOpen(false)
-                        //    setAvatarPic(null)
-                      }
-                    })
-                  }
-                  else {
-                    setOpen(false)
-                    //     setAvatarPic(null)
-                  }
-                })
-              }
-              else {
-                if (newName) {
-
-                  changeOwnerName(newName).then(result => {
-                    if (!result) {
-                      alert("name is taken")
-                    }
-                    else {
-                      setPostArr(pre => {
-                        return [...pre.map(function (item) {
-                          if (item.ownerName === oldName) { item.ownerName = newName; return item }
-                          else { return item }
-                        })]
-                      })
-                      setNewName("")
-                      setOpen(false)
-                    }
-                  })
+                  setNewName("")
+                  setOpen(false)
                 }
 
 
-
-              }
-
-
+              })
 
 
 
@@ -422,8 +344,12 @@ export default function Content({ style }) {
               }}>
               OK
           </Button>
-          </DialogActions>}
+          </DialogActions>
         </Dialog>
+
+
+
+
 
 
         <Masonry
@@ -436,6 +362,8 @@ export default function Content({ style }) {
 
 
             return (
+
+
               <PaperContent
 
                 key={item.postID}
@@ -447,8 +375,6 @@ export default function Content({ style }) {
                 setOpen={setOpen}
 
                 mentionHeadAvatar={mentionHeadAvatar}
-                avatarPic={avatarPic}
-                setShowOk={setShowOk}
               />
             )
 
@@ -458,12 +384,12 @@ export default function Content({ style }) {
         </Masonry>
 
         <Paper
-          ref={ref}
           style={{
             padding: theme.spacing(1), margin: "auto", backgroundColor: theme.palette.background.default, width: "100%",
             opacity: Boolean(!isFull) && inView ? 1 : 0,
             display: "flex", justifyContent: "center", alignItems: "center"
-          }}>
+          }}
+          ref={ref}>
           <CircularProgress size="1.5rem" />
         </Paper>
 
@@ -475,8 +401,7 @@ export default function Content({ style }) {
 
 }
 
-function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, token, mentionBodyRoot2, mentionHeadAvatar, mentionBodyLabel, breakpointsAttribute,
-  deleteSinglePost, setOpen, avatarPic, setShowOk }) {
+function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, token, mentionBodyRoot2, mentionHeadAvatar, mentionBodyLabel, breakpointsAttribute, deleteSinglePost, setOpen }) {
   const theme = useTheme()
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -509,18 +434,20 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
   return (
 
 
+    <div ref={panelRef} style={{ position: "relative" }} >
 
 
 
+      <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref}
+        style={{
 
-    <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref} key={index}
-      style={{
 
-        padding: "0px", whiteSpace: "normal",
+          overflow: display === "none" ? "visible" : "hidden",
 
-      }} >
-      <div ref={panelRef} style={{ position: "relative", overflow: display === "none" ? "visible" : "hidden", height: height, }} >
 
+          padding: "0px", whiteSpace: "normal", height: height,
+
+        }} key={index}>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "2px", paddingBottom: "0px" }}>
 
@@ -534,8 +461,6 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
               onClick={function () {
                 token.userName === postArr[index].ownerName && setOpen(pre => !pre)
-
-                token.userName === postArr[index].ownerName && setShowOk(true)
               }}
 
               // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
@@ -545,9 +470,12 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
               avatar={
                 < Avatar alt={null}
-                  style={{ width: "1.8rem", height: "1.8rem", }}
-                  src={avatarPic && token.userName === postArr[index].ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${postArr[index].ownerName}.svg`}
 
+                  style={{ width: "1.8rem", height: "1.8rem", }}
+
+                  src={`${url}/avatar/${postArr[index].ownerName}.svg`}
+                //  src={"https://api.multiavatar.com/" + postArr[index].ownerName + ".svg"}   //src={friendObj[person]}
+                //    src={`http://localhost/aaa.svg`} 
                 />
               }
               label={
@@ -564,8 +492,10 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             />
             <IconButton size="small" style={{ justifySelf: "right" }}
               onClick={function () {
-
+                //   alert(postArr[index].postID)
                 setShowComment(pre => !pre)
+                setHeight("auto")
+                setDisplay("none")
                 axios.get(`${url}/comment/count/${postArr[index].postID}`).then(response => {
                   setCommentCount(response.data)
                 })
@@ -588,72 +518,72 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
           </IconButton>}
 
 
+
+
+
+
+
+
+
         </div>
 
 
 
 
         {toHtml(postArr[index].content, postPicArr[index], inView)}
-
-
-        <Button
-
-          style={{
-            marginTop: "8px",
-            borderTopLeftRadius: 0,
-            borderTopRightRadius: 0,
-
-            borderBottomLeftRadius: showComment ? 0 : "4px",
-            borderBottomRightRadius: showComment ? 0 : "4px",
-
-            padding: 0,
-            position: "absolute",
-            bottom: 0,
-            opacity: 0.8,
-            ...display === "none" && { display: "none" },
-            backgroundColor: theme.palette.background.default,
-            boxShadow: theme.shadows[5],
-
-            color: theme.palette.type === "dark"
-              ? theme.palette.text.secondary
-              : theme.palette.primary.main
-
-
-          }}
-          onClick={function () {
-            setHeight("auto")
-            setDisplay("none")
-
-          }}
-
-          size="small"
-
-          color="primary"
-          fullWidth={true}
-        >
-
-
-          <ExpandMore />
-
-        </Button>
-      </div>
-      {showComment && <CommentContent
-        key={postArr[index].postID}
-        postID={postArr[index].postID} index={index}
-        toHtml={toHtml} setCommentCount={setCommentCount}
-        commentCount={commentCount}
-        avatarPic={avatarPic}
-      />}
-
-
-    </Paper >
+        {/* {postArr[index].postID === "27762_1" && <CommentEditor postID={postArr[index].postID} />} */}
+        {showComment && <CommentContent
+          key={postArr[index].postID}
+          postID={postArr[index].postID} index={index}
+          toHtml={toHtml} setCommentCount={setCommentCount}
+          commentCount={commentCount}
+        />}
 
 
 
+      </Paper>
 
 
 
+      <Button
 
+        style={{
+          marginTop: "8px",
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          padding: 0,
+          position: "absolute",
+          bottom: 0,
+          opacity: 0.8,
+          ...display === "none" && { display: "none" },
+          backgroundColor: theme.palette.background.default,
+          boxShadow: theme.shadows[1],
+          color: theme.palette.type === "dark"
+            ? theme.palette.text.secondary
+            : theme.palette.primary.main
+
+
+        }}
+        onClick={function () {
+          setHeight("auto")
+          setDisplay("none")
+
+        }}
+
+        size="small"
+
+        color="primary"
+        fullWidth={true}
+      >
+
+
+        <ExpandMore />
+
+      </Button>
+
+
+
+    </div>
   )
 }
 

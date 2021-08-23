@@ -18,18 +18,6 @@ router.get("/:commentid", function (req, res, next) {
 })
 
 
-router.get("/loadfive/:commentid/:p", function (req, res, next) {
-
-
-  // console.log(req.params.commentid)
-   SubComment.find({ commentID: req.params.commentid }).sort({ "postingTime": -1 }).then(docs => {
-   // console.log(docs)
-     res.json(docs)
-   })
- 
-  
- })
- 
 
 
 router.get("/loadfive2/:commentID/:postingTime", function (req, res, next) {

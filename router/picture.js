@@ -25,7 +25,7 @@ router.post("/uploadpicture",
   uploadFile,
   function (req, res, next) {
 
-    console.log("got picture")
+   // console.log("got picture")
     res.json("got picture")
 
   })

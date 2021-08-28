@@ -319,7 +319,7 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
 
   }, [showComment])
 
-
+  
 
 
   function createCommentEditorHeader(isSubCommentEditor = false, commentID) {

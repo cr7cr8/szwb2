@@ -24,7 +24,7 @@ import { stateToHTML } from 'draft-js-export-html';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2, } from 'react-html-parser';
 import { makeStyles, styled, useTheme } from '@material-ui/core/styles';
 
-import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, IconButton, Icon, Chip, Divider, CircularProgress } from "@material-ui/core";
+import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, IconButton, Icon, Chip, Divider, CircularProgress, Collapse } from "@material-ui/core";
 
 import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, PaletteOutlined, Send, Reply, DeleteOutline, Cancel, ExpandMore } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -249,7 +249,7 @@ function toPreHtml(editorContent, postID = "local") {
 }
 
 
-export default function CommentContent({ postID, index, toHtml, setCommentCount, commentCount, avatarPic }) {
+export default function CommentContent({ postID, index, toHtml, setCommentCount, commentCount, avatarPic, showComment }) {
 
   const {
 
@@ -302,12 +302,6 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
 
 
   useEffect(function () {
-    setTimeout(() => {
-      editor.current.focus()
-      EditorState.moveFocusToEnd(editorState)
-    }, 0);
-
-
 
     axios.get(`${url}/comment/loadfive/${postID}/${Date.now()}`).then(response => {
 
@@ -315,13 +309,18 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
 
     })
 
-    // axios.get(`${url}/comment/${postID}`).then(response => {
-
-    //   setCommentArr(response.data)
-
-    // })
-
   }, [])
+
+  useEffect(function () {
+    !isMobile && showComment && setTimeout(() => {
+      editor.current.focus()
+      EditorState.moveFocusToEnd(editorState)
+    }, 0);
+
+  }, [showComment])
+
+
+
 
   function createCommentEditorHeader(isSubCommentEditor = false, commentID) {
 
@@ -619,10 +618,16 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
                 replyNum === listIndex
                   ? subCommentHead.clearSubComments()
                   : subCommentHead.loadSubComments()
+
+
+
                 setReplyNum(pre => pre === listIndex ? 999 : listIndex)
+
+
+
                 setTimeout(() => {
-                  editor.current.focus();
-                  EditorState.moveFocusToEnd(editorState);
+                  !isMobile && editor.current.focus();
+                  !isMobile && EditorState.moveFocusToEnd(editorState);
 
                 }, 0)
 
@@ -648,11 +653,13 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
                   ? subCommentHead.clearSubComments()
                   : subCommentHead.loadSubComments()
                 setReplyNum(pre => pre === listIndex ? 999 : listIndex)
-                setTimeout(() => {
-                  editor.current.focus();
-                  EditorState.moveFocusToEnd(editorState);
 
-                }, 0)
+                setTimeout(() => {
+
+                  !isMobile && editor.current.focus();
+                  !isMobile && EditorState.moveFocusToEnd(editorState);
+
+                }, 1000)
 
 
               }}
@@ -778,6 +785,7 @@ class SubComments extends Component {
     this.state = {
       subCommentArr: [],
       showingCount: 5,
+      open: false,
     }
     this.subCommentCount = this.props.comment.subCommentCount
 
@@ -787,6 +795,12 @@ class SubComments extends Component {
 
   //shouldComponentUpdate(nextProps, nextState) { }
   //componentDidUpdate(prevProps) { }
+  componentDidMount() {
+    this.props.commentObjList.current.push(this)
+  }
+
+
+
 
   updateSubCommentArr = (obj) => {
 
@@ -806,41 +820,50 @@ class SubComments extends Component {
 
   loadSubComments = () => {
 
-
-
     axios.get(`${url}/subcomment/${this.props.comment.commentID}`).then(response => {
-
-
-
       this.setState(pre => {
-        pre.subCommentArr = response.data
+        pre.subCommentArr = true ? response.data : pre.subCommentArr
         pre.showingCount = 5
         return pre
       })
 
-      this.props.commentObjList.current.push(this)
+      setTimeout(() => {
+        this.setState(pre => {
+          pre.open = true
+          return pre
+        })
 
-
+      }, 200);
     })
   }
 
   clearSubComments = () => {
     this.setState(pre => {
-      pre.subCommentArr = []
-      pre.showingCount = 5
+
+      pre.open = false
       return pre
+
     })
 
+    setTimeout(() => {
+      this.setState(pre => {
+
+        pre.subCommentArr = []
+        pre.showingCount = 5
+        return pre
+
+
+      })
+    }, 200);
+
   }
 
-  componentDidMount() {
-    this.props.commentObjList.current.push(this)
-  }
+
 
 
   render() {
     return (
-      <>
+      <Collapse in={Boolean(this.state.subCommentArr.length) && this.state.open}>
 
         {this.state.subCommentArr.map((subComment, subListIndex) => {
 
@@ -983,7 +1006,7 @@ class SubComments extends Component {
 
 
 
-      </>
+      </Collapse>
     )
 
 

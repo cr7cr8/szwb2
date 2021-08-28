@@ -16,7 +16,7 @@ import DetectableOverflow from 'react-detectable-overflow';
 
 
 
-import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, Chip, Link, IconButton, CircularProgress } from "@material-ui/core";
+import { Typography, Button, ButtonGroup, Container, Paper, Box, Avatar, Grid, Chip, Link, IconButton, CircularProgress, Collapse } from "@material-ui/core";
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -436,6 +436,7 @@ export default function Content({ style }) {
 
 
             return (
+            
               <PaperContent
 
                 key={item.postID}
@@ -641,13 +642,14 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
         </Button>}
       </div>
-      {showComment && <CommentContent
+      <Collapse in={showComment}><CommentContent
         key={postArr[index].postID}
         postID={postArr[index].postID} index={index}
         toHtml={toHtml} setCommentCount={setCommentCount}
         commentCount={commentCount}
         avatarPic={avatarPic}
-      />}
+        showComment={showComment}
+      /></Collapse>
 
 
     </Paper >

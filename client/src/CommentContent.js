@@ -595,6 +595,8 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
   }
 
   return (
+
+
     <Container disableGutters={true} maxWidth="lg" style={{
       backgroundColor: theme.palette.action.disabledBackground, paddingBottom: theme.spacing(0),
       //height:"auto",
@@ -605,141 +607,142 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
     }}>
 
       {(replyNum === 999) && createCommentEditor(false, null)}
-      {commentArr.map((comment, listIndex) => {
+      <Collapse in={commentArr.length&&showComment}>
+        {commentArr.map((comment, listIndex) => {
 
-        return (
-          <span key={comment.commentID}>
-
-
-
-            <Chip
-
-              style={{ verticalAlign: "top" }}
-
-              onClick={function () {
-                const subCommentHead = commentObjList.current.find(item => {
-                  return comment.commentID === item.commentID
-                })
-
-                replyNum === listIndex
-                  ? subCommentHead.clearSubComments()
-                  : subCommentHead.loadSubComments()
+          return (
+            <span key={comment.commentID}>
 
 
 
-                setReplyNum(pre => pre === listIndex ? 999 : listIndex)
+              <Chip
 
+                style={{ verticalAlign: "top" }}
 
-
-                setTimeout(() => {
-                  !isMobile && editor.current.focus();
-                  !isMobile && EditorState.moveFocusToEnd(editorState);
-
-                }, 0)
-
-              }}
-
-              deleteIcon={
-
-                <>{replyNum === listIndex
-                  ? <Cancel style={{ fontSize: "1.2rem", color: theme.palette.text.secondary, }} />
-                  : <Reply style={{ fontSize: "1.2rem", color: theme.palette.text.secondary, }} />
-                }
-                  <span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle" }}>
-                    {comment.subCommentCount}
-                  </span>
-                </>
-              }
-              onDelete={function () {
-                const subCommentHead = commentObjList.current.find(item => {
-                  return comment.commentID === item.commentID
-                })
-
-                replyNum === listIndex
-                  ? subCommentHead.clearSubComments()
-                  : subCommentHead.loadSubComments()
-                setReplyNum(pre => pre === listIndex ? 999 : listIndex)
-
-                setTimeout(() => {
-
-                  !isMobile && editor.current.focus();
-                  !isMobile && EditorState.moveFocusToEnd(editorState);
-
-                }, 1000)
-
-
-              }}
-
-              // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-              key={index}
-
-              avatar={
-                < Avatar alt={null}
-                  //   style={{ width: "1.5rem", height: "1.5rem", }}
-                  //   src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
-                  src={avatarPic && token.userName === comment.ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${comment.ownerName}.svg`}
-                />
-              }
-              label={
-                <Typography
-                  style={{ fontWeight: "bold", fontSize: "0.9rem" }}>
-                  {comment.ownerName}
-                  &nbsp;<span style={{ color: theme.palette.text.secondary, fontSize: "0.7rem", fontWeight: "normal" }}>
-                    {formatDistanceToNow(Number(comment.postingTime)).replace("less than ", "").replace("about ", "")}
-                  </span>
-                </Typography>
-              }
-
-            />
-
-
-
-            {token.userName == comment.ownerName && <IconButton size="small"
-              style={{ float: "right", }}
-              onClick={function () {
-
-                setCommentArr(pre => {
-                  return pre.filter(item => {
-                    return item.commentID !== comment.commentID
+                onClick={function () {
+                  const subCommentHead = commentObjList.current.find(item => {
+                    return comment.commentID === item.commentID
                   })
-                })
 
-                axios.get(`${url}/comment/deletecomment/${comment.commentID}`).then(response => {
-
-                  setCommentCount(pre => Number(pre) - 1)
-                })
-              }}
-            >
-              <DeleteOutline style={{ fontSize: "1.5rem" }} />
-            </IconButton>}
-
-            <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>
-              {toHtml(comment.content, null, null, true)}
-            </Paper>
-
-            {(replyNum === listIndex) && createCommentEditor(true, comment.commentID)}
-
-
-            <SubComments setReplyNum={setReplyNum} replyNum={replyNum} listIndex={listIndex}
-              commentArr={commentArr} toHtml={toHtml} comment={comment} theme={theme} index={index} editor={editor}
-              commentObjList={commentObjList}
-              setCommentArr={setCommentArr}
-              token={token}
-              avatarPic={avatarPic}
-              fullScreen={fullScreen}
-            />
-
-
-            {(listIndex !== commentArr.length - 1) && <Divider light={false} style={{ marginTop: "8px" }} />}
+                  replyNum === listIndex
+                    ? subCommentHead.clearSubComments()
+                    : subCommentHead.loadSubComments()
 
 
 
+                  setReplyNum(pre => pre === listIndex ? 999 : listIndex)
 
-          </span>
-        )
 
-      })}
 
+                  setTimeout(() => {
+                    !isMobile && editor.current.focus();
+                    !isMobile && EditorState.moveFocusToEnd(editorState);
+
+                  }, 0)
+
+                }}
+
+                deleteIcon={
+
+                  <>{replyNum === listIndex
+                    ? <Cancel style={{ fontSize: "1.2rem", color: theme.palette.text.secondary, }} />
+                    : <Reply style={{ fontSize: "1.2rem", color: theme.palette.text.secondary, }} />
+                  }
+                    <span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle" }}>
+                      {comment.subCommentCount}
+                    </span>
+                  </>
+                }
+                onDelete={function () {
+                  const subCommentHead = commentObjList.current.find(item => {
+                    return comment.commentID === item.commentID
+                  })
+
+                  replyNum === listIndex
+                    ? subCommentHead.clearSubComments()
+                    : subCommentHead.loadSubComments()
+                  setReplyNum(pre => pre === listIndex ? 999 : listIndex)
+
+                  setTimeout(() => {
+
+                    !isMobile && editor.current.focus();
+                    !isMobile && EditorState.moveFocusToEnd(editorState);
+
+                  }, 1000)
+
+
+                }}
+
+                // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+                key={index}
+
+                avatar={
+                  < Avatar alt={null}
+                    //   style={{ width: "1.5rem", height: "1.5rem", }}
+                    //   src={"https://api.multiavatar.com/" + comment.ownerName + ".svg"}   //src={friendObj[person]}
+                    src={avatarPic && token.userName === comment.ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${comment.ownerName}.svg`}
+                  />
+                }
+                label={
+                  <Typography
+                    style={{ fontWeight: "bold", fontSize: "0.9rem" }}>
+                    {comment.ownerName}
+                    &nbsp;<span style={{ color: theme.palette.text.secondary, fontSize: "0.7rem", fontWeight: "normal" }}>
+                      {formatDistanceToNow(Number(comment.postingTime)).replace("less than ", "").replace("about ", "")}
+                    </span>
+                  </Typography>
+                }
+
+              />
+
+
+
+              {token.userName == comment.ownerName && <IconButton size="small"
+                style={{ float: "right", }}
+                onClick={function () {
+
+                  setCommentArr(pre => {
+                    return pre.filter(item => {
+                      return item.commentID !== comment.commentID
+                    })
+                  })
+
+                  axios.get(`${url}/comment/deletecomment/${comment.commentID}`).then(response => {
+
+                    setCommentCount(pre => Number(pre) - 1)
+                  })
+                }}
+              >
+                <DeleteOutline style={{ fontSize: "1.5rem" }} />
+              </IconButton>}
+
+              <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>
+                {toHtml(comment.content, null, null, true)}
+              </Paper>
+
+              {(replyNum === listIndex) && createCommentEditor(true, comment.commentID)}
+
+
+              <SubComments setReplyNum={setReplyNum} replyNum={replyNum} listIndex={listIndex}
+                commentArr={commentArr} toHtml={toHtml} comment={comment} theme={theme} index={index} editor={editor}
+                commentObjList={commentObjList}
+                setCommentArr={setCommentArr}
+                token={token}
+                avatarPic={avatarPic}
+                fullScreen={fullScreen}
+              />
+
+
+              {(listIndex !== commentArr.length - 1) && <Divider light={false} style={{ marginTop: "8px" }} />}
+
+
+
+
+            </span>
+          )
+
+        })}
+      </Collapse>
 
       {commentArr.length < commentCount
         ? <Button
@@ -778,6 +781,7 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
         : <div style={{ marginTop: "16px" }}></div>
       }
     </Container>
+
   )
 
 }
@@ -857,27 +861,21 @@ class SubComments extends Component {
           pre.open = true
           return pre
         })
-
       }, 200);
     })
   }
 
   clearSubComments = () => {
     this.setState(pre => {
-
       pre.open = false
       return pre
-
     })
 
     setTimeout(() => {
       this.setState(pre => {
-
         pre.subCommentArr = []
         pre.showingCount = 5
         return pre
-
-
       })
     }, 200);
 

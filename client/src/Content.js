@@ -27,7 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline, FullscreenOutlined } from "@material-ui/icons";
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline, FullscreenOutlined, CloseOutlined } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useStyles } from './DraftEditor';
@@ -548,7 +548,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
       {!isMobile && <Dialog
         open={fullScreen}
-        onClose={function () { setFullScreen(false);  }}
+        onClose={function () { setFullScreen(false); }}
         scroll={"paper"}
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
@@ -594,6 +594,9 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             }
 
           />
+
+
+
           <IconButton size="small" style={{ justifySelf: "right" }}
             onClick={function () {
 
@@ -608,15 +611,15 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             &nbsp;<span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{commentCount}</span>
           </IconButton>
 
-          <IconButton size="small"
-            onClick={function (e) {
-              e.preventDefault()
-              e.stopPropagation()
-
+          <IconButton size="small" style={{ float: "right" }}
+            onClick={function () {
+              setFullScreen(false)
             }}
           >
-            <DeleteOutline style={{ fontSize: "1.5rem" }} />
+
+            <CloseOutlined fontSize="medium" />
           </IconButton>
+
 
 
         </DialogTitle>
@@ -642,6 +645,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             showComment={showComment}
             fullScreen={fullScreen}
           /></Collapse>
+
 
 
         </DialogContent>
@@ -788,7 +792,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
         </Button>}
       </div>
-      <Collapse in={showComment}><CommentContent
+      {/* <Collapse in={showComment}><CommentContent
         key={postArr[index].postID}
         postID={postArr[index].postID} index={index}
         toHtml={toHtml} setCommentCount={setCommentCount}
@@ -796,8 +800,18 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         avatarPic={avatarPic}
         showComment={showComment}
         fullScreen={fullScreen}
-      /></Collapse>
+      /></Collapse> */}
 
+
+      {showComment && <CommentContent
+        key={postArr[index].postID}
+        postID={postArr[index].postID} index={index}
+        toHtml={toHtml} setCommentCount={setCommentCount}
+        commentCount={commentCount}
+        avatarPic={avatarPic}
+        showComment={showComment}
+        fullScreen={fullScreen}
+      />}
 
     </Paper >
 
@@ -867,7 +881,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
           mainSrc={images[photoIndex]}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => { setIsOpen(false);setFullVisible(true) }}
+          onCloseRequest={() => { setIsOpen(false); setFullVisible(true) }}
           onMovePrevRequest={() =>
             setPhotoIndex(
               pre => (pre + images.length - 1) % images.length,
@@ -968,7 +982,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
           mainSrc={images[photoIndex]}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => { setIsOpen(false);setFullVisible(true) }}
+          onCloseRequest={() => { setIsOpen(false); setFullVisible(true) }}
           onMovePrevRequest={() =>
             setPhotoIndex(
               pre => (pre + images.length - 1) % images.length,
@@ -1089,7 +1103,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
           mainSrc={images[photoIndex]}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => { setIsOpen(false);setFullVisible(true) }}
+          onCloseRequest={() => { setIsOpen(false); setFullVisible(true) }}
           onMovePrevRequest={() =>
             setPhotoIndex(
               pre => (pre + images.length - 1) % images.length,
@@ -1233,7 +1247,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
           mainSrc={images[photoIndex]}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => { setIsOpen(false);setFullVisible(true) }}
+          onCloseRequest={() => { setIsOpen(false); setFullVisible(true) }}
           onMovePrevRequest={() =>
             setPhotoIndex(
               pre => (pre + images.length - 1) % images.length,

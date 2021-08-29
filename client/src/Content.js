@@ -27,7 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline } from "@material-ui/icons";
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline, FullscreenOutlined } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useStyles } from './DraftEditor';
@@ -54,6 +54,8 @@ import 'react-image-lightbox/style.css'; // This only needs to be imported once 
 import { useInView } from 'react-intersection-observer';
 import CommentContent from "./CommentContent";
 
+import Grow from '@material-ui/core/Grow';
+
 
 export default function Content({ style }) {
 
@@ -74,7 +76,7 @@ export default function Content({ style }) {
   const { editorPaperCss, className1, unstyledBlockCss, imageBlockCss, centerBlockCss, rightBlockCss, textFieldCss, labelShrinkCss } = useStyles({})
   const { mentionHeadRoot, mentionBodyRoot, mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel, } = mentionStyles();
 
-
+  const [fullVisible, setFullVisible] = useState(true)
   const toHtml = useCallback(
     function (preHtml, imgArr, inView, isComment) {
       //  alert("bbbb")
@@ -86,7 +88,7 @@ export default function Content({ style }) {
 
 
           if (node.name === "imgtag") {
-            return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} />)
+            return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} fullVisible={fullVisible} setFullVisible={setFullVisible} />)
           }
           if (node.name === "emoji") {
 
@@ -436,7 +438,9 @@ export default function Content({ style }) {
 
 
             return (
-            
+
+
+
               <PaperContent
 
                 key={item.postID}
@@ -450,7 +454,10 @@ export default function Content({ style }) {
                 mentionHeadAvatar={mentionHeadAvatar}
                 avatarPic={avatarPic}
                 setShowOk={setShowOk}
+                fullVisible={fullVisible}
+
               />
+
             )
 
           })}
@@ -477,7 +484,10 @@ export default function Content({ style }) {
 }
 
 function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, token, mentionBodyRoot2, mentionHeadAvatar, mentionBodyLabel, breakpointsAttribute,
-  deleteSinglePost, setOpen, avatarPic, setShowOk }) {
+  deleteSinglePost, setOpen, avatarPic, setShowOk,
+  fullVisible,
+
+}) {
   const theme = useTheme()
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -497,6 +507,11 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
   const [shrinkBar, setShrinkBar] = useState(false)
 
+  //const [show,setShow] = useState(true)
+
+
+  const [fullScreen, setFullScreen] = useState(false)
+
   useEffect(function () {
     // console.log(panelRef.current)
     //   console.log(window.getComputedStyle(panelRef.current)["height"])
@@ -510,11 +525,14 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
   }, [])
 
 
+
+
+
   return (
 
 
 
-
+    // <Grow key={index + "_"} in={show} timeout={300} >
 
 
     <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref} key={index}
@@ -523,6 +541,120 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         padding: "0px", whiteSpace: "normal",
 
       }} >
+
+
+
+
+
+      {!isMobile && <Dialog
+        open={fullScreen}
+        onClose={function () { setFullScreen(false);  }}
+        scroll={"paper"}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+        style={{ display: fullVisible ? "block" : "none" }}
+      >
+        <DialogTitle id="scroll-dialog-title"
+
+          style={{ padding: "8px 16px" }}
+
+        >
+          <Chip
+
+
+            //style={{ backgroundColor: "transparent" }}
+
+            onClick={function () {
+              token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+
+              token.userName === postArr[index].ownerName && setShowOk(true)
+            }}
+
+            // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+            key={index}
+
+
+
+            avatar={
+              < Avatar alt={null}
+                style={{ width: "1.8rem", height: "1.8rem", }}
+                src={avatarPic && token.userName === postArr[index].ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${postArr[index].ownerName}.svg`}
+
+              />
+            }
+            label={
+              <Typography
+
+
+                style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", ...token.userName === postArr[index].ownerName && { color: theme.palette.primary.main, } }}>
+                {postArr[index].ownerName}<br />
+                <span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>{formatDistanceToNow(postArr[index].postingTime)}</span>
+
+              </Typography>
+            }
+
+          />
+          <IconButton size="small" style={{ justifySelf: "right" }}
+            onClick={function () {
+
+              setShowComment(pre => !pre)
+              axios.get(`${url}/comment/count/${postArr[index].postID}`).then(response => {
+                setCommentCount(response.data)
+              })
+            }}
+          >
+
+            <TextsmsOutlined style={{ fontSize: "1.5rem" }} />
+            &nbsp;<span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{commentCount}</span>
+          </IconButton>
+
+          <IconButton size="small"
+            onClick={function (e) {
+              e.preventDefault()
+              e.stopPropagation()
+
+            }}
+          >
+            <DeleteOutline style={{ fontSize: "1.5rem" }} />
+          </IconButton>
+
+
+        </DialogTitle>
+
+
+        <DialogContent dividers={true} style={{ padding: 0 }}>
+          <DialogContentText
+            style={{ padding: "24px" }}
+            id="scroll-dialog-description"
+            //     ref={descriptionElementRef}
+            tabIndex={-1}
+          >
+            {toHtml(postArr[index].content, postPicArr[index], inView)}
+
+          </DialogContentText>
+
+          <Collapse in={showComment}><CommentContent
+            key={postArr[index].postID}
+            postID={postArr[index].postID} index={index}
+            toHtml={toHtml} setCommentCount={setCommentCount}
+            commentCount={commentCount}
+            avatarPic={avatarPic}
+            showComment={showComment}
+            fullScreen={fullScreen}
+          /></Collapse>
+
+
+        </DialogContent>
+
+      </Dialog>}
+
+
+
+
+
+
+
+
       <div ref={panelRef} style={{ position: "relative", overflow: display === "none" ? "visible" : "hidden", height: height, }} >
 
 
@@ -566,6 +698,18 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
               }
 
             />
+
+
+            {!isMobile && <IconButton size="small" style={{ justifySelf: "right" }}
+              onClick={function () {
+                setFullScreen(true)
+              }}
+            >
+
+              <FullscreenOutlined fontSize="medium" />
+            </IconButton>
+            }
+
             <IconButton size="small" style={{ justifySelf: "right" }}
               onClick={function () {
 
@@ -576,9 +720,11 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
               }}
             >
 
-              <TextsmsOutlined style={{ fontSize: "1.2rem" }} />
+              <TextsmsOutlined style={{ fontSize: "1.5rem" }} />
               &nbsp;<span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{commentCount}</span>
             </IconButton>
+
+
 
 
           </div>
@@ -603,7 +749,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         {shrinkBar && <Button
 
           style={{
-      //      marginTop: "0px",
+            //      marginTop: "0px",
             borderTopLeftRadius: 0,
             borderTopRightRadius: 0,
 
@@ -614,14 +760,14 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             position: display === "none" ? "relative" : "absolute",
             bottom: 0,
             opacity: 0.8,
-         
+
             backgroundColor: theme.palette.background.default,
             boxShadow: display === "none" ? theme.shadows[0] : theme.shadows[5],
 
             color: theme.palette.type === "dark"
               ? theme.palette.text.secondary
               : theme.palette.primary.main,
-             ...display==="none"&&{display:"flex"},
+            ...display === "none" && { display: "flex" },
             //verticalAlign:"top",
 
           }}
@@ -633,7 +779,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
           size="small"
 
-        //  color="primary"
+          //  color="primary"
           fullWidth={true}
         >
 
@@ -649,6 +795,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         commentCount={commentCount}
         avatarPic={avatarPic}
         showComment={showComment}
+        fullScreen={fullScreen}
       /></Collapse>
 
 
@@ -657,7 +804,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
 
 
-
+    // </Grow>
 
 
   )
@@ -665,7 +812,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
 
 
-function ImgTag({ picArr, picName, ...props }) {
+function ImgTag({ picArr, picName, setFullVisible, ...props }) {
 
   //  const { editorContent, setEditorContent, lgSizeObj, smSizeObj, deviceSize, picArr, setPicArr } = useContext(Context1);
   const theme = useTheme()
@@ -676,6 +823,12 @@ function ImgTag({ picArr, picName, ...props }) {
 
   const [photoIndex, setPhotoIndex] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
+
+  // useEffect(function(){
+  //   setFullVisible(!isOpen)
+  // },[isOpen])
+
+
 
   if (picNum === 1) {
 
@@ -705,7 +858,7 @@ function ImgTag({ picArr, picName, ...props }) {
         overflow: "hidden",
 
       }} onClick={function () {
-
+        setFullVisible(false)
         setIsOpen(true)
 
 
@@ -714,7 +867,7 @@ function ImgTag({ picArr, picName, ...props }) {
           mainSrc={images[photoIndex]}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
+          onCloseRequest={() => { setIsOpen(false);setFullVisible(true) }}
           onMovePrevRequest={() =>
             setPhotoIndex(
               pre => (pre + images.length - 1) % images.length,
@@ -778,6 +931,7 @@ function ImgTag({ picArr, picName, ...props }) {
           onClick={function () {
             setPhotoIndex(0)
             setIsOpen(true)
+            setFullVisible(false)
             //    setPicArr(pre => [pre[1]])
           }}
 
@@ -805,6 +959,7 @@ function ImgTag({ picArr, picName, ...props }) {
             //    setPicArr(pre => [pre[0]])
             setPhotoIndex(1)
             setIsOpen(true)
+            setFullVisible(false)
           }}
         />
 
@@ -813,7 +968,7 @@ function ImgTag({ picArr, picName, ...props }) {
           mainSrc={images[photoIndex]}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
+          onCloseRequest={() => { setIsOpen(false);setFullVisible(true) }}
           onMovePrevRequest={() =>
             setPhotoIndex(
               pre => (pre + images.length - 1) % images.length,
@@ -877,6 +1032,7 @@ function ImgTag({ picArr, picName, ...props }) {
             //    setPicArr(pre => [pre[1], pre[2]])
             setPhotoIndex(0)
             setIsOpen(true)
+            setFullVisible(false)
           }}
 
         />
@@ -902,6 +1058,7 @@ function ImgTag({ picArr, picName, ...props }) {
             //   setPicArr(pre => [pre[0], pre[2]])
             setPhotoIndex(1)
             setIsOpen(true)
+            setFullVisible(false)
           }} />
 
         <div style={{
@@ -925,13 +1082,14 @@ function ImgTag({ picArr, picName, ...props }) {
             //   setPicArr(pre => [pre[0], pre[1]])
             setPhotoIndex(2)
             setIsOpen(true)
+            setFullVisible(false)
           }} />
 
         {isOpen && <Lightbox
           mainSrc={images[photoIndex]}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
+          onCloseRequest={() => { setIsOpen(false);setFullVisible(true) }}
           onMovePrevRequest={() =>
             setPhotoIndex(
               pre => (pre + images.length - 1) % images.length,
@@ -997,6 +1155,7 @@ function ImgTag({ picArr, picName, ...props }) {
           //  setPicArr(pre => [pre[1], pre[2], pre[3]])
           setPhotoIndex(0)
           setIsOpen(true)
+          setFullVisible(false)
         }} />
 
         <div style={{
@@ -1019,6 +1178,7 @@ function ImgTag({ picArr, picName, ...props }) {
           //   setPicArr(pre => [pre[0], pre[2], pre[3]])
           setPhotoIndex(1)
           setIsOpen(true)
+          setFullVisible(false)
         }} />
 
         <div style={{
@@ -1042,6 +1202,7 @@ function ImgTag({ picArr, picName, ...props }) {
               //      setPicArr(pre => [pre[0], pre[1], pre[3]])
               setPhotoIndex(2)
               setIsOpen(true)
+              setFullVisible(false)
             }}
         />
 
@@ -1066,12 +1227,13 @@ function ImgTag({ picArr, picName, ...props }) {
             //   setPicArr(pre => [pre[1], pre[2], pre[3]])
             setPhotoIndex(3)
             setIsOpen(true)
+            setFullVisible(false)
           }} />
         {isOpen && <Lightbox
           mainSrc={images[photoIndex]}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
+          onCloseRequest={() => { setIsOpen(false);setFullVisible(true) }}
           onMovePrevRequest={() =>
             setPhotoIndex(
               pre => (pre + images.length - 1) % images.length,
@@ -1085,22 +1247,8 @@ function ImgTag({ picArr, picName, ...props }) {
         />}
 
       </div>
-
-
-
-
-
     )
-
-
-
   }
-
-
-
-
-
-
 
 }
 

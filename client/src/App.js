@@ -1,3 +1,9 @@
+
+
+
+
+
+
 import logo from './logo.svg';
 import './App.css';
 
@@ -14,6 +20,8 @@ import { useEffect, useState, useContext, useRef } from 'react';
 import { Context } from "./ContextProvider"
 
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2, } from 'react-html-parser';
+
+
 
 //import multiavatar from '@multiavatar/multiavatar'
 //import yellow from '@material-ui/core/colors/yellow';
@@ -55,17 +63,17 @@ function App() {
 
       </Grid>
 
-      {/* <div style={{ margin: "0px" }} /> */}
+
 
 
 
       <Content />
 
 
-      {/* <div style={{ margin: "auto", backgroundColor: "pink", width: "200px", height: "30px" }} ref={ref}>{inView + ""}</div> */}
 
     </>
   );
 }
 
 export default App;
+

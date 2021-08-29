@@ -249,7 +249,7 @@ function toPreHtml(editorContent, postID = "local") {
 }
 
 
-export default function CommentContent({ postID, index, toHtml, setCommentCount, commentCount, avatarPic, showComment }) {
+export default function CommentContent({ postID, index, toHtml, setCommentCount, commentCount, avatarPic, showComment, fullScreen }) {
 
   const {
 
@@ -306,10 +306,16 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
     axios.get(`${url}/comment/loadfive/${postID}/${Date.now()}`).then(response => {
 
       setCommentArr(response.data)
-
+      setReplyNum(999)
     })
 
-  }, [])
+  }, [fullScreen])
+
+
+
+
+
+
 
   useEffect(function () {
     !isMobile && showComment && setTimeout(() => {
@@ -319,7 +325,7 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
 
   }, [showComment])
 
-  
+
 
 
   function createCommentEditorHeader(isSubCommentEditor = false, commentID) {
@@ -720,6 +726,7 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
               setCommentArr={setCommentArr}
               token={token}
               avatarPic={avatarPic}
+              fullScreen={fullScreen}
             />
 
 
@@ -795,6 +802,24 @@ class SubComments extends Component {
 
   //shouldComponentUpdate(nextProps, nextState) { }
   //componentDidUpdate(prevProps) { }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.fullScreen !== prevProps.fullScreen) {
+
+
+      axios.get(`${url}/subcomment/${this.props.comment.commentID}`).then(response => {
+        this.setState(pre => {
+          pre.subCommentArr = response.data
+          pre.showingCount = 5
+          return pre
+        })
+
+      })
+
+
+    }
+  }
+
   componentDidMount() {
     this.props.commentObjList.current.push(this)
   }

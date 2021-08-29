@@ -89,7 +89,7 @@ export default function ContextProvider(props) {
 
     return axios.post(`${url}/article/changeownername`, { newName }).then(response => {
 
-     
+
 
       if (!response.data) {
         return response.data
@@ -111,7 +111,7 @@ export default function ContextProvider(props) {
 
   const getSinglePost = function () {
     const postingTime = Math.min(...postArr.map(item => item.postingTime), Date.now())
- //   console.log(...postArr.map(item => item.postingTime))
+    //   console.log(...postArr.map(item => item.postingTime))
 
 
 
@@ -145,7 +145,10 @@ export default function ContextProvider(props) {
     return axios.get(`${url}/article/deletesinglepost/${postID}`).then(response => {
       const postIndex = postArr.findIndex(item => { return item.postID === postID })
 
-      setPostArr(pre => { return pre.filter(item => item.postID !== postID) })
+
+
+
+      setPostArr(pre => { return pre = pre.filter(item => item.postID !== postID) })
       setPostPicArr(pre => {
         return pre.filter((item, index) => { return index !== postIndex })
 
@@ -159,7 +162,7 @@ export default function ContextProvider(props) {
 
 
 
-  const sizeArr = ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
+  const sizeArr = isMobile ? ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"] : ["1.2rem", "1.2rem", "1.2rem", "1.2rem", "1.2rem"]
   const iconSizeArr = ["2rem", "2rem", "2rem", "2rem", "2rem"]
   //const iconSizeArr = ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
 
@@ -198,8 +201,8 @@ export default function ContextProvider(props) {
         { backgroundImage: "url(https://picsum.photos/640/361)", color: "white" },
         { backgroundImage: "url(https://picsum.photos/600/338)", color: "white" },
         { backgroundImage: "url(https://picsum.photos/800/451)", color: "white" },
-      
-        
+
+
       ],
       palette: {
         primary: primaryColor,
@@ -281,7 +284,7 @@ export default function ContextProvider(props) {
   const xl = useMediaQuery(theme.breakpoints.only('xl'));
 
   const deviceSize = xs ? "xs" : sm ? "sm" : md ? "md" : lg ? "lg" : "xl"
-  const lgSizeObj = { xs: "2.5rem", sm: "2.5rem", md: "2.5rem", lg: "2.5rem", xl: "2.5rem" }
+  const lgSizeObj = { xs: "1.5rem", sm: "2.5rem", md: "2.5rem", lg: "2.5rem", xl: "2.5rem" }
   const smSizeObj = { xs: "1rem", sm: "1rem", md: "1rem", lg: "1rem", xl: "1rem" }
 
   //const [picArr, setPicArr] = useState([])

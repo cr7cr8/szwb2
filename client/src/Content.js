@@ -746,9 +746,9 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
 
 
-
-        {toHtml(postArr[index].content, postPicArr[index], inView)}
-
+      
+          {toHtml(postArr[index].content, postPicArr[index], inView)}
+     
 
         {shrinkBar && <Button
 

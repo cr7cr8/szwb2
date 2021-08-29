@@ -215,7 +215,7 @@ export default function ContextProvider(props) {
         body2: breakpointsAttribute(["fontSize", ...sizeArr])
       },
 
-
+   
       overrides: {
         //     MuiInputLabel: {
         //       root: {
@@ -234,6 +234,14 @@ export default function ContextProvider(props) {
         MuiAvatar: {
           root: {
             ...breakpointsAttribute(["width", ...iconSizeArr], ["height", ...iconSizeArr]),
+          }
+        },
+
+
+   
+        MuiDialogContentText:{
+          root:{
+            ...breakpointsAttribute(["fontSize", ...sizeArr])
           }
         },
 

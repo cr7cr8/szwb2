@@ -186,7 +186,7 @@ export default function Content({ style }) {
       })
 
       return html
-    }, [])
+    }, [mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel])
 
 
 

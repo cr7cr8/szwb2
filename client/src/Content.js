@@ -27,7 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 
-import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline } from "@material-ui/icons";
+import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline, FullscreenOutlined, CloseOutlined } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useStyles } from './DraftEditor';
@@ -54,6 +54,8 @@ import 'react-image-lightbox/style.css'; // This only needs to be imported once 
 import { useInView } from 'react-intersection-observer';
 import CommentContent from "./CommentContent";
 
+import Grow from '@material-ui/core/Grow';
+
 
 export default function Content({ style }) {
 
@@ -74,7 +76,7 @@ export default function Content({ style }) {
   const { editorPaperCss, className1, unstyledBlockCss, imageBlockCss, centerBlockCss, rightBlockCss, textFieldCss, labelShrinkCss } = useStyles({})
   const { mentionHeadRoot, mentionBodyRoot, mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel, } = mentionStyles();
 
-
+  const [fullVisible, setFullVisible] = useState(true)
   const toHtml = useCallback(
     function (preHtml, imgArr, inView, isComment) {
       //  alert("bbbb")
@@ -86,7 +88,7 @@ export default function Content({ style }) {
 
 
           if (node.name === "imgtag") {
-            return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} />)
+            return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} fullVisible={fullVisible} setFullVisible={setFullVisible} />)
           }
           if (node.name === "emoji") {
 
@@ -184,7 +186,7 @@ export default function Content({ style }) {
       })
 
       return html
-    }, [])
+    }, [mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel])
 
 
 
@@ -436,7 +438,9 @@ export default function Content({ style }) {
 
 
             return (
-            
+
+
+
               <PaperContent
 
                 key={item.postID}
@@ -450,7 +454,10 @@ export default function Content({ style }) {
                 mentionHeadAvatar={mentionHeadAvatar}
                 avatarPic={avatarPic}
                 setShowOk={setShowOk}
+                fullVisible={fullVisible}
+
               />
+
             )
 
           })}
@@ -477,7 +484,10 @@ export default function Content({ style }) {
 }
 
 function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, token, mentionBodyRoot2, mentionHeadAvatar, mentionBodyLabel, breakpointsAttribute,
-  deleteSinglePost, setOpen, avatarPic, setShowOk }) {
+  deleteSinglePost, setOpen, avatarPic, setShowOk,
+  fullVisible,
+
+}) {
   const theme = useTheme()
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -497,6 +507,11 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
   const [shrinkBar, setShrinkBar] = useState(false)
 
+  //const [show,setShow] = useState(true)
+
+
+  const [fullScreen, setFullScreen] = useState(false)
+
   useEffect(function () {
     // console.log(panelRef.current)
     //   console.log(window.getComputedStyle(panelRef.current)["height"])
@@ -510,11 +525,14 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
   }, [])
 
 
+
+
+
   return (
 
 
 
-
+    // <Grow key={index + "_"} in={show} timeout={300} >
 
 
     <Paper classes={{ root: editorPaperCss }} elevation={3} ref={ref} key={index}
@@ -523,6 +541,124 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         padding: "0px", whiteSpace: "normal",
 
       }} >
+
+
+
+
+
+      {!isMobile && <Dialog
+        open={fullScreen}
+        onClose={function () { setFullScreen(false); }}
+        scroll={"paper"}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+        style={{ display: fullVisible ? "block" : "none" }}
+      >
+        <DialogTitle id="scroll-dialog-title"
+
+          style={{ padding: "8px 16px" }}
+
+        >
+          <Chip
+
+
+            //style={{ backgroundColor: "transparent" }}
+
+            onClick={function () {
+              token.userName === postArr[index].ownerName && setOpen(pre => !pre)
+
+              token.userName === postArr[index].ownerName && setShowOk(true)
+            }}
+
+            // classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
+            key={index}
+
+
+
+            avatar={
+              < Avatar alt={null}
+                style={{ width: "1.8rem", height: "1.8rem", }}
+                src={avatarPic && token.userName === postArr[index].ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${postArr[index].ownerName}.svg`}
+
+              />
+            }
+            label={
+              <Typography
+
+
+                style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", ...token.userName === postArr[index].ownerName && { color: theme.palette.primary.main, } }}>
+                {postArr[index].ownerName}<br />
+                <span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>{formatDistanceToNow(postArr[index].postingTime)}</span>
+
+              </Typography>
+            }
+
+          />
+
+
+
+          <IconButton size="small" style={{ justifySelf: "right" }}
+            onClick={function () {
+
+              setShowComment(pre => !pre)
+              axios.get(`${url}/comment/count/${postArr[index].postID}`).then(response => {
+                setCommentCount(response.data)
+              })
+            }}
+          >
+
+            <TextsmsOutlined style={{ fontSize: "1.5rem" }} />
+            &nbsp;<span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{commentCount}</span>
+          </IconButton>
+
+          <IconButton size="small" style={{ float: "right" }}
+            onClick={function () {
+              setFullScreen(false)
+            }}
+          >
+
+            <CloseOutlined fontSize="medium" />
+          </IconButton>
+
+
+
+        </DialogTitle>
+
+
+        <DialogContent dividers={true} style={{ padding: 0 }}>
+          <DialogContentText
+            style={{ padding: "16px" }}
+            id="scroll-dialog-description"
+            //     ref={descriptionElementRef}
+            tabIndex={-1}
+          >
+            {toHtml(postArr[index].content, postPicArr[index], inView)}
+
+          </DialogContentText>
+
+          <Collapse in={showComment}><CommentContent
+            key={postArr[index].postID}
+            postID={postArr[index].postID} index={index}
+            toHtml={toHtml} setCommentCount={setCommentCount}
+            commentCount={commentCount}
+            avatarPic={avatarPic}
+            showComment={showComment}
+            fullScreen={fullScreen}
+          /></Collapse>
+
+
+
+        </DialogContent>
+
+      </Dialog>}
+
+
+
+
+
+
+
+
       <div ref={panelRef} style={{ position: "relative", overflow: display === "none" ? "visible" : "hidden", height: height, }} >
 
 
@@ -566,6 +702,18 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
               }
 
             />
+
+
+            {!isMobile && <IconButton size="small" style={{ justifySelf: "right" }}
+              onClick={function () {
+                setFullScreen(true)
+              }}
+            >
+
+              <FullscreenOutlined fontSize="medium" />
+            </IconButton>
+            }
+
             <IconButton size="small" style={{ justifySelf: "right" }}
               onClick={function () {
 
@@ -576,9 +724,11 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
               }}
             >
 
-              <TextsmsOutlined style={{ fontSize: "1.2rem" }} />
+              <TextsmsOutlined style={{ fontSize: "1.5rem" }} />
               &nbsp;<span style={{ fontWeight: "bold", fontSize: "1rem", color: theme.palette.text.secondary, verticalAlign: "middle", }}>{commentCount}</span>
             </IconButton>
+
+
 
 
           </div>
@@ -603,7 +753,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         {shrinkBar && <Button
 
           style={{
-      //      marginTop: "0px",
+            //      marginTop: "0px",
             borderTopLeftRadius: 0,
             borderTopRightRadius: 0,
 
@@ -614,14 +764,14 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             position: display === "none" ? "relative" : "absolute",
             bottom: 0,
             opacity: 0.8,
-         
+
             backgroundColor: theme.palette.background.default,
             boxShadow: display === "none" ? theme.shadows[0] : theme.shadows[5],
 
             color: theme.palette.type === "dark"
               ? theme.palette.text.secondary
               : theme.palette.primary.main,
-             ...display==="none"&&{display:"flex"},
+            ...display === "none" && { display: "flex" },
             //verticalAlign:"top",
 
           }}
@@ -633,7 +783,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
           size="small"
 
-        //  color="primary"
+          //  color="primary"
           fullWidth={true}
         >
 
@@ -642,22 +792,33 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
         </Button>}
       </div>
-      <Collapse in={showComment}><CommentContent
+      {/* <Collapse in={showComment}><CommentContent
         key={postArr[index].postID}
         postID={postArr[index].postID} index={index}
         toHtml={toHtml} setCommentCount={setCommentCount}
         commentCount={commentCount}
         avatarPic={avatarPic}
         showComment={showComment}
-      /></Collapse>
+        fullScreen={fullScreen}
+      /></Collapse> */}
 
+
+      {showComment && <CommentContent
+        key={postArr[index].postID}
+        postID={postArr[index].postID} index={index}
+        toHtml={toHtml} setCommentCount={setCommentCount}
+        commentCount={commentCount}
+        avatarPic={avatarPic}
+        showComment={showComment}
+        fullScreen={fullScreen}
+      />}
 
     </Paper >
 
 
 
 
-
+    // </Grow>
 
 
   )
@@ -665,167 +826,125 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
 
 
-function ImgTag({ picArr, picName, ...props }) {
+function ImgTag({ picArr, picName, setFullVisible, ...props }) {
 
   //  const { editorContent, setEditorContent, lgSizeObj, smSizeObj, deviceSize, picArr, setPicArr } = useContext(Context1);
   const theme = useTheme()
   const picNum = picName === "local" ? picArr.length : Number(picName.split("_")[1])
-  const imgArr = picArr
+  const imgArr = picArr || []
 
 
 
   const [photoIndex, setPhotoIndex] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
 
+  // useEffect(function(){
+  //   setFullVisible(!isOpen)
+  // },[isOpen])
+
+
+  const commonStyle0 = {
+    position: "relative",
+    width: "100%",
+    height: 0,
+    paddingBottom: "56.25%",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: theme.palette.divider,   //"skyblue",
+    overflow: "hidden",
+
+
+
+
+  }
+
+
+  const commonStyle = {
+    position: "absolute",
+    backgroundColor: "wheat",
+    backgroundRepeat: "no-repeat",
+    overflow: "hidden",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundSize: "cover",
+
+  }
+
+
+  const images =
+
+
+    picName === "local"
+      ? imgArr.map((item) => { return item.localUrl })       //[imgArr[0].localUrl]
+      : [...Array(picNum)].map((item, index) => { return `${url}/picture/downloadpicture/${picName}_${index}` })  //[`${url}/picture/downloadpicture/${picName}_0`]
+
+
+  const lightBox = <Lightbox
+    mainSrc={images[photoIndex]}
+    nextSrc={images[(photoIndex + 1) % images.length]}
+    prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+    onCloseRequest={() => { setIsOpen(false); setFullVisible(true) }}
+    onMovePrevRequest={() =>
+      setPhotoIndex(
+        pre => (pre + images.length - 1) % images.length,
+      )
+    }
+    onMoveNextRequest={() =>
+      setPhotoIndex(
+        pre => (pre + images.length + 1) % images.length,
+      )
+    }
+  />
+
+
   if (picNum === 1) {
-
-    const images = picName === "local"
-      ? [imgArr[0].localUrl]
-      : [`${url}/picture/downloadpicture/${picName}_0`]
-
 
     return (
 
-
-
       <div style={{
 
-        position: "relative",
-        width: "100%",
-        height: 0,
-        paddingBottom: "56.25%",
-
+        ...commonStyle0,
         backgroundRepeat: "no-repeat",
-        backgroundPositionX: "center",
-        backgroundPositionY: "center",
         backgroundSize: "cover",
         backgroundImage: picName === "local" ? "url(" + imgArr[0].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_0)`,
 
-        backgroundColor: theme.palette.divider,   //"skyblue",
-        overflow: "hidden",
-
       }} onClick={function () {
-
+        setFullVisible(false)
         setIsOpen(true)
-
-
       }} >
-        {isOpen && <Lightbox
-          mainSrc={images[photoIndex]}
-          nextSrc={images[(photoIndex + 1) % images.length]}
-          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
-          onMovePrevRequest={() =>
-            setPhotoIndex(
-              pre => (pre + images.length - 1) % images.length,
-            )
-          }
-          onMoveNextRequest={() =>
-            setPhotoIndex(
-              pre => (pre + images.length + 1) % images.length,
-            )
-          }
-        />}
+        {isOpen && lightBox}
       </div>
-
-
-
     )
   }
   else if (picNum === 2) {
 
-    const images = picName === "local"
-      ? [imgArr[0].localUrl, imgArr[1].localUrl]
-      : [`${url}/picture/downloadpicture/${picName}_0`, `${url}/picture/downloadpicture/${picName}_1`]
-
-
     return (
 
-
-
-      <div style={{
-        position: "relative",
-        width: "100%",
-        height: 0,
-        paddingBottom: "56.25%",
-        backgroundPositionX: "center",
-        backgroundPositionY: "center",
-        backgroundColor: theme.palette.divider,   //"skyblue",
-        overflow: "hidden",
-        //    padding:0,
-
-      }}>
-
+      <div style={{ ...commonStyle0 }}>
 
         <div style={{
-          position: "absolute",
+          ...commonStyle,
           width: "50%",
           height: "100%",
-          //  paddingBottom: "25%",//  "112.5%", 
-          backgroundColor: "pink",
-          left: "0%",
           top: "0%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          //  backgroundImage: "url(" + imgArr[0].localUrl + ")",
+          left: "0%",
           backgroundImage: picName === "local" ? "url(" + imgArr[0].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_0)`,
           transform: "translateX(-1px) translateY(0px)",
           backgroundColor: "wheat",
         }}
-          onClick={function () {
-            setPhotoIndex(0)
-            setIsOpen(true)
-            //    setPicArr(pre => [pre[1]])
-          }}
-
-        />
+          onClick={function () { setPhotoIndex(0); setIsOpen(true); setFullVisible(false); }} />
         <div style={{
-          position: "absolute",
+          ...commonStyle,
           width: "50%",
           height: "100%",
-          //  paddingBottom: "25%",//  "112.5%", 
-          backgroundColor: "wheat",
-          left: "50%",
           top: "0%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          // backgroundImage: "url(" + imgArr[1].localUrl + ")",
+          left: "50%",
           backgroundImage: picName === "local" ? "url(" + imgArr[1].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_1)`,
-
           transform: "translateX(1px) translateY(0px)",
-          backgroundColor: "wheat",
         }}
-          onClick={function () {
-            //    setPicArr(pre => [pre[0]])
-            setPhotoIndex(1)
-            setIsOpen(true)
-          }}
-        />
+          onClick={function () { setPhotoIndex(1); setIsOpen(true); setFullVisible(false); }} />
 
-
-        {isOpen && <Lightbox
-          mainSrc={images[photoIndex]}
-          nextSrc={images[(photoIndex + 1) % images.length]}
-          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
-          onMovePrevRequest={() =>
-            setPhotoIndex(
-              pre => (pre + images.length - 1) % images.length,
-            )
-          }
-          onMoveNextRequest={() =>
-            setPhotoIndex(
-              pre => (pre + images.length + 1) % images.length,
-            )
-          }
-        />}
-
+        {isOpen && lightBox}
 
       </div>
 
@@ -833,185 +952,88 @@ function ImgTag({ picArr, picName, ...props }) {
   }
   else if (picNum === 3) {
 
-    const images = picName === "local"
-      ? [imgArr[0].localUrl, imgArr[1].localUrl, imgArr[2].localUrl]
-      : [`${url}/picture/downloadpicture/${picName}_0`, `${url}/picture/downloadpicture/${picName}_1`, `${url}/picture/downloadpicture/${picName}_2`]
 
     return (
 
-
-
-      <div style={{
-        position: "relative",
-        width: "100%",
-        height: 0,
-        paddingBottom: "56.25%",
-        backgroundPositionX: "center",
-        backgroundPositionY: "center",
-        backgroundColor: theme.palette.divider,   //"skyblue",
-        overflow: "hidden",
-        //    padding:0,
-      }}>
+      <div style={{ ...commonStyle0 }}>
 
 
         <div style={{
-          position: "absolute",
+          ...commonStyle,
+
           width: "50%",
           height: "100%",
-          //  paddingBottom: "25%",//  "112.5%", 
-          backgroundColor: "pink",
           left: "0%",
           top: "0%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          //  backgroundImage: "url(" + imgArr[0].localUrl + ")",
           backgroundImage: picName === "local" ? "url(" + imgArr[0].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_0)`,
-
           transform: "translateX(-1px) translateY(0px)",
-          backgroundColor: "wheat",
-        }}
-          onClick={function () {
-            //    setPicArr(pre => [pre[1], pre[2]])
-            setPhotoIndex(0)
-            setIsOpen(true)
-          }}
 
-        />
+        }}
+          onClick={function () { setPhotoIndex(0); setIsOpen(true); setFullVisible(false); }} />
+
         <div style={{
-          position: "absolute",
+          ...commonStyle,
           width: "50%",
           height: "50%",
-          backgroundColor: "wheat",
           left: "50%",
           top: "0%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          // backgroundImage: "url(" + imgArr[1].localUrl + ")",
           backgroundImage: picName === "local" ? "url(" + imgArr[1].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_1)`,
           transform: "translateX(1px) translateY(-1px)",
 
 
-        }} onClick={
-          function () {
-            //   setPicArr(pre => [pre[0], pre[2]])
-            setPhotoIndex(1)
-            setIsOpen(true)
-          }} />
-
+        }}
+          onClick={function () { setPhotoIndex(1); setIsOpen(true); setFullVisible(false); }} />
         <div style={{
-          position: "absolute",
+          ...commonStyle,
+
+
           width: "50%",
           height: "50%",
-          backgroundColor: "wheat",
           left: "50%",
           top: "50%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          //   backgroundImage: "url(" + imgArr[2].localUrl + ")",
           backgroundImage: picName === "local" ? "url(" + imgArr[2].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_2)`,
           transform: "translateX(1px) translateY(1px)",
 
         }} onClick={
-          function () {
-            //   setPicArr(pre => [pre[0], pre[1]])
-            setPhotoIndex(2)
-            setIsOpen(true)
-          }} />
-
-        {isOpen && <Lightbox
-          mainSrc={images[photoIndex]}
-          nextSrc={images[(photoIndex + 1) % images.length]}
-          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
-          onMovePrevRequest={() =>
-            setPhotoIndex(
-              pre => (pre + images.length - 1) % images.length,
-            )
-          }
-          onMoveNextRequest={() =>
-            setPhotoIndex(
-              pre => (pre + images.length + 1) % images.length,
-            )
-          }
-        />}
-
+          function () { setPhotoIndex(2); setIsOpen(true); setFullVisible(false); }} />
+        {isOpen && lightBox}
 
       </div>
-
-
 
     )
   }
 
   else {
 
-
-    const images = picName === "local"
-      ? [imgArr[0].localUrl, imgArr[1].localUrl, imgArr[2].localUrl, imgArr[3].localUrl]
-      : [`${url}/picture/downloadpicture/${picName}_0`, `${url}/picture/downloadpicture/${picName}_1`, `${url}/picture/downloadpicture/${picName}_2`, `${url}/picture/downloadpicture/${picName}_3`]
-
-
     return (
 
 
-      <div style={{
-        position: "relative",
-        width: "100%",
-        height: 0,
-        paddingBottom: "56.25%",
-        backgroundPositionX: "center",
-        backgroundPositionY: "center",
-        backgroundColor: theme.palette.divider,   //"skyblue",
-        overflow: "hidden",
-        //   padding:0,
-      }}>
-
+      <div style={{ ...commonStyle0 }}>
 
         <div style={{
-          position: "absolute",
+          ...commonStyle,
+
           width: "50%",
           height: "50%",
-          backgroundColor: "wheat",
           top: "0%",
           left: "0%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          // backgroundImage: "url(" + imgArr[0].localUrl + ")",
           backgroundImage: picName === "local" ? "url(" + imgArr[0].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_0)`,
-
           transform: "translateX(-1px) translateY(-1px)",
 
         }} onClick={function () {
           //  setPicArr(pre => [pre[1], pre[2], pre[3]])
           setPhotoIndex(0)
           setIsOpen(true)
+          setFullVisible(false)
         }} />
 
         <div style={{
-          position: "absolute",
+          ...commonStyle,
+
           width: "50%",
           height: "50%",
-          backgroundColor: "wheat",
           top: "0%",
           left: "50%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          //   backgroundImage: "url(" + imgArr[1].localUrl + ")",
           backgroundImage: picName === "local" ? "url(" + imgArr[1].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_1)`,
           transform: "translateX(1px) translateY(-1px)",
 
@@ -1019,88 +1041,47 @@ function ImgTag({ picArr, picName, ...props }) {
           //   setPicArr(pre => [pre[0], pre[2], pre[3]])
           setPhotoIndex(1)
           setIsOpen(true)
+          setFullVisible(false)
         }} />
 
         <div style={{
-          position: "absolute",
+          ...commonStyle,
           width: "50%",
           height: "50%",
-          backgroundColor: "wheat",
           top: "50%",
           left: "0%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
           //    backgroundImage: "url(" + imgArr[2].localUrl + ")",
           backgroundImage: picName === "local" ? "url(" + imgArr[2].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_2)`,
           transform: "translateX(-1px) translateY(1px)",
         }}
-          onClick={
-            function () {
-              //      setPicArr(pre => [pre[0], pre[1], pre[3]])
-              setPhotoIndex(2)
-              setIsOpen(true)
-            }}
+          onClick={function () {
+            //  setPicArr(pre => [pre[0], pre[1], pre[3]])
+            setPhotoIndex(2)
+            setIsOpen(true)
+            setFullVisible(false)
+          }}
         />
 
         <div style={{
-          position: "absolute",
+          ...commonStyle,
           width: "50%",
           height: "50%",
-          backgroundColor: "wheat",
           top: "50%",
           left: "50%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          //   backgroundImage: "url(" + imgArr[3].localUrl + ")",
           backgroundImage: picName === "local" ? "url(" + imgArr[3].localUrl + ")" : `url(${url}/picture/downloadpicture/${picName}_3)`,
           transform: "translateX(1px) translateY(1px)",
-
         }} onClick={
           function () {
             //   setPicArr(pre => [pre[1], pre[2], pre[3]])
             setPhotoIndex(3)
             setIsOpen(true)
+            setFullVisible(false)
           }} />
-        {isOpen && <Lightbox
-          mainSrc={images[photoIndex]}
-          nextSrc={images[(photoIndex + 1) % images.length]}
-          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
-          onMovePrevRequest={() =>
-            setPhotoIndex(
-              pre => (pre + images.length - 1) % images.length,
-            )
-          }
-          onMoveNextRequest={() =>
-            setPhotoIndex(
-              pre => (pre + images.length + 1) % images.length,
-            )
-          }
-        />}
+        {isOpen && lightBox}
 
       </div>
-
-
-
-
-
     )
-
-
-
   }
-
-
-
-
-
-
 
 }
 

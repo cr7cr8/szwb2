@@ -998,7 +998,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
           function () { setPhotoIndex(2); setIsOpen(true); setFullVisible(false); }} />
         {isOpen && lightBox}
 
-      </div>
+      </div>  //
 
     )
   }

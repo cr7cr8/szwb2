@@ -627,7 +627,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
         <DialogContent dividers={true} style={{ padding: 0 }}>
           <DialogContentText
-            style={{ padding: "24px" }}
+            style={{ padding: "16px" }}
             id="scroll-dialog-description"
             //     ref={descriptionElementRef}
             tabIndex={-1}

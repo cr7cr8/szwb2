@@ -332,8 +332,8 @@ export default function DraftEditor() {
 
               },
               style: {
-                paddingLeft: "4px",
-                paddingRight: "4px",
+                paddingLeft: isMobile?"4px":theme.spacing(1),
+                paddingRight: isMobile?"4px":theme.spacing(1),
               }
             }
           }

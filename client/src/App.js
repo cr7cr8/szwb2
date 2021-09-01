@@ -21,26 +21,16 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2, } fro
 
 function App() {
 
-
-
   //return  <div dangerouslySetInnerHTML={{__html: svgCode}} />
-
   //eturn ReactHtmlParser(svgCode)
   // return (
-
   //   <img src={`http://localhost/aaa.svg`} />
-
   // )
 
   return (
 
     <>
       <CssBaseline />
-
-
-
-
-
 
       <Grid container
         direction="row"

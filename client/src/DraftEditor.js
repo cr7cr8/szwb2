@@ -318,8 +318,9 @@ export default function DraftEditor() {
           SMALL: { style: { fontSize: smSizeObj[deviceSize] }, },
           //   linkStyle: { style: { fontSize: 0 } }
           //  LARGE: { attributes: { class: "largeText" } },
+
         },
- 
+
 
         blockStyleFn: function (block) {
           const type = block.getType()
@@ -332,8 +333,8 @@ export default function DraftEditor() {
 
               },
               style: {
-                paddingLeft: isMobile?"4px":theme.spacing(1),
-                paddingLeft: isMobile?"4px":theme.spacing(1),
+                paddingLeft: isMobile ? "4px" : theme.spacing(1),
+                paddingLeft: isMobile ? "4px" : theme.spacing(1),
               }
             }
           }
@@ -345,8 +346,8 @@ export default function DraftEditor() {
               },
               style: {
 
-                paddingLeft: isMobile?"4px":theme.spacing(1),
-                paddingLeft: isMobile?"4px":theme.spacing(1),
+                paddingLeft: isMobile ? "4px" : theme.spacing(1),
+                paddingLeft: isMobile ? "4px" : theme.spacing(1),
                 textAlign: "center",
               }
             }
@@ -357,8 +358,8 @@ export default function DraftEditor() {
                 //   className: rightBlockCss,// may loose when state update 
               },
               style: {
-                paddingLeft: isMobile?"4px":theme.spacing(1),
-                paddingLeft: isMobile?"4px":theme.spacing(1),
+                paddingLeft: isMobile ? "4px" : theme.spacing(1),
+                paddingLeft: isMobile ? "4px" : theme.spacing(1),
                 textAlign: "end",
               }
 
@@ -558,6 +559,7 @@ export default function DraftEditor() {
         //  className={editorPaperClass}
         classes={{ root: editorPaperCss }}
         style={{
+          ...!isMobile && { minHeight: "3rem" },
           // backgroundColor: "pink"
           // backgroundImage
           // minHeight: "20vh",
@@ -747,7 +749,7 @@ export default function DraftEditor() {
           }}
 
           stripPastedStyles={true}
-          handlePastedText={function (text, html, editorState,props) {
+          handlePastedText={function (text, html, editorState, props) {
             return true
 
           }}
@@ -770,7 +772,7 @@ export default function DraftEditor() {
             ownerName: token.userName,
             content: toPreHtml(editorContent, postID),
             postID,
-        
+
           }).then((response) => {
 
 
@@ -810,7 +812,7 @@ export default function DraftEditor() {
 
 
 
-          setPostArr(pre => { return [{  ownerName: token.userName, postID, postingTime: Date.now(), content: toPreHtml(editorContent, "local") }, ...pre,] })
+          setPostArr(pre => { return [{ ownerName: token.userName, postID, postingTime: Date.now(), content: toPreHtml(editorContent, "local") }, ...pre,] })
           setPostPicArr(pre => { return [picArr, ...pre,] })
 
         }}

@@ -319,7 +319,7 @@ export default function DraftEditor() {
           //   linkStyle: { style: { fontSize: 0 } }
           //  LARGE: { attributes: { class: "largeText" } },
         },
-
+ 
 
         blockStyleFn: function (block) {
           const type = block.getType()

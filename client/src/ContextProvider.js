@@ -65,120 +65,12 @@ export default function ContextProvider(props) {
 
 
 
-  const [token, setToken] = useState(
-    localStorage.getItem("token")
-      ? jwtDecode(localStorage.getItem("token"))
-      : { userName: "__temp__" }
-  );
-
-
-  const [editorContent, setEditorContent] = useState(
-    EditorState.createWithContent(ContentState.createFromText(''))
-  );
-
   const [isLight, setIsLight] = useState(true)
-  const [picArr, setPicArr] = useState([])
 
-  const [postArr, setPostArr] = useState([])
-  const [postPicArr, setPostPicArr] = useState([])
-
-  //const postCount = useRef(0)
-
-
-  const changeOwnerName = function (newName) {
-
-    return axios.post(`${url}/article/changeownername`, { newName }).then(response => {
-
-     
-
-      if (!response.data) {
-        return response.data
-      }
-      else {
-        localStorage.setItem("token", response.headers["x-auth-token"])
-        setToken(jwtDecode(response.headers["x-auth-token"]));
-        return token
-      }
-
-
-
-
-
-
-    })
-
-  }
-
-  const getSinglePost = function () {
-    const postingTime = Math.min(...postArr.map(item => item.postingTime), Date.now())
- //   console.log(...postArr.map(item => item.postingTime))
-
-
-
-    return axios.get(`${url}/article/singlepost2/${postingTime}`).then(response => {
-
-      //  console.log(response.data)
-      if (response.data.length === 0) {
-
-
-
-
-        return Promise.resolve(response.data)
-      }
-
-
-      // alert(JSON.stringify(Object.keys(response.data[0])))
-
-      setPostArr(pre => { return [...pre, ...response.data.map(item => item),] })
-      setPostPicArr(pre => [...pre, ""])
-
-      return response.data
-    })
-
-
-  }
-
-
-
-
-  const deleteSinglePost = useCallback(function (postID) {
-    return axios.get(`${url}/article/deletesinglepost/${postID}`).then(response => {
-      const postIndex = postArr.findIndex(item => { return item.postID === postID })
-
-      setPostArr(pre => { return pre.filter(item => item.postID !== postID) })
-      setPostPicArr(pre => {
-        return pre.filter((item, index) => { return index !== postIndex })
-
-      })
-
-      return response.data
-    })
-
-
-  })
-
-
-
-  const sizeArr = ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
+  const sizeArr = isMobile
+    ? ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
+    : ["1.1rem", "1.1rem", "1.1rem", "1.1rem", "1.1rem"]
   const iconSizeArr = ["2rem", "2rem", "2rem", "2rem", "2rem"]
-  //const iconSizeArr = ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
-
-  useEffect(function () {
-
-
-    if (token.userName === "__temp__") {
-
-
-      axios.post(`${url}/user/register`, token).then(response => {
-        localStorage.setItem("token", response.headers["x-auth-token"])
-        setToken(jwtDecode(response.headers["x-auth-token"]));
-      })
-
-
-    }
-  }, [])
-
-
 
   const theme = useMemo(function () {
 
@@ -198,8 +90,8 @@ export default function ContextProvider(props) {
         { backgroundImage: "url(https://picsum.photos/640/361)", color: "white" },
         { backgroundImage: "url(https://picsum.photos/600/338)", color: "white" },
         { backgroundImage: "url(https://picsum.photos/800/451)", color: "white" },
-      
-        
+
+
       ],
       palette: {
         primary: primaryColor,
@@ -231,6 +123,7 @@ export default function ContextProvider(props) {
         MuiAvatar: {
           root: {
             ...breakpointsAttribute(["width", ...iconSizeArr], ["height", ...iconSizeArr]),
+            //   ...breakpointsAttribute(["width", "13rem"], ["height", "13rem"]),
           }
         },
 
@@ -251,12 +144,11 @@ export default function ContextProvider(props) {
               objectFit: "cover",
               textAlign: "center",
 
-              ...breakpointsAttribute(["width", ...sizeArr], ["height", ...sizeArr])
+              //     ...breakpointsAttribute(["width", ...sizeArr], ["height", ...sizeArr])
+
+              ...breakpointsAttribute(["width", "1.8rem"], ["height", "1.8rem"])
             },
             //  backgroundColor:"transparent",
-
-
-
 
           },
           label: {
@@ -279,10 +171,121 @@ export default function ContextProvider(props) {
   const md = useMediaQuery(theme.breakpoints.only('md'));
   const lg = useMediaQuery(theme.breakpoints.only('lg'));
   const xl = useMediaQuery(theme.breakpoints.only('xl'));
-
   const deviceSize = xs ? "xs" : sm ? "sm" : md ? "md" : lg ? "lg" : "xl"
-  const lgSizeObj = { xs: "2.5rem", sm: "2.5rem", md: "2.5rem", lg: "2.5rem", xl: "2.5rem" }
-  const smSizeObj = { xs: "1rem", sm: "1rem", md: "1rem", lg: "1rem", xl: "1rem" }
+
+  const lgSizeObj = isMobile
+    ? { xs: "2.5rem", sm: "2.5rem", md: "2.5rem", lg: "2.5rem", xl: "2.5rem" }
+    : { xs: "1.5rem", sm: "1.5rem", md: "1.5rem", lg: "1.5rem", xl: "1.5rem" }
+
+  const smSizeObj = isMobile
+    ? { xs: "1rem", sm: "1rem", md: "1rem", lg: "1rem", xl: "1rem" }
+    : { xs: "1rem", sm: "1rem", md: "1rem", lg: "1rem", xl: "1rem" }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const [token, setToken] = useState(
+    localStorage.getItem("token")
+      ? jwtDecode(localStorage.getItem("token"))
+      : { userName: "__temp__" }
+  );
+
+
+  const [editorContent, setEditorContent] = useState(
+    EditorState.createWithContent(ContentState.createFromText(''))
+  );
+
+  const [picArr, setPicArr] = useState([])
+  const [postArr, setPostArr] = useState([])
+  const [postPicArr, setPostPicArr] = useState([])
+
+
+
+  const changeOwnerName = function (newName) {
+
+    return axios.post(`${url}/article/changeownername`, { newName }).then(response => {
+
+      if (!response.data) {
+        return response.data
+      }
+      else {
+        localStorage.setItem("token", response.headers["x-auth-token"])
+        setToken(jwtDecode(response.headers["x-auth-token"]));
+        return token
+      }
+    })
+
+  }
+
+  const getSinglePost = function () {
+    const postingTime = Math.min(...postArr.map(item => item.postingTime), Date.now())
+    //   console.log(...postArr.map(item => item.postingTime))
+
+    return axios.get(`${url}/article/singlepost2/${postingTime}`).then(response => {
+
+      //  console.log(response.data)
+      if (response.data.length === 0) {
+        return Promise.resolve(response.data)
+      }
+      // alert(JSON.stringify(Object.keys(response.data[0])))
+
+      setPostArr(pre => { return [...pre, ...response.data.map(item => item),] })
+      setPostPicArr(pre => [...pre, ""])
+
+      return response.data
+    })
+
+
+  }
+
+
+  const deleteSinglePost = useCallback(function (postID) {
+    return axios.get(`${url}/article/deletesinglepost/${postID}`).then(response => {
+      const postIndex = postArr.findIndex(item => { return item.postID === postID })
+
+      setPostArr(pre => { return pre.filter(item => item.postID !== postID) })
+      setPostPicArr(pre => {
+        return pre.filter((item, index) => { return index !== postIndex })
+
+      })
+
+      return response.data
+    })
+
+
+  })
+
+
+
+
+  useEffect(function () {
+
+
+    if (token.userName === "__temp__") {
+
+
+      axios.post(`${url}/user/register`, token).then(response => {
+        localStorage.setItem("token", response.headers["x-auth-token"])
+        setToken(jwtDecode(response.headers["x-auth-token"]));
+      })
+
+
+    }
+  }, [])
+
+
+
+
 
   //const [picArr, setPicArr] = useState([])
 

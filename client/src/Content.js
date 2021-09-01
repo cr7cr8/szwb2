@@ -577,7 +577,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
             avatar={
               < Avatar alt={null}
-                style={{ width: "1.8rem", height: "1.8rem", }}
+            //    style={{ width: "1.8rem", height: "1.8rem", }}
                 src={avatarPic && token.userName === postArr[index].ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${postArr[index].ownerName}.svg`}
 
               />
@@ -685,7 +685,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
               avatar={
                 < Avatar alt={null}
-                  style={{ width: "1.8rem", height: "1.8rem", }}
+           //       style={{ width: "1.8rem", height: "1.8rem", }}
                   src={avatarPic && token.userName === postArr[index].ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${postArr[index].ownerName}.svg`}
 
                 />

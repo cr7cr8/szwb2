@@ -222,7 +222,7 @@ export default function Content({ style }) {
     threshold: 0.8,
     triggerOnce: false,
     initialInView: true,
-    rootMargin: "0px 0px 20px 0px"
+    rootMargin: "0px 0px 0px 0px"
   });
 
   useEffect(function () {

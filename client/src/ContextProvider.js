@@ -142,7 +142,7 @@ export default function ContextProvider(props) {
               objectFit: "cover",
               textAlign: "center",
            //   ...breakpointsAttribute(["width", ...sizeArr], ["height", ...sizeArr]),
-              ...breakpointsAttribute(["width", "1.8rem"], ["height", "1.8rem"]),
+              ...breakpointsAttribute(["width", "1.8rem","1.8rem"], ["height", "1.8rem","1.8rem",]),  // chip avatar size
             },
             //  backgroundColor:"transparent",
           },
@@ -169,7 +169,7 @@ export default function ContextProvider(props) {
   const xl = useMediaQuery(theme.breakpoints.only('xl'));
 
   const deviceSize = xs ? "xs" : sm ? "sm" : md ? "md" : lg ? "lg" : "xl"
-  const lgSizeObj = { xs: "2.5rem", sm: "2.5rem", md: "2.5rem", lg: "2.5rem", xl: "2.5rem" }
+  const lgSizeObj = { xs: "2rem", sm: "2rem", md: "2rem", lg: "2rem", xl: "2rem" }
   const smSizeObj = { xs: "1rem", sm: "1rem", md: "1rem", lg: "1rem", xl: "1rem" }
 
   const [token, setToken] = useState(

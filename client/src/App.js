@@ -30,7 +30,7 @@ function App() {
   return (
 
     <>
-      <CssBaseline />
+      <CssBaseline />  {/* defualt theme fontsize in body2 will not work without <Cssbaseline /> */}
 
       <Grid container
         direction="row"

@@ -67,7 +67,7 @@ export const useStyles = makeStyles(theme => {
 
   return {
     ...obj,
- 
+
 
     editorPaperCss: ({ isLight, breakpointsAttribute, isEditorFocusOn }) => {
       // console.log(isLight)
@@ -327,8 +327,8 @@ export default function DraftEditor() {
 
               },
               style: {
-                paddingLeft: isMobile ? "4px" : theme.spacing(1),
-                paddingRight: isMobile ? "4px" : theme.spacing(1),
+                paddingLeft: "4px",
+                paddingRight: "4px",
               }
             }
           }
@@ -340,8 +340,8 @@ export default function DraftEditor() {
               },
               style: {
 
-                paddingLeft: isMobile ? "4px" : theme.spacing(1),
-                paddingRight: isMobile ? "4px" : theme.spacing(1),
+                paddingLeft: "4px",
+                paddingRight: "4px",
                 textAlign: "center",
               }
             }
@@ -352,8 +352,8 @@ export default function DraftEditor() {
                 //   className: rightBlockCss,// may loose when state update 
               },
               style: {
-                paddingLeft: isMobile ? "4px" : theme.spacing(1),
-                paddingRight: isMobile ? "4px" : theme.spacing(1),
+                paddingLeft: "4px",
+                paddingRight: "4px",
                 textAlign: "end",
               }
 

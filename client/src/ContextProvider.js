@@ -65,7 +65,7 @@ export default function ContextProvider(props) {
 
 
 
-  const sizeArr = !isMobile?["1.1rem", "1.1rem", "1.1rem", "1.1rem", "1.1rem"]:["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
+  const sizeArr = ["1.1rem", "1.1rem", "1.1rem", "1.1rem", "1.1rem"]
   const iconSizeArr = ["1.8rem", "1.8rem", "1.8rem", "1.8rem", "1.8rem"]
   //const iconSizeArr = ["1.5rem", "1.5rem", "1.5rem", "1.5rem", "1.5rem"]
 
@@ -121,7 +121,7 @@ export default function ContextProvider(props) {
 
         MuiAvatar: {
           root: {
-            ...breakpointsAttribute(["width", ...iconSizeArr], ["height", ...iconSizeArr]),          
+            ...breakpointsAttribute(["width", ...iconSizeArr], ["height", ...iconSizeArr]),
           }
         },
 
@@ -141,15 +141,15 @@ export default function ContextProvider(props) {
               marginRight: "-6px",
               objectFit: "cover",
               textAlign: "center",
-           //   ...breakpointsAttribute(["width", ...sizeArr], ["height", ...sizeArr]),
-              ...breakpointsAttribute(["width", "1.8rem","1.8rem"], ["height", "1.8rem","1.8rem",]),  // chip avatar size
+              //   ...breakpointsAttribute(["width", ...sizeArr], ["height", ...sizeArr]),
+              ...breakpointsAttribute(["width", "1.8rem", "1.8rem"], ["height", "1.8rem", "1.8rem",]),  // chip avatar size
             },
             //  backgroundColor:"transparent",
           },
           label: {
             "& > .MuiTypography-root.MuiTypography-body2": {
               ...breakpointsAttribute(["fontSize", "1.2rem", "1.2rem"]),
-              
+
             }
           }
         },
@@ -169,8 +169,12 @@ export default function ContextProvider(props) {
   const xl = useMediaQuery(theme.breakpoints.only('xl'));
 
   const deviceSize = xs ? "xs" : sm ? "sm" : md ? "md" : lg ? "lg" : "xl"
-  const lgSizeObj = { xs: "2rem", sm: "2rem", md: "2rem", lg: "2rem", xl: "2rem" }
-  const smSizeObj = { xs: "1rem", sm: "1rem", md: "1rem", lg: "1rem", xl: "1rem" }
+
+  const lgSizeObj = { xs: "1.5rem", sm: "1.5rem", md: "1.5rem", lg: "1.5rem", xl: "1.5rem" }
+  const smSizeObj = { xs: "0.8rem", sm: "0.8rem", md: "0.8rem", lg: "0.8rem", xl: "0.8rem" }
+
+
+
 
   const [token, setToken] = useState(
     localStorage.getItem("token")

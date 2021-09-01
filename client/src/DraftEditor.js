@@ -67,13 +67,7 @@ export const useStyles = makeStyles(theme => {
 
   return {
     ...obj,
-    labelShrinkCss: () => {
-      return { transform: "translate(0, 1.5px) scale(0.5)" }
-    },
-    textFieldCss: () => {
-      return { fontSize: "1.5rem" }
-    },
-
+ 
 
     editorPaperCss: ({ isLight, breakpointsAttribute, isEditorFocusOn }) => {
       // console.log(isLight)

@@ -24,13 +24,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-
-
-
 import { Image, Brightness4, Brightness5, FormatBold, FormatItalic, FormatUnderlined, InsertEmoticon, NavigateBeforeSharp, ExpandMore, ExpandLess, DeleteOutline, Send, TextsmsOutlined, MessageOutlined, ChatBubbleOutline, FullscreenOutlined, CloseOutlined } from "@material-ui/icons";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
-import { useStyles } from './DraftEditor';
+import { useStyles as draftStyles } from './DraftEditor';
 import { useStyles as mentionStyles } from './MentionPlugin';
 
 import url, { axios } from './config';
@@ -56,6 +53,27 @@ import CommentContent from "./CommentContent";
 
 import Grow from '@material-ui/core/Grow';
 
+const useStyles = makeStyles(theme => {
+
+  return {
+    textFieldCss: () => {
+      return {
+        fontSize: "1.5rem",
+        "&.MuiInputLabel-shrink": {
+          transform: "translate(0, 1.5px) scale(0.5)",
+        }
+
+
+      }
+    },
+
+    labelShrinkCss: () => {
+      return { transform: "translate(0, 1.5px) scale(0.5)" }
+    },
+  }
+
+})
+
 
 export default function Content({ style }) {
 
@@ -73,8 +91,9 @@ export default function Content({ style }) {
 
   const [isFull, setIsFull] = useState(false)
   const theme = useTheme()
-  const { editorPaperCss, className1, unstyledBlockCss, imageBlockCss, centerBlockCss, rightBlockCss, textFieldCss, labelShrinkCss } = useStyles({})
+  const { editorPaperCss, className1, unstyledBlockCss, imageBlockCss, centerBlockCss, rightBlockCss } = draftStyles({})
   const { mentionHeadRoot, mentionBodyRoot, mentionBodyRoot2, mentionHeadAvatar, mentionHeadLabel, mentionHeadLabel2, mentionBodyLabel, } = mentionStyles();
+  const { textFieldCss, labelShrinkCss } = useStyles()
 
   const [fullVisible, setFullVisible] = useState(true)
   const toHtml = useCallback(
@@ -295,7 +314,7 @@ export default function Content({ style }) {
                 classes: {
                   root: textFieldCss,
                   animated: textFieldCss,
-                  shrink: labelShrinkCss,
+             //     shrink: labelShrinkCss,
                 }
 
               }}
@@ -577,7 +596,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
             avatar={
               < Avatar alt={null}
-            //    style={{ width: "1.8rem", height: "1.8rem", }}
+                //    style={{ width: "1.8rem", height: "1.8rem", }}
                 src={avatarPic && token.userName === postArr[index].ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${postArr[index].ownerName}.svg`}
 
               />
@@ -682,7 +701,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
               avatar={
                 < Avatar alt={null}
-           //       style={{ width: "1.8rem", height: "1.8rem", }}
+                  //       style={{ width: "1.8rem", height: "1.8rem", }}
                   src={avatarPic && token.userName === postArr[index].ownerName ? URL.createObjectURL(avatarPic) : `${url}/avatar/${postArr[index].ownerName}.svg`}
 
                 />

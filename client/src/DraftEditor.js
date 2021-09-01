@@ -328,7 +328,7 @@ export default function DraftEditor() {
               },
               style: {
                 paddingLeft: isMobile ? "4px" : theme.spacing(1),
-                paddingLeft: isMobile ? "4px" : theme.spacing(1),
+                paddingRight: isMobile ? "4px" : theme.spacing(1),
               }
             }
           }
@@ -341,7 +341,7 @@ export default function DraftEditor() {
               style: {
 
                 paddingLeft: isMobile ? "4px" : theme.spacing(1),
-                paddingLeft: isMobile ? "4px" : theme.spacing(1),
+                paddingRight: isMobile ? "4px" : theme.spacing(1),
                 textAlign: "center",
               }
             }
@@ -353,7 +353,7 @@ export default function DraftEditor() {
               },
               style: {
                 paddingLeft: isMobile ? "4px" : theme.spacing(1),
-                paddingLeft: isMobile ? "4px" : theme.spacing(1),
+                paddingRight: isMobile ? "4px" : theme.spacing(1),
                 textAlign: "end",
               }
 

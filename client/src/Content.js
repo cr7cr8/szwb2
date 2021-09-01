@@ -222,6 +222,7 @@ export default function Content({ style }) {
     threshold: 0.8,
     triggerOnce: false,
     initialInView: true,
+    rootMargin: "0px 0px 20px 0px"
   });
 
   useEffect(function () {
@@ -314,7 +315,7 @@ export default function Content({ style }) {
                 classes: {
                   root: textFieldCss,
                   animated: textFieldCss,
-             //     shrink: labelShrinkCss,
+                  //     shrink: labelShrinkCss,
                 }
 
               }}
@@ -652,15 +653,16 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
 
           </DialogContentText>
 
-          <Collapse in={showComment}><CommentContent
+          <CommentContent
             key={postArr[index].postID}
             postID={postArr[index].postID} index={index}
             toHtml={toHtml} setCommentCount={setCommentCount}
             commentCount={commentCount}
             avatarPic={avatarPic}
             showComment={showComment}
+            setShowComment={setShowComment}
             fullScreen={fullScreen}
-          /></Collapse>
+          />
 
 
 
@@ -819,7 +821,7 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
       /></Collapse> */}
 
 
-      {showComment && <CommentContent
+      {/* {showComment && <CommentContent
         key={postArr[index].postID}
         postID={postArr[index].postID} index={index}
         toHtml={toHtml} setCommentCount={setCommentCount}
@@ -827,7 +829,18 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
         avatarPic={avatarPic}
         showComment={showComment}
         fullScreen={fullScreen}
-      />}
+      />} */}
+
+
+      <CommentContent
+        key={postArr[index].postID}
+        postID={postArr[index].postID} index={index}
+        toHtml={toHtml} setCommentCount={setCommentCount}
+        commentCount={commentCount}
+        avatarPic={avatarPic}
+        showComment={showComment}
+        fullScreen={fullScreen}
+      />
 
     </Paper >
 

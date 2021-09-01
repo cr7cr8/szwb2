@@ -119,6 +119,20 @@ export default function ContextProvider(props) {
         //       },
         //     },
 
+        MuiPaper: {
+          root: {
+            backgroundColor: isLight ? "rgba(255,255,255,0.85)" : "rgba(66, 66, 66,0.85)",
+            //     position:"relative",
+            //     zIndex:100,
+
+            "&.MuiDialog-paper": {
+              backgroundColor: isLight ? "rgba(255,255,255,1)" : "rgba(66, 66, 66,1)",
+
+            }
+
+          }
+        },
+
         MuiAvatar: {
           root: {
             ...breakpointsAttribute(["width", ...iconSizeArr], ["height", ...iconSizeArr]),

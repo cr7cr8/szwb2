@@ -30,6 +30,19 @@ function App() {
   return (
 
     <>
+
+<div style={{backgroundImage:`url(https://picsum.photos/${window.screen.width}/${window.screen.height})`,
+
+
+//
+position:"fixed",
+top:0,
+left:0,
+width:"100%",
+height:"100%",
+zIndex:-100,
+opacity:0.85,
+}} />
       <CssBaseline />  {/* defualt theme fontsize in body2 will not work without <Cssbaseline /> */}
 
       <Grid container
@@ -37,6 +50,7 @@ function App() {
         justifyContent="space-around"
         alignItems="flex-start"
         spacing={0}
+       
       >
         <Grid item xs={12} sm={12} md={10} lg={6} xl={6} >
 
@@ -45,7 +59,7 @@ function App() {
 
       </Grid>
 
-      {/* <div style={{ margin: "0px" }} /> */}
+    
 
 
 

@@ -315,7 +315,7 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
     !isMobile && showComment && setTimeout(() => {
       editor.current.focus()
       EditorState.moveFocusToEnd(editorState)
-    }, 0);
+    }, 500);
 
   }, [showComment])
 
@@ -588,15 +588,37 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
     </>
   }
 
+  // const commentEditor = useRef(createCommentEditor(false, null))
+
+  // if ((commentArr.length === 0)&&(showComment)) {
+  //   return (
+  //     <>
+  //       {createCommentEditor(false, null)}
+
+  //       <Divider light={false} style={{ marginTop: "8px" }} />
+
+  //     </>
+  //   )
+  // }
+
+  
+
+
+
   return (
-    <Container disableGutters={true} maxWidth="lg" style={{
-      backgroundColor: theme.palette.action.disabledBackground, paddingBottom: theme.spacing(0),
-      //height:"auto",
-      display: "flex", flexDirection: "column", justifyContent: "space-between",
-      // transition: "height 10s",
+    // <Container disableGutters={true} maxWidth="lg" style={{
+    //   backgroundColor: theme.palette.action.disabledBackground, paddingBottom: theme.spacing(0),
+    //   //height:"auto",
+    //   display: "flex", flexDirection: "column", justifyContent: "space-between",
+    //   // transition: "height 10s",
 
 
-    }}>
+    // }}>
+
+
+    <Collapse in={showComment} style={{backgroundColor: theme.palette.action.disabledBackground,}}>
+
+
 
       {(replyNum === 999) && createCommentEditor(false, null)}
       {commentArr.map((comment, listIndex) => {
@@ -707,7 +729,9 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
               <DeleteOutline style={{ fontSize: "1.5rem" }} />
             </IconButton>}
 
-            <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem", backgroundColor: theme.palette.background.default }}>
+            <Paper style={{ marginLeft: "2rem", paddingLeft: "4px", paddingRight: "4px", marginRight: "4px", fontSize: "1.2rem",
+             //backgroundColor: theme.palette.background.default 
+             }}>
               {toHtml(comment.content, null, null, true)}
             </Paper>
 
@@ -770,7 +794,9 @@ export default function CommentContent({ postID, index, toHtml, setCommentCount,
         </Button>
         : <div style={{ marginTop: "16px" }}></div>
       }
-    </Container>
+
+    </Collapse>
+    // </Container>
   )
 
 }

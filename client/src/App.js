@@ -42,7 +42,7 @@ function App() {
         width: "100%",
         height: "100%",
         zIndex: -100,   
-        opacity: 0.85,
+        opacity: 0.85, 
         overflow: "hidden"
       }} />
       <CssBaseline />  {/* defualt theme fontsize in body2 will not work without <Cssbaseline /> */}

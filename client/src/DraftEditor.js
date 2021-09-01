@@ -332,8 +332,8 @@ export default function DraftEditor() {
 
               },
               style: {
-                paddingLeft: "4px",
-                paddingRight: "4px",
+                paddingLeft: isMobile?"4px":theme.spacing(1),
+                paddingLeft: isMobile?"4px":theme.spacing(1),
               }
             }
           }
@@ -345,8 +345,8 @@ export default function DraftEditor() {
               },
               style: {
 
-                paddingLeft: theme.spacing(1),
-                paddingRight: theme.spacing(1),
+                paddingLeft: isMobile?"4px":theme.spacing(1),
+                paddingLeft: isMobile?"4px":theme.spacing(1),
                 textAlign: "center",
               }
             }
@@ -357,8 +357,8 @@ export default function DraftEditor() {
                 //   className: rightBlockCss,// may loose when state update 
               },
               style: {
-                paddingLeft: theme.spacing(1),
-                paddingRight: theme.spacing(1),
+                paddingLeft: isMobile?"4px":theme.spacing(1),
+                paddingLeft: isMobile?"4px":theme.spacing(1),
                 textAlign: "end",
               }
 

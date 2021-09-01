@@ -24,7 +24,7 @@ import url, { axios } from './config';
 import jwtDecode from 'jwt-decode';
 
 import yellow from '@material-ui/core/colors/yellow';
-import { PhoneMissed } from '@material-ui/icons';
+
 
 
 
@@ -184,16 +184,6 @@ export default function ContextProvider(props) {
 
 
 
-
-
-
-
-
-
-
-
-
-
   const [token, setToken] = useState(
     localStorage.getItem("token")
       ? jwtDecode(localStorage.getItem("token"))
@@ -248,7 +238,6 @@ export default function ContextProvider(props) {
 
   }
 
-
   const deleteSinglePost = useCallback(function (postID) {
     return axios.get(`${url}/article/deletesinglepost/${postID}`).then(response => {
       const postIndex = postArr.findIndex(item => { return item.postID === postID })
@@ -264,8 +253,6 @@ export default function ContextProvider(props) {
 
 
   })
-
-
 
 
   useEffect(function () {
@@ -284,18 +271,10 @@ export default function ContextProvider(props) {
   }, [])
 
 
-
-
-
-  //const [picArr, setPicArr] = useState([])
-
-
   // theme.typography.body2 = {
   //   ...breakpointsFontSize(["fontSize", "2.5rem", "1.5rem"])
   // };
   //theme = responsiveFontSizes(theme);
-
-  // console.log(theme)
 
 
   return (

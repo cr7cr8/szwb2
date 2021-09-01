@@ -584,12 +584,9 @@ function PaperContent({ postArr, postPicArr, index, editorPaperCss, toHtml, toke
             }
             label={
               <Typography
-
-
                 style={{ marginTop: "3px", lineHeight: "1.0", fontWeight: "bold", ...token.userName === postArr[index].ownerName && { color: theme.palette.primary.main, } }}>
                 {postArr[index].ownerName}<br />
                 <span style={{ color: theme.palette.text.secondary, verticalAlign: "middle", fontSize: "0.7rem", fontWeight: "normal" }}>{formatDistanceToNow(postArr[index].postingTime)}</span>
-
               </Typography>
             }
 

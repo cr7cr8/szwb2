@@ -415,6 +415,30 @@ export default function createImagePlugin() {
     const imgArr = picArr
 
 
+    const commonStyle0 = {
+      position: "relative",
+      width: "100%",
+      height: 0,
+      paddingBottom: "56.25%",
+      backgroundPositionX: "center",
+      backgroundPositionY: "center",
+      backgroundColor: theme.palette.divider,   //"skyblue",
+      overflow: "hidden"
+    }
+
+    const commonStyle = {
+      position: "absolute",
+      backgroundRepeat: "no-repeat",
+      overflow: "hidden",
+      backgroundPositionX: "center",
+      backgroundPositionY: "center",
+      backgroundSize: "cover",
+      backgroundColor: "wheat",
+    }
+
+
+
+
     if (picNum === 0) {
 
       //  setTimeout(() => {
@@ -423,30 +447,14 @@ export default function createImagePlugin() {
 
       return (
         <div style={{
-          // display:"none",
-          position: "relative",
-          width: "100%",
-          height: 0,
-          paddingBottom: "56.25%",
-
-          // backgroundRepeat: "no-repeat",
-          // backgroundPositionX: "center",
-          // backgroundPositionY: "center",
-          // backgroundSize: "cover",
-          // backgroundImage: "url(" + imgArr[0] + ")",
-
-          backgroundColor: theme.palette.divider,   //"skyblue",
-          overflow: "hidden",
-
+          ...commonStyle0
         }}
-
         >
           <button
             onClick={function () {
               //  alert("xx")
               //removeImageBlog()
               //setPicArr([])
-
             }}
           >delete</button>
           {/* <AddPhotoAlternateOutlined style={{ transform: "translateX(59%)" }} /> */}
@@ -459,19 +467,13 @@ export default function createImagePlugin() {
     else if (picNum === 1) {
       return <div style={{
 
-        position: "relative",
-        width: "100%",
-        height: 0,
-        paddingBottom: "56.25%",
+        ...commonStyle0,
 
         backgroundRepeat: "no-repeat",
-        backgroundPositionX: "center",
-        backgroundPositionY: "center",
         backgroundSize: "cover",
         backgroundImage: "url(" + imgArr[0].localUrl + ")",
 
-        backgroundColor: theme.palette.divider,   //"skyblue",
-        overflow: "hidden"
+
       }}
 
         onClick={function () {
@@ -489,35 +491,17 @@ export default function createImagePlugin() {
     else if (picNum === 2) {
       return (
         <div style={{
-          position: "relative",
-          width: "100%",
-          height: 0,
-          paddingBottom: "56.25%",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundColor: theme.palette.divider,   //"skyblue",
-          overflow: "hidden",
-
-
+          ...commonStyle0,
         }}>
-
-
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "100%",
-            //  paddingBottom: "25%",//  "112.5%", 
-            backgroundColor: "pink",
             left: "0%",
             top: "0%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[0].localUrl + ")",
             transform: "translateX(-1px) translateY(0px)",
-            backgroundColor: "wheat",
+
           }}
             onClick={function () {
               setPicArr(pre => [pre[1]])
@@ -525,21 +509,14 @@ export default function createImagePlugin() {
 
           />
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "100%",
-            //  paddingBottom: "25%",//  "112.5%", 
-            backgroundColor: "wheat",
             left: "50%",
             top: "0%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[1].localUrl + ")",
             transform: "translateX(1px) translateY(0px)",
-            backgroundColor: "wheat",
+
           }}
             onClick={function () {
               setPicArr(pre => [pre[0]])
@@ -554,33 +531,19 @@ export default function createImagePlugin() {
     else if (picNum === 3) {
       return (
         <div style={{
-          position: "relative",
-          width: "100%",
-          height: 0,
-          paddingBottom: "56.25%",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundColor: theme.palette.divider,   //"skyblue",
-          overflow: "hidden"
+          ...commonStyle0,
         }}>
 
 
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "100%",
-            //  paddingBottom: "25%",//  "112.5%", 
-            backgroundColor: "pink",
             left: "0%",
             top: "0%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[0].localUrl + ")",
             transform: "translateX(-1px) translateY(0px)",
-            backgroundColor: "wheat",
+
           }}
             onClick={function () {
               setPicArr(pre => [pre[1], pre[2]])
@@ -588,17 +551,11 @@ export default function createImagePlugin() {
 
           />
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "50%",
-            backgroundColor: "wheat",
             left: "50%",
             top: "0%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[1].localUrl + ")",
             transform: "translateX(1px) translateY(-1px)",
 
@@ -609,17 +566,11 @@ export default function createImagePlugin() {
             }} />
 
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "50%",
-            backgroundColor: "wheat",
             left: "50%",
             top: "50%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[2].localUrl + ")",
             transform: "translateX(1px) translateY(1px)",
 
@@ -636,29 +587,16 @@ export default function createImagePlugin() {
     else {
       return (
         <div style={{
-          position: "relative",
-          width: "100%",
-          height: 0,
-          paddingBottom: "56.25%",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundColor: theme.palette.divider,   //"skyblue",
-          overflow: "hidden"
+          ...commonStyle0,
         }}>
 
 
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "50%",
-            backgroundColor: "wheat",
             top: "0%",
             left: "0%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[0].localUrl + ")",
             transform: "translateX(-1px) translateY(-1px)",
 
@@ -667,17 +605,11 @@ export default function createImagePlugin() {
           }} />
 
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "50%",
-            backgroundColor: "wheat",
             top: "0%",
             left: "50%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[1].localUrl + ")",
             transform: "translateX(1px) translateY(-1px)",
 
@@ -686,17 +618,11 @@ export default function createImagePlugin() {
           }} />
 
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "50%",
-            backgroundColor: "wheat",
             top: "50%",
             left: "0%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[2].localUrl + ")",
             transform: "translateX(-1px) translateY(1px)",
           }}
@@ -707,17 +633,11 @@ export default function createImagePlugin() {
           />
 
           <div style={{
-            position: "absolute",
+            ...commonStyle,
             width: "50%",
             height: "50%",
-            backgroundColor: "wheat",
             top: "50%",
             left: "50%",
-            backgroundRepeat: "no-repeat",
-            overflow: "hidden",
-            backgroundPositionX: "center",
-            backgroundPositionY: "center",
-            backgroundSize: "cover",
             backgroundImage: "url(" + imgArr[3].localUrl + ")",
             transform: "translateX(1px) translateY(1px)",
 
@@ -726,191 +646,10 @@ export default function createImagePlugin() {
               setPicArr(pre => [pre[1], pre[2], pre[3]])
             }} />
 
-
         </div>
-
-
-
-
 
       )
     }
-
-
-
-
-
-
-
-
-
-    return (
-      <div style={{
-        position: "relative",
-        width: "100%",
-        height: 0,
-        paddingBottom: "56.25%",
-
-        backgroundColor: theme.palette.divider,   //"skyblue",
-        overflow: "hidden"
-      }}>
-
-        <div style={{
-          position: "absolute",
-          width: "50%",
-          height: "100%",
-          // paddingBottom: "112.5%",
-          backgroundColor: "pink",
-
-          backgroundRepeat: "no-repeat",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          backgroundImage: "url(" + imgArr[0] + ")",
-          transform: "translateX(-1px)",
-        }} />
-
-
-
-
-        <div style={{
-          position: "absolute",
-          width: "50%",
-          height: "50%",
-          //  paddingBottom: "25%",//  "112.5%", 
-          backgroundColor: "wheat",
-          left: "50%",
-          top: "0%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          backgroundImage: "url(" + imgArr[1] + ")",
-          transform: "translateX(1px) translateY(-1px)",
-          backgroundColor: "wheat",
-        }} />
-
-
-        <div style={{
-          position: "absolute",
-          width: "50%",
-          height: "50%",
-          //  paddingBottom: "25%",//  "112.5%", 
-          backgroundColor: "wheat",
-          left: "50%",
-          top: "50%",
-          backgroundRepeat: "no-repeat",
-          overflow: "hidden",
-          backgroundPositionX: "center",
-          backgroundPositionY: "center",
-          backgroundSize: "cover",
-          backgroundImage: "url(" + imgArr[2] + ")",
-          transform: "translateX(1px) translateY(1px)",
-          backgroundColor: "wheat",
-        }} />
-
-
-      </div>
-    )
-
-
-
-
-
-    return (
-      <>
-
-        <Grid container
-          direction="row"
-          justify="space-around"
-          alignItems="flex-start"
-          spacing={0}
-
-          style={{
-            backgroundColor: "skyblue",
-            overflow: "hidden",
-            //  minHeight: "20vh",
-            //  maxHeight: "40vh",
-            // height:"30vh",
-          }}
-        >
-
-          {imgArr.map((item, index) => {
-
-            let col = 12
-            const picNum = imgArr.length
-            const picIndex = index + 1
-
-            //  if (picNum===1) 
-
-            return <Grid item xs={12} sm={12} md={4} lg={4} xl={4} key={index}
-              style={{
-                overflow: "hidden",
-                margin: 0, padding: 0, backgroundColor: index % 2 === 1 ? "pink" : "wheat",
-
-              }}
-            >
-              {isChrome
-                ? <img src={item} style={{ width: "100%", display: "block", aspectRatio: "16 / 9", objectFit: "cover" }} />
-                : <div src={item}
-                  style={{
-
-                    position: "relative",
-                    width: "100%",
-                    paddingBottom: "56.25%",
-                    height: 0,
-                    //   height:"100%",
-                    // overflow: "visible",
-                    // aspectRatio: "16 / 9",
-                    display: "block",
-
-                    // objectFit: "cover",
-                    //  objectFit:"contain",
-                    backgroundColor: index % 2 === 1 ? "pink" : "wheat",
-                  }}
-                >
-                  <img src={item} style={{ position: "absolute", display: "block", top: 0, left: 0, width: "100%", objectFit: "cover" }} />
-
-
-
-
-                </div>}
-            </Grid>
-
-          })}
-
-        </Grid>
-
-
-
-
-
-
-        {/* {imgUrl && <img src={imgUrl}
-          style={{
-            maxWidth: "100%",
-            display: "block",
-            marginLeft: "auto",
-            marginRight: "auto"
-          }}
-        />} */}
-
-
-      </>
-    )
-
-    return (
-      <Grid container
-        direction="row"
-        justify="space-around"
-        alignItems="flex-start"
-        spacing={0}>
-        <Grid item xs={12} sm={12} md={10} lg={8} xl={8} >
-
-        </Grid>
-      </Grid>
-    )
   }
 
 

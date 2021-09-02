@@ -423,7 +423,8 @@ export default function createImagePlugin() {
       backgroundPositionX: "center",
       backgroundPositionY: "center",
       backgroundColor: theme.palette.divider,   //"skyblue",
-      overflow: "hidden"
+      overflow: "hidden",
+      opacity:1,
     }
 
     const commonStyle = {
@@ -434,6 +435,7 @@ export default function createImagePlugin() {
       backgroundPositionY: "center",
       backgroundSize: "cover",
       backgroundColor: "wheat",
+      opacity:1,
     }
 
 

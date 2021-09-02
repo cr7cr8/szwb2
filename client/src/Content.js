@@ -881,6 +881,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
     backgroundPositionY: "center",
     backgroundColor: theme.palette.divider,   //"skyblue",
     overflow: "hidden",
+    opacity:1,
 
 
 
@@ -896,6 +897,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
     backgroundPositionX: "center",
     backgroundPositionY: "center",
     backgroundSize: "cover",
+    opacity:1,
 
   }
 

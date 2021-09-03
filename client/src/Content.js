@@ -105,7 +105,26 @@ export default function Content({ style }) {
 
         transform: function transformFn(node, index) {
 
+          if (node.name === "svg") {
 
+            const child = node.children[0];
+            const { width, height, viewbox, preserveaspectratio } = node.attribs;
+            //     alert(node.children.length)
+            return (
+              <svg
+                key={index}
+                width={width}
+                height={height}
+                viewBox={viewbox}
+                preserveAspectRatio={preserveaspectratio}
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {node.children.map((child, index) => {
+                  return convertNodeToElement(child, index, transformFn)
+                })}    
+              </svg>
+            )
+          }
           if (node.name === "imgtag") {
             return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} fullVisible={fullVisible} setFullVisible={setFullVisible} />)
           }

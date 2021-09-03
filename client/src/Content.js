@@ -106,7 +106,7 @@ export default function Content({ style }) {
         transform: function transformFn(node, index) {
 
 
-          if (node.name === "Imgtag") {
+          if (node.name === "imgtag") {
             return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} fullVisible={fullVisible} setFullVisible={setFullVisible} />)
           }
           if (node.name === "emoji") {

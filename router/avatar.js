@@ -17,17 +17,7 @@ const parser = new DatauriParser();
 
 router.post("/",
 
-
-
   authenticateToken, checkConnState, getFileArray, getAvatarImageArray, deleteFileByUserName, uploadFile, function (req, res) { res.json("upload done") })
-
-
-
-
-
-
-
-
 
 router.get("/:username", checkConnState,
   function (req, res, next) {

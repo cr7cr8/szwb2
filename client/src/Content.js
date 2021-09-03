@@ -106,7 +106,7 @@ export default function Content({ style }) {
         transform: function transformFn(node, index) {
 
 
-          if (node.name === "imgtag") {
+          if (node.name === "Imgtag") {
             return (inView && <ImgTag key={index} picArr={imgArr} picName={node.attribs.id} fullVisible={fullVisible} setFullVisible={setFullVisible} />)
           }
           if (node.name === "emoji") {
@@ -146,6 +146,7 @@ export default function Content({ style }) {
               arr.push(convertNodeToElement(element))
             })
 
+           // console.log(node)
 
             const avatarUrl = `${url}/avatar${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/"), node.attribs.imgurl.length)}`.replace(").", ".")
 
@@ -162,6 +163,8 @@ export default function Content({ style }) {
                 label={
                   <Typography variant="body2">
                     {arr.map((element, index) => {
+         
+                    //  console.log(element)
                       return <span key={index}>{element}</span>
                     })}
                   </Typography>
@@ -881,7 +884,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
     backgroundPositionY: "center",
     backgroundColor: theme.palette.divider,   //"skyblue",
     overflow: "hidden",
-    opacity:1,
+    opacity: 1,
 
 
 
@@ -897,7 +900,7 @@ function ImgTag({ picArr, picName, setFullVisible, ...props }) {
     backgroundPositionX: "center",
     backgroundPositionY: "center",
     backgroundSize: "cover",
-    opacity:1,
+    opacity: 1,
 
   }
 

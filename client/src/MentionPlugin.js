@@ -19,7 +19,8 @@ import {
 } from "react-device-detect";
 
 //import axios from "axios";
-import {axios,avatarUrl} from "./config";
+import { axios, avatarUrl } from "./config";
+
 
 
 export const useStyles = makeStyles(props => {
@@ -123,11 +124,11 @@ export const useStyles = makeStyles(props => {
 
 export default function createMentionPlugin() {
   //  const url = "http://szwb1.herokuapp.com/api";
- // const url = "https://api.multiavatar.com"
+  // const url = "https://api.multiavatar.com"
 
   const url = avatarUrl
 
-  
+
   let externalES = null;
   let externalSetEditorState = null;
   //let friendsList = isMobile?[]:["刘德华", "郭富城", "阿狗"];
@@ -370,18 +371,21 @@ export default function createMentionPlugin() {
     else if (mentionType === "longMentionOff_BODY") {
 
 
-
+//alert(JSON.stringify(children))
       return <>
 
 
 
         <Chip
           classes={{ root: mentionBodyRoot2, label: mentionBodyLabel }}
-          avatar={<Avatar alt="Natacha" src={friendObj[person]||`${url}/${person}.svg`}
+          avatar={<Avatar alt="Natacha" src={friendObj[person] || `${url}/${person}.svg`}
 
           />}
           label={<Typography variant="body2" >{children}</Typography>}
         />
+
+      
+
 
       </>
 
@@ -597,7 +601,7 @@ export default function createMentionPlugin() {
               person: blockText.substring(start, end).replace(" @", ""),
               //  imgurl: `url(${url}/avatar/downloadavatar/${blockText.substring(start, end).replace(" @", "")})`
               imgurl: `${url}/${blockText.substring(start, end).replace(" @", "")}).svg`
-          
+
             }
           )
 
@@ -608,7 +612,7 @@ export default function createMentionPlugin() {
               person: blockText.substring(start, end).replace(" @", ""),
               //     imgurl: `url(${url}/avatar/downloadavatar/${blockText.substring(start, end).replace(" @", "")})`
               imgurl: `${url}/${blockText.substring(start, end).replace(" @", "")}).svg`
-           
+
             }
           )
         }

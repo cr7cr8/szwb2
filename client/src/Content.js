@@ -282,7 +282,7 @@ export default function Content({ style }) {
   return (
     <>
 
-      <Container disableGutters={false}   >
+      <Container disableGutters={false} fixed={false} maxWidth={"lg"} >
 
 
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">

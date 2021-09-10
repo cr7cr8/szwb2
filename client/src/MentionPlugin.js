@@ -130,8 +130,8 @@ export default function createMentionPlugin() {
   
   let externalES = null;
   let externalSetEditorState = null;
-  let friendsList = isMobile?[]:["刘德华", "郭富城", "阿狗"];
-  //let friendsList = [];
+  //let friendsList = isMobile?[]:["刘德华", "郭富城", "阿狗"];
+  let friendsList = [];
   const friendObj = {}
 
   friendsList.forEach(friendName => {

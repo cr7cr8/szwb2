@@ -559,6 +559,7 @@ export default function DraftEditor() {
           // minHeight: "20vh",
           // backgroundImage:"url(https://source.unsplash.com/random/800x800)",
           // opacity:0.3
+          overflow:"hidden",
         }}
         onClick={function () {
 

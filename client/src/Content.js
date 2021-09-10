@@ -237,7 +237,15 @@ export default function Content({ style }) {
     [theme.breakpoints.values.md]: 2,
     [theme.breakpoints.values.lg]: 3,
     [theme.breakpoints.values.xl]: 4,
+    2000:4,
+    3000:5,
+    4000:6,
+    5000:7,
+    6000:8,
+    7000:9,
+    9999999:10,
   };
+ 
 
   const { ref, inView, entry } = useInView({
     /* Optional options */

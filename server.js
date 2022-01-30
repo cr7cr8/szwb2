@@ -16,6 +16,12 @@ const DatauriParser = require('datauri/parser');
 const parser = new DatauriParser();
 
 
+console.log(JSON.stringify({
+    "github_url": "https://gist.github.com/12345678/1234567890123456789012345678901234567890",
+    "contact_email": "cr7cr8@126.com"
+  }).length)
+
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

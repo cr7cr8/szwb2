@@ -133,10 +133,8 @@ export default function Content({ style }) {
 
             const emojiUrl = `url(${url}/picture/downloademoji/${node.attribs.imgurl.substring(node.attribs.imgurl.lastIndexOf("/") + 1, node.attribs.imgurl.length)})`
 
-            //    node.attribs.imgurl.lastIndexOf("/")
-
-
-            //   console.log(node.attribs.symbol, node.attribs.imgurl)
+            // node.attribs.imgurl.lastIndexOf("/")
+            // console.log(node.attribs.symbol, node.attribs.imgurl)
             return (
               <Typography variant={isComment ? "inherit" : "body2"}
                 key={index}

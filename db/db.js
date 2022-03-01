@@ -7,12 +7,16 @@ mongoose.connection.on('error', function (err) {
 
 const { connSzwb2DB, connEmojiDB, connPictureDB, connParam } = {
 
-  EmojiDB: "mongodb+srv://boss:ABCabc123@cluster0-lsf8g.azure.mongodb.net/EmojiDB?retryWrites=true&w=majority",
-  szwb2DB: "mongodb+srv://boss:ABCabc123@cluster0-lsf8g.azure.mongodb.net/szwb2?retryWrites=true&w=majority",
-  pictureDB: "mongodb+srv://boss:ABCabc123@cluster0-lsf8g.azure.mongodb.net/pictureDB?retryWrites=true&w=majority",
-  // EmojiDB: "mongodb+srv://boss:ABCabc123@cluster2-lsf8g.azure.mongodb.net/EmojiDB?retryWrites=true&w=majority",
-  // szwb2DB: "mongodb+srv://boss:ABCabc123@cluster2-lsf8g.azure.mongodb.net/szwb2?retryWrites=true&w=majority",
-  // pictureDB: "mongodb+srv://boss:ABCabc123@cluster2-lsf8g.azure.mongodb.net/pictureDB?retryWrites=true&w=majority",
+  //EmojiDB: "mongodb+srv://boss:ABCabc123@cluster0-lsf8g.azure.mongodb.net/EmojiDB?retryWrites=true&w=majority",
+  //szwb2DB: "mongodb+srv://boss:ABCabc123@cluster0-lsf8g.azure.mongodb.net/szwb2?retryWrites=true&w=majority",
+  //pictureDB: "mongodb+srv://boss:ABCabc123@cluster0-lsf8g.azure.mongodb.net/pictureDB?retryWrites=true&w=majority",
+
+
+  //mongodb+srv://<username>:<password>@cluster0.ew3qv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+
+  EmojiDB:"mongodb+srv://boss:ABCabc123@cluster0.ew3qv.mongodb.net/szwb2?retryWrites=true&w=majority",
+  szwb2DB: "mongodb+srv://boss:ABCabc123@cluster0.ew3qv.mongodb.net/szwb2?retryWrites=true&w=majority",
+  pictureDB: "mongodb+srv://boss:ABCabc123@cluster0.ew3qv.mongodb.net/szwb2?retryWrites=true&w=majority",
 
 
  // <a href="#metrics/host/778af45ec7d23738125baeca9a08f091/status">cluster0-shard-00-02.lsf8g.azure.mongodb.net:27017</a>

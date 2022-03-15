@@ -39,6 +39,13 @@ app.use("/api/article", article)
 app.use("/api/picture", picture)
 app.use("/api/user", user)
 
+app.use("/api/aaa",function(req,res,next){
+
+  res.send("aaafff")
+
+})
+
+
 app.get("*", clientPack)
 
 

@@ -71,8 +71,22 @@ Content-Type: application/json
 
 
 GET https://api.multiavatar.com/yuan.svg
+###
+
+GET https://api.github.com/facebook/react
 
 
+###
+POST http://localhost/api/aaa
+Content-Type: application/json
 
+{
+    "ownerName":"ccc",
+    "content":"cccdd",
+    "postID":"Fdfewfsa",
+    "subCommentID":"78973984",
+    "postingTime":"434534343",
+    "commentID":3554657
 
+}
 ###
